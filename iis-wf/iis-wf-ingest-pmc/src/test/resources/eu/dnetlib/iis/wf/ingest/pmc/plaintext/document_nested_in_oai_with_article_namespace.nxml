@@ -1,0 +1,675 @@
+<oai:record xmlns:dri="http://www.driver-repository.eu/namespace/dri" xmlns="http://namespace.openaire.eu/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oai="http://www.openarchives.org/OAI/2.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dr="http://www.driver-repository.eu/namespace/dr" xmlns:oaf="http://namespace.openaire.eu/oaf" xmlns:prov="http://www.openarchives.org/OAI/2.0/provenance">
+<oai:header><dri:objIdentifier>od_______267::2a0cd8975b85a46f8d52d6521f9adde6</dri:objIdentifier><dri:recordIdentifier>oai:pubmedcentral.nih.gov:4219982</dri:recordIdentifier><dri:dateOfCollection>2018-06-11T22:13:09.769Z</dri:dateOfCollection><oaf:datasourceprefix>od_______267</oaf:datasourceprefix><identifier xmlns="http://www.openarchives.org/OAI/2.0/">oai:pubmedcentral.nih.gov:4219982</identifier><datestamp xmlns="http://www.openarchives.org/OAI/2.0/">2014-11-06</datestamp><setSpec xmlns="http://www.openarchives.org/OAI/2.0/">bmfh</setSpec><setSpec xmlns="http://www.openarchives.org/OAI/2.0/">pmc-open</setSpec></oai:header>
+<metadata xmlns="http://www.openarchives.org/OAI/2.0/">
+<article xmlns="https://jats.nlm.nih.gov/ns/archiving/1.0/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" xsi:schemaLocation="https://jats.nlm.nih.gov/ns/archiving/1.0/ https://jats.nlm.nih.gov/archiving/1.0/xsd/JATS-archivearticle1.xsd" article-type="research-article">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">Biosci Microbiota Food Health</journal-id>
+      <journal-id journal-id-type="iso-abbrev">Biosci Microbiota Food Health</journal-id>
+      <journal-id journal-id-type="publisher-id">BMFH</journal-id>
+      <journal-title-group>
+        <journal-title>Bioscience of Microbiota, Food and Health</journal-title>
+      </journal-title-group>
+      <issn pub-type="ppub">2186-6953</issn>
+      <issn pub-type="epub">2186-3342</issn>
+      <publisher>
+        <publisher-name>BMFH Press</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="accession">PMC4219982</article-id>
+      <article-id pub-id-type="pmcid">PMC4219982</article-id>
+      <article-id pub-id-type="pmc-uid">4219982</article-id>
+      <article-id pub-id-type="pmid">25379363</article-id>
+      <article-id pub-id-type="publisher-id">2014-004</article-id>
+      <article-id pub-id-type="doi">10.12938/bmfh.33.157</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Full Paper</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title><italic>Lactobacillus acidophilus</italic> L-92 Cells Activate Expression of Immunomodulatory Genes in THP-1
+Cells</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name>
+            <surname>YANAGIHARA</surname>
+            <given-names>Sae</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">
+            <sup>1</sup>
+          </xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>GOTO</surname>
+            <given-names>Hiroaki</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">
+            <sup>1</sup>
+          </xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>HIROTA</surname>
+            <given-names>Tatsuhiko</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">
+            <sup>1</sup>
+          </xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>FUKUDA</surname>
+            <given-names>Shinji</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff2">
+            <sup>2</sup>
+          </xref>
+          <xref ref-type="aff" rid="aff3">
+            <sup>3</sup>
+          </xref>
+          <xref ref-type="aff" rid="aff4">
+            <sup>4</sup>
+          </xref>
+          <xref ref-type="aff" rid="aff5">
+            <sup>5</sup>
+          </xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>OHNO</surname>
+            <given-names>Hiroshi</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff2">
+            <sup>2</sup>
+          </xref>
+          <xref ref-type="aff" rid="aff3">
+            <sup>3</sup>
+          </xref>
+          <xref ref-type="aff" rid="aff4">
+            <sup>4</sup>
+          </xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>YAMAMOTO</surname>
+            <given-names>Naoyuki</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff2">
+            <sup>2</sup>
+          </xref>
+          <xref ref-type="aff" rid="aff6">
+            <sup>6</sup>
+          </xref>
+          <xref rid="cor1" ref-type="corresp">
+            <sup>*</sup>
+          </xref>
+        </contrib>
+        <aff id="aff1"><label>1</label>Microbiology and Fermentation Laboratory, Calpis Co. Ltd., 5–11–10 Fuchinobe, Chuo-ku,
+Sagamihara-shi, Kanagawa 252-0206, Japan</aff>
+        <aff id="aff2"><label>2</label>Intestinal Microbe Symbiosis Laboratory, RIKEN, Wako, Saitama 351-0198, Japan</aff>
+        <aff id="aff3"><label>3</label>Laboratory for Intestinal Ecosystem, RCAI, RIKEN Center for Integrative Medical Sciences, Yokohama,
+Kanagawa 230-0045, Japan</aff>
+        <aff id="aff4"><label>4</label>Immunobiology Laboratory, Graduate School of Medical Life Science, Yokohama City University,
+Yokohama, Kanagawa 230-0045, Japan</aff>
+        <aff id="aff5"><label>5</label>Institute for Advanced Biosciences, Keio University, Tsuruoka, Yamagata 997-0052, Japan</aff>
+        <aff id="aff6"><label>6</label>Research and Development Planning Department, Calpis Co. Ltd., 5–11–10 Fuchinobe, Chuo-ku,
+Sagamihara-shi, Kanagawa 252-0206, Japan</aff>
+      </contrib-group>
+      <author-notes>
+        <corresp id="cor1">*Corresponding author. Mailing address: Naoyuki Yamamoto, Research and Development Planning Department, Calpis
+Co. Ltd., 5–11–10 Fuchinobe, Chuo-ku, Sagamihara-shi, Kanagawa 252-0206, Japan. Phone: +81-42-769-7811, Fax: +81-42-769-7842.
+E-mail: <email xlink:href="naoyuki.yamamoto@calpis.co.jp">naoyuki.yamamoto@calpis.co.jp</email></corresp>
+      </author-notes>
+      <pub-date pub-type="epub">
+        <day>01</day>
+        <month>8</month>
+        <year>2014</year>
+      </pub-date>
+      <pub-date pub-type="ppub">
+        <year>2014</year>
+      </pub-date>
+      <volume>33</volume>
+      <issue>4</issue>
+      <fpage>157</fpage>
+      <lpage>164</lpage>
+      <history>
+        <date date-type="received">
+          <day>20</day>
+          <month>1</month>
+          <year>2014</year>
+        </date>
+        <date date-type="accepted">
+          <day>03</day>
+          <month>7</month>
+          <year>2014</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>©2014 BMFH Press</copyright-statement>
+        <copyright-year>2014</copyright-year>
+        <license license-type="open-access" xlink:href="http://creativecommons.org/licenses/by-nc-nd/3.0/">
+          <license-p>This is an open-access article distributed under the terms of the Creative Commons Attribution Non-Commercial No
+Derivatives (by-nc-nd) License. </license-p>
+        </license>
+      </permissions>
+      <abstract>
+        <p>To understand the immunomodulatory effects of <italic>Lactobacillus acidophilus</italic> L-92 cells suggested from our previous
+study of <italic>in vivo</italic> anti-allergy and anti-virus effects, host immune responses in macrophage-like THP-1 cells after
+4 h (the early phase) and 24 h (the late phase) of cocultivation with L-92 cells were investigated by transcriptome analysis. In
+the early phase of L-92 treatment, various transcription regulator genes, such as, <italic>NFkB1, NFkB2, JUN, HIVEP2</italic> and
+<italic>RELB,</italic> and genes encoding chemokines and cytokines, such as <italic>CCL4, CXCL11, CCL3</italic> and
+<italic>TNF,</italic> were upregulated. Two transmembrane receptor genes, <italic>TLR7</italic> and <italic>ICAM1</italic>, were
+also upregulated in the early phase of treatment. In contrast, many transmembrane receptor genes, such as <italic>IL7R, CD80,
+CRLF2, CD86, CD5, HLA-DQA1, IL2RA, IL15RA</italic> and <italic>CSF2RA</italic>, and some cytokine genes, including <italic>IL6,
+IL23A</italic> and <italic>CCL22</italic>, were significantly upregulated in the late phase after L-92 exposure. Some genes
+encoding cytokines, such as <italic>IL1A, IL1B</italic> and <italic>IL8,</italic> and the enzyme <italic>IDO1</italic> were
+upregulated at both the early and the late phases of treatment. These results suggest that probiotic L-92 might promote Th1 and
+regulatory T-cell responses by activation of the MAPK signaling pathway, followed by the NOD-like receptor signaling pathway in
+THP-1 cells.</p>
+      </abstract>
+      <kwd-group>
+        <kwd><italic>Lactobacillus acidophilus</italic> L-92</kwd>
+        <kwd>transcriptome analysis</kwd>
+        <kwd>transcription regulator</kwd>
+        <kwd>cytokine</kwd>
+        <kwd>THP-1</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec sec-type="intro" id="s1">
+      <title>INTRODUCTION</title>
+      <p>A variety of lactic acid bacteria (LAB) have been isolated and used in mainly dairy foods and supplements for their health benefits
+in humans. One of the most important probiotic effects of LAB in a host would be its action on the gastrointestinal immune system,
+which may be beneficial in the prevention of gastrointestinal infections [<xref rid="r1" ref-type="bibr">1</xref>, <xref rid="r2" ref-type="bibr">2</xref>], and inflammatory bowel diseases [<xref rid="r3" ref-type="bibr">3</xref>] and the alleviation
+of allergic diseases [<xref rid="r4" ref-type="bibr">4</xref>]. Among many probiotic strains that have been developed,
+<italic>Lactobacillus</italic> strains have been characterized as strong inducers of pro-inflammatory cytokines, such as IL-12 and
+tumor necrosis factor (TNF-α) [<xref rid="r5" ref-type="bibr">5</xref>, <xref rid="r6" ref-type="bibr">6</xref>], and they seem to
+be different from the weak IL-12 inducer bifidobacteria.</p>
+      <p><italic>Lactobacillus acidophilus</italic> L-92 has been developed as a strain with anti-allergy effects for pollen allergy [<xref rid="r7" ref-type="bibr">7</xref>], perennial allergy [<xref rid="r8" ref-type="bibr">8</xref>], and atopic dermatitis [<xref rid="r9" ref-type="bibr">9</xref>, <xref rid="r10" ref-type="bibr">10</xref>], and it also has the ability to control
+gastrointestinal disorders [<xref rid="r11" ref-type="bibr">11</xref>]. To explain these <italic>in vivo</italic> anti-allergy
+effects, various mechanisms have been proposed, including an improvement in the balance of T helper 1 (Th1) cells and T helper 2
+(Th2) cells, induction of apoptosis, induction or activation of regulatory T cells, and activation of the innate immune system
+[<xref rid="r9" ref-type="bibr">9</xref>, <xref rid="r12" ref-type="bibr">12</xref>,<xref rid="r13" ref-type="bibr">13</xref>,<xref rid="r14" ref-type="bibr">14</xref>]. Our recent study demonstrated that surface layer protein A (SlpA) on the
+cell wall of the <italic>L. acidophilus</italic> L-92 strain is important for enhancement of the release of IL-12, known as a
+Th1-type cytokine, from splenocytes [<xref rid="r15" ref-type="bibr">15</xref>]. However, the detailed mechanisms of such immune
+modulation events are unknown.</p>
+      <p>The Peyer’s patch, lamina propria and mesenteric lymph nodes of the gastrointestinal tract play a crucial role in controlling the
+gastrointestinal immune system. In the gastrointestinal immune system, contact between LAB and antigen-presenting cells (APCs), such
+as dendritic cells (DCs) and macrophages, is likely to be a particularly important process for initiation of host immune responses
+by priming innate and adaptive immunity [<xref rid="r16" ref-type="bibr">16</xref>]. Probiotic microbial signals are thought to be
+transmitted to DCs via Toll-like receptors [<xref rid="r17" ref-type="bibr">17</xref>]; however, few reports have addressed the
+action of probiotics on cells of the immune system. To improve understanding of the events in DCs, transcriptome analyses have been
+conducted both in animal studies and in human trials [<xref rid="r18" ref-type="bibr">18</xref>,<xref rid="r19" ref-type="bibr">19</xref>,<xref rid="r20" ref-type="bibr">20</xref>]. Macrophage-like THP-1 cells represent a well responding and physiologically
+meaningful model system for investigation of the context of innate immunity.</p>
+      <p>We herein report a detailed analysis of cell metabolism of macrophages in response to L-92 by using transcriptomic analysis on
+THP-1 cells, which show a response to L-92 cells similar to that of splenocytes by releasing IL-12. The present study suggests that
+probiotic L-92 might activate Th1 and regulatory T-cell responses by engaging the MAPK and NOD-like receptor signaling pathways.</p>
+    </sec>
+    <sec sec-type="materials|methods" id="s2">
+      <title>MATERIALS AND METHODS</title>
+      <sec>
+        <title>THP-1 cell culture</title>
+        <p>The human monocyte cell line THP-1 [<xref rid="r21" ref-type="bibr">21</xref>, <xref rid="r22" ref-type="bibr">22</xref>] was
+obtained from the Health Science Research Resources Bank (Tokyo, Japan) and maintained in RPMI-1640 (Sigma, St. Louis, MO, USA)
+containing 10% (V/V) of heat-inactivated fetal bovine serum (FBS; Hana-Nesco Bio, Tokyo, Japan), streptomycin (100 µg/ml) and
+penicillin (100 U/ml) (GIBCO, Grand Island, NY, USA) at 37°C in 5% CO<sub>2</sub>/95% air.</p>
+      </sec>
+      <sec>
+        <title>Preparation of heat-killed L-92 cells</title>
+        <p><italic>Lactobacillus acidophilus</italic> L-92 from our stock culture collection was cultured anaerobically at 37°C for 20 hr in
+de Man, Rogosa and Sharpe (MRS) broth (Difco Laboratories, Detroit, MI, USA), and washed with phosphate-buffered saline (PBS).
+Bacteria were suspended in PBS and killed by heating at 100°C for 10 min.</p>
+      </sec>
+      <sec>
+        <title>L-92 treatment of THP-1 cells</title>
+        <p>For transcriptome analysis of THP-1 metabolism, THP-1 cells were grown in RPMI-1640 containing 10% (V/V) of heat-inactivated FBS,
+streptomycin (100 µg/ml) and penicillin (100 U/ml) in a 250 mL flask (Sumitomo Bakelite Co., Ltd., Tokyo, Japan) at 37°C in 5%
+CO<sub>2</sub>/95% air and stimulated to macrophage-like cells by a method described previously, with some modifications [<xref rid="r23" ref-type="bibr">23</xref>]. Briefly, THP-1 cells were suspended in 2 mL of RPMI-1640 at a cell density of 5 ×
+10<sup>6</sup> cells/ml and cultivated in a 6-well plate (Asahi Glass Co., Ltd., Tokyo, Japan). The cells were differentiated by
+cultivation in 1.2% (V/V) Me<sub>2</sub>SO containing RPMI-1640 for 24 hr and stimulated with IFN-γ (5000 U/ml) for 16 hr.
+Unstained cells were counted as viable cell after treatment with Trypan Blue Solution (0.4%) (Sigma, St. Louis, MO, USA). Next, 1
+× 10<sup>9</sup> cells of heat-killed L-92, suspended in 0.2 mL of culture buffer, were added to stimulate the THP-1 cells. The
+THP-1 cells were then harvested after 4 and 24 hr of cocultivation with L-92 in the culture medium. The THP-1 cells were collected
+by centrifugation at 4°C for 10 min at 430 × <italic>g</italic>, and cell pellets were washed twice with cold D-PBS (Sigma) for
+total RNA extraction. Cells untreated with L-92 cells and stimulated with IFN-γ (5000 U/ml) for 16 hr were used as controls. Three
+samples were prepared from three independent experiments for each group.</p>
+      </sec>
+      <sec>
+        <title>Microarray analysis</title>
+        <p>Total RNA was extracted by using an RNeasy Mini Kit (QIAGEN, Valencia, CA, USA). Double-stranded cDNA was synthesized from 5 µg
+of total RNA, and the cDNA was subjected to <italic>in vitro</italic> transcription in the presence of biotinylated nucleotide
+triphosphates. Human genome-wide gene expression was examined by using the GeneChip<sup>®</sup> Human Gene 1.0 ST Array
+(Affymetrix, Santa Clara, CA, USA), which contains oligonucleotide probe sets for approximately 28,869 full-length genes and
+expressed sequence tags. The biotinylated cDNA was hybridized with a probe array for 16 hr at 45°C. The hybridized products were
+stained with streptavidin-phycoerythrin, and then scanned with a Hewlett-Packard Gene Array Scanner (Palo Alto, CA, USA). The
+fluorescence intensity of each probe was quantified by using the GeneChip Analysis Suite 5.0 software (Affymetrix). The level of
+gene expression was determined as the average difference by using the GeneChip software.</p>
+      </sec>
+      <sec>
+        <title>Statistical and functional analysis of microarray data</title>
+        <p>Data analysis was performed with GeneSpring software version 6.1 (Silicon Genetics, San Carlos, CA, USA). Expression data were
+considered significant when they differed at least twofold between L-92-treated and PBS-treated cells, and were statistically
+analyzed by the unpaired t-test with the Benjamini-Hochberg post test. P-values of less than 0.05 were considered significant.
+Biological interaction networks among regulated genes activated in response to L-92 were identified using Ingenuity Pathways
+Analysis (IPA). Kyoto Encyclopedia of Genes and Genomes (KEGG) pathway analysis was used for deeper understanding of the
+metabolism of the altered gene expression.</p>
+      </sec>
+      <sec>
+        <title>Quantitative real-time (qRT)-PCR</title>
+        <p>A two-step RT-PCR reaction was employed. cDNA was synthesized according to the protocol of the Superscript III First-Strand cDNA
+Synthesis System (Invitrogen, Carlsbad, CA, USA) using 1 µg of total RNA. cDNA was diluted, and frozen aliquots were stored at
+−20°C. The cDNA generated was amplified using SYBR<sup>®</sup> Premix Ex Taq<sup>TM</sup> II (Tli RNaseH Plus) (Takara Bio, Inc.,
+Shiga, Japan). All assays were performed on a TP800 Thermal Cycler Dice<sup>®</sup> Real Time System (Takara Bio, Inc.). Primers
+were prepared for amplification of specific genes, TNF, CRLF2, GAPDH, CD86, STAT4 and IL-8 genes. The sequences of the primers
+(forward and reverse primers) used in PCR reactions were 5′-AGATGATCTGACTGCCTGGG-3′ and 5′-CTGCTGCACTTTGGAGTGAT-3′ for TNF,
+5′-CTGATGCCACGAAAATCTCA-3′ and 5′-TTCTCCATCAGGAATGGGAC-3′ for CRLF25’, 5′-GCACCGTCAAGGCTGAGAAC-3′ and 5′-TGGTGAAGACGCCAGTGGA -3′
+for GAPDH, 5′-AGAGGAGCAGCACCAGAGAG-3′ and 5′-CAGAAGCAGCCAAAATGGAT-3′ for CD86, 5′-CACAGCTACATGCATTGGATT-3′and
+5′-CGTGTTTCCAAAGAGAAAAACC-3′ for STAT4 and 5′-CTGGCCGTGGCTCTCTTG-3′ and 5′-CCTTGGCAAAACTGCACCTT-3′ for and IL8. A cycle threshold
+(Ct) was assigned at the beginning of the logarithmic phase of PCR amplification. Data were analyzed by ABI software, and the gene
+expression was quantified using the 2<sup>−ΔΔCT</sup> method and normalized to the constitutively expressed housekeeping gene
+<italic>GAPDH</italic>.</p>
+      </sec>
+    </sec>
+    <sec sec-type="results" id="s3">
+      <title>RESULTS</title>
+      <sec>
+        <title>Altered gene pathways in THP-1 cells</title>
+        <p>To understand the host immunomodulatory effects of <italic>L. acidophilus</italic> L-92 cells suggested from previous studies of
+<italic>in vivo</italic> anti-allergy and anti-virus effects, responses in THP-1 cells after 4 hr (the early phase) and 24 hr
+(the late phase) of cocultivation with L-92 cells were investigated by transcriptome analysis. For cultivation of THP-1 cells in
+RPMI-1640 medium, a high concentration of IFN-γ was added to enhance IL-12 release for the Th1 type cell response based on our
+previous study. Viability of the THP-1 cells after inoculation in RPMI-1640 medium with IFN-γ at 16 hr was 96.3%. Differential
+expression analysis showed a significant (more than 2-fold) up- or downregulation of 282 genes in the early phase and 2,411 genes
+in the late phase in THP-1 cells caused by treatment with L-92 (data not shown).</p>
+        <p>Next, IPA was used to integrate the transcriptional networks for a more detailed understanding of the main networks linked to
+immunomodulatory responses in THP-1 cells, as described in the Materials and Methods. In the IPA analysis, the most significant
+differences in biological functions, referred to as “hematological process”, were found after 4 hr (66 molecules; p=1.34 ×
+10<sup>−28</sup>) and 24 hr (253 molecules; p=1.42 × 10<sup>−37</sup>) of treatment with L-92 cells. At the early phase of the
+treatment (4 hr), transcription regulators, cytokines and transmembrane receptors in particular showed highly altered expression
+(<xref rid="tbl_001" ref-type="table">Table 1</xref><table-wrap id="tbl_001" orientation="portrait" position="float"><label>Table 1.</label><caption><title> Ingenuity pathway analysis for altered gene expression in THP-1 cells treated with heat-killed <italic>Lactobacillus
+acidophilus</italic> L-92 cells</title></caption><table frame="hsides" rules="groups"><thead><tr><td align="center" rowspan="1" colspan="1">Category</td><td align="center" rowspan="1" colspan="1">4 hr</td><td align="center" rowspan="1" colspan="1">24 hr</td></tr></thead><tbody><tr><td align="left" rowspan="1" colspan="1">Transcription regulator</td><td align="center" rowspan="1" colspan="1">19</td><td align="center" rowspan="1" colspan="1">53</td></tr><tr><td align="left" rowspan="1" colspan="1">Enzyme</td><td align="center" rowspan="1" colspan="1">5</td><td align="center" rowspan="1" colspan="1">31</td></tr><tr><td align="left" rowspan="1" colspan="1">Transmembrane receptor</td><td align="center" rowspan="1" colspan="1">7</td><td align="center" rowspan="1" colspan="1">28</td></tr><tr><td align="left" rowspan="1" colspan="1">Cytokine</td><td align="center" rowspan="1" colspan="1">14</td><td align="center" rowspan="1" colspan="1">24</td></tr><tr><td align="left" rowspan="1" colspan="1">Kinase</td><td align="center" rowspan="1" colspan="1">4</td><td align="center" rowspan="1" colspan="1">22</td></tr><tr><td align="left" rowspan="1" colspan="1">G-protein coupled receptor</td><td align="center" rowspan="1" colspan="1">2</td><td align="center" rowspan="1" colspan="1">10</td></tr><tr><td align="left" rowspan="1" colspan="1">Phosphatase</td><td align="center" rowspan="1" colspan="1">2</td><td align="center" rowspan="1" colspan="1">7</td></tr><tr><td align="left" rowspan="1" colspan="1">Growth factor</td><td align="center" rowspan="1" colspan="1">1</td><td align="center" rowspan="1" colspan="1">5</td></tr><tr><td align="left" rowspan="1" colspan="1">Peptidase</td><td align="center" rowspan="1" colspan="1">0</td><td align="center" rowspan="1" colspan="1">4</td></tr><tr><td align="left" rowspan="1" colspan="1">Ion channel</td><td align="center" rowspan="1" colspan="1">0</td><td align="center" rowspan="1" colspan="1">3</td></tr><tr><td align="left" rowspan="1" colspan="1">Ligand-dependent nuclear receptor</td><td align="center" rowspan="1" colspan="1">0</td><td align="center" rowspan="1" colspan="1">3</td></tr><tr><td align="left" rowspan="1" colspan="1">Transporter</td><td align="center" rowspan="1" colspan="1">0</td><td align="center" rowspan="1" colspan="1">1</td></tr><tr><td align="left" rowspan="1" colspan="1">Other</td><td align="center" rowspan="1" colspan="1">12</td><td align="center" rowspan="1" colspan="1">62</td></tr><tr><td align="left" rowspan="1" colspan="1"/><td align="center" rowspan="1" colspan="1">66</td><td align="center" rowspan="1" colspan="1">253</td></tr></tbody></table></table-wrap>). In the late phase of the treatment with L-92, transcription regulators, enzymes, transmembrane receptors and
+cytokines were mostly upregulated (<xref rid="tbl_001" ref-type="table">Table 1</xref>). Over the course of the treatment, the
+majority of genes with altered expression were transcription regulators, enzymes, cytokines and transmembrane receptors (<xref rid="tbl_001" ref-type="table">Table 1</xref>). These results revealed that the genes showing changes in expression in THP-1
+cells caused by L-92 treatment were mainly associated with immune response and transcriptional regulation.</p>
+      </sec>
+      <sec>
+        <title>Altered genes in THP-1 cells</title>
+        <p>For a deeper understanding of each cellular response in THP-1 cells caused by L-92 treatment, genes that showed significant
+changes, especially those in the transcription regulator, enzyme, transmembrane receptor and cytokine categories that showed over
+a 4-fold change after 4 hr of treatment and less than a 4-fold change from 4 hr to 24 hr of L-92 treatment, are listed in <xref rid="tbl_002" ref-type="table">Table 2</xref><table-wrap id="tbl_002" orientation="portrait" position="float"><label>Table 2.</label><caption><title> Major altered genes categorized as transcription regulators, enzymes, transmembrane receptors and cytokines in THP-1
+cells after L-92 treatment for 4 hr and 24 hr</title></caption><table frame="hsides" rules="groups"><thead><tr><td align="center" rowspan="2" colspan="1">Category</td><td align="center" rowspan="2" colspan="1">Entrez Gene Name</td><td align="center" rowspan="2" colspan="1">Symbol</td><td align="center" colspan="2" rowspan="1">Fold change<hr/></td></tr><tr><td align="center" rowspan="1" colspan="1">0–4 hr</td><td align="center" rowspan="1" colspan="1">4–24 hr</td></tr></thead><tbody><tr><td align="left" colspan="3" rowspan="1">Early responding genes</td><td align="center" rowspan="1" colspan="1">&gt; 4.0</td><td align="center" rowspan="1" colspan="1">4.0 &gt;</td></tr><tr><td align="left" colspan="5" rowspan="1"> Cytokine</td></tr><tr><td align="left" rowspan="5" colspan="1"/><td align="left" rowspan="1" colspan="1">chemokine (C-C motif) ligand 4</td><td align="left" rowspan="1" colspan="1"><italic>CCL4</italic></td><td align="center" rowspan="1" colspan="1">58.29 </td><td align="center" rowspan="1" colspan="1">2.02 </td></tr><tr><td align="left" rowspan="1" colspan="1">chemokine (C-X-C motif) ligand 11</td><td align="left" rowspan="1" colspan="1"><italic>CXCL11</italic></td><td align="center" rowspan="1" colspan="1">27.97 </td><td align="center" rowspan="1" colspan="1">2.28 </td></tr><tr><td align="left" rowspan="1" colspan="1">chemokine (C-C motif) ligand 3</td><td align="left" rowspan="1" colspan="1"><italic>CCL3</italic></td><td align="center" rowspan="1" colspan="1">20.04 </td><td align="center" rowspan="1" colspan="1">2.77 </td></tr><tr><td align="left" rowspan="1" colspan="1">tumor necrosis factor</td><td align="left" rowspan="1" colspan="1"><italic>TNF</italic></td><td align="center" rowspan="1" colspan="1">14.57 </td><td align="center" rowspan="1" colspan="1">1.15 </td></tr><tr><td align="left" rowspan="1" colspan="1">interleukin 1 receptor antagonist</td><td align="left" rowspan="1" colspan="1"><italic>IL1RN</italic></td><td align="center" rowspan="1" colspan="1">5.11 </td><td align="center" rowspan="1" colspan="1">1.95 </td></tr><tr><td align="left" colspan="5" rowspan="1"> Transmembrane receptor</td></tr><tr><td align="left" rowspan="2" colspan="1"/><td align="left" rowspan="1" colspan="1">intercellular adhesion molecule 1</td><td align="left" rowspan="1" colspan="1"><italic>ICAM1</italic></td><td align="center" rowspan="1" colspan="1">10.01 </td><td align="center" rowspan="1" colspan="1">2.33 </td></tr><tr><td align="left" rowspan="1" colspan="1">toll-like receptor 7</td><td align="left" rowspan="1" colspan="1"><italic>TLR7</italic></td><td align="center" rowspan="1" colspan="1">6.63 </td><td align="center" rowspan="1" colspan="1">0.32 </td></tr><tr><td align="left" colspan="5" rowspan="1"> Enzyme</td></tr><tr><td align="left" rowspan="2" colspan="1"/><td align="left" rowspan="1" colspan="1">superoxide dismutase 2, mitochondrial</td><td align="left" rowspan="1" colspan="1"><italic>SOD2</italic></td><td align="center" rowspan="1" colspan="1">10.04 </td><td align="center" rowspan="1" colspan="1">2.50 </td></tr><tr><td align="left" rowspan="1" colspan="1">heme oxygenase (decycling) 1</td><td align="left" rowspan="1" colspan="1"><italic>HMOX1</italic></td><td align="center" rowspan="1" colspan="1">4.26 </td><td align="center" rowspan="1" colspan="1">2.21 </td></tr><tr><td align="left" colspan="5" rowspan="1"> Transcription regulator</td></tr><tr><td align="left" rowspan="5" colspan="1"/><td align="left" rowspan="1" colspan="1">jun proto-oncogene</td><td align="left" rowspan="1" colspan="1"><italic>JUN</italic></td><td align="center" rowspan="1" colspan="1">4.99 </td><td align="center" rowspan="1" colspan="1">2.72 </td></tr><tr><td align="left" rowspan="1" colspan="1">nuclear factor of kappa light polypeptide gene enhancer in B-cells 1</td><td align="left" rowspan="1" colspan="1"><italic>NFKB1</italic></td><td align="center" rowspan="1" colspan="1">5.18 </td><td align="center" rowspan="1" colspan="1">2.21 </td></tr><tr><td align="left" rowspan="1" colspan="1">nuclear factor of kappa light polypeptide gene enhancer in B-cells 2 (p49/p100)</td><td align="left" rowspan="1" colspan="1"><italic>NFKB2</italic></td><td align="center" rowspan="1" colspan="1">6.10 </td><td align="center" rowspan="1" colspan="1">1.85 </td></tr><tr><td align="left" rowspan="1" colspan="1">human immunodeficiency virus type I enhancer binding protein 2</td><td align="left" rowspan="1" colspan="1"><italic>HIVEP2</italic></td><td align="center" rowspan="1" colspan="1">4.18 </td><td align="center" rowspan="1" colspan="1">2.29 </td></tr><tr><td align="left" rowspan="1" colspan="1">v-rel reticuloendotheliosis viral oncogene homolog B</td><td align="left" rowspan="1" colspan="1"><italic>RELB</italic></td><td align="center" rowspan="1" colspan="1">4.34 </td><td align="center" rowspan="1" colspan="1">1.04 </td></tr><tr><td align="left" colspan="5" rowspan="1"><hr/></td></tr><tr><td align="left" colspan="3" rowspan="1">Slowly responding genes</td><td align="center" rowspan="1" colspan="1">0–4 hr</td><td align="center" rowspan="1" colspan="1">4–24 hr</td></tr><tr><td align="left" colspan="5" rowspan="1"><hr/></td></tr><tr><td align="left" colspan="3" rowspan="1"> Transmembrane receptor</td><td align="center" rowspan="1" colspan="1">4.0 &gt;</td><td align="center" rowspan="1" colspan="1">&gt; 4.0</td></tr><tr><td align="left" rowspan="9" colspan="1"/><td align="left" rowspan="1" colspan="1">interleukin 7 receptor</td><td align="left" rowspan="1" colspan="1"><italic>IL7R</italic></td><td align="center" rowspan="1" colspan="1">1.83 </td><td align="center" rowspan="1" colspan="1">63.99 </td></tr><tr><td align="left" rowspan="1" colspan="1">CD80 molecule</td><td align="left" rowspan="1" colspan="1"><italic>CD80</italic></td><td align="center" rowspan="1" colspan="1">1.74 </td><td align="center" rowspan="1" colspan="1">61.40 </td></tr><tr><td align="left" rowspan="1" colspan="1">cytokine receptor-like factor 2</td><td align="left" rowspan="1" colspan="1"><italic>CRLF2</italic></td><td align="center" rowspan="1" colspan="1">2.02 </td><td align="center" rowspan="1" colspan="1">52.00 </td></tr><tr><td align="left" rowspan="1" colspan="1">CD86 molecule</td><td align="left" rowspan="1" colspan="1"><italic>CD86</italic></td><td align="center" rowspan="1" colspan="1">0.86 </td><td align="center" rowspan="1" colspan="1">30.10 </td></tr><tr><td align="left" rowspan="1" colspan="1">CD5 molecule</td><td align="left" rowspan="1" colspan="1"><italic>CD5</italic></td><td align="center" rowspan="1" colspan="1">1.10 </td><td align="center" rowspan="1" colspan="1">16.20 </td></tr><tr><td align="left" rowspan="1" colspan="1">interleukin 15 receptor, alpha</td><td align="left" rowspan="1" colspan="1"><italic>IL15RA</italic></td><td align="center" rowspan="1" colspan="1">2.06 </td><td align="center" rowspan="1" colspan="1">4.37 </td></tr><tr><td align="left" rowspan="1" colspan="1">major histocompatibility complex, class II, DQ alpha 1</td><td align="left" rowspan="1" colspan="1"><italic>HLA-DQA1</italic></td><td align="center" rowspan="1" colspan="1">0.94 </td><td align="center" rowspan="1" colspan="1">5.93 </td></tr><tr><td align="left" rowspan="1" colspan="1">interleukin 2 receptor, alpha</td><td align="left" rowspan="1" colspan="1"><italic>IL2RA</italic></td><td align="center" rowspan="1" colspan="1">1.00 </td><td align="center" rowspan="1" colspan="1">4.98 </td></tr><tr><td align="left" rowspan="1" colspan="1">colony stimulating factor 2 receptor, alpha, low-affinity (granulocyte-macrophage)</td><td align="left" rowspan="1" colspan="1"><italic>CSF2RA</italic></td><td align="center" rowspan="1" colspan="1">0.85 </td><td align="center" rowspan="1" colspan="1">4.15 </td></tr><tr><td align="left" colspan="5" rowspan="1"> Cytokine</td></tr><tr><td align="left" rowspan="6" colspan="1"/><td align="left" rowspan="1" colspan="1">interleukin 12B (natural killer cell stimulatory factor 2, p40)</td><td align="left" rowspan="1" colspan="1"><italic>IL12B</italic></td><td align="center" rowspan="1" colspan="1">3.39 </td><td align="center" rowspan="1" colspan="1">18.10 </td></tr><tr><td align="left" rowspan="1" colspan="1">interleukin 6 (interferon, beta 2)</td><td align="left" rowspan="1" colspan="1"><italic>IL6</italic></td><td align="center" rowspan="1" colspan="1">1.08 </td><td align="center" rowspan="1" colspan="1">54.45 </td></tr><tr><td align="left" rowspan="1" colspan="1">interleukin 23, alpha subunit p19</td><td align="left" rowspan="1" colspan="1"><italic>IL23A</italic></td><td align="center" rowspan="1" colspan="1">1.29 </td><td align="center" rowspan="1" colspan="1">28.01 </td></tr><tr><td align="left" rowspan="1" colspan="1">secreted phosphoprotein 1</td><td align="left" rowspan="1" colspan="1"><italic>SPP1 </italic></td><td align="center" rowspan="1" colspan="1">2.73 </td><td align="center" rowspan="1" colspan="1">11.06 </td></tr><tr><td align="left" rowspan="1" colspan="1">chemokine (C-C motif) ligand 22</td><td align="left" rowspan="1" colspan="1"><italic>CCL22</italic></td><td align="center" rowspan="1" colspan="1">1.07 </td><td align="center" rowspan="1" colspan="1">17.16 </td></tr><tr><td align="left" rowspan="1" colspan="1">chemokine (C-C motif) ligand 19</td><td align="left" rowspan="1" colspan="1"><italic>CCL19</italic></td><td align="center" rowspan="1" colspan="1">1.13 </td><td align="center" rowspan="1" colspan="1">9.65 </td></tr><tr><td align="left" colspan="5" rowspan="1"> Transcription regulator</td></tr><tr><td align="left" rowspan="6" colspan="1"/><td align="left" rowspan="1" colspan="1">early B-cell factor 1</td><td align="left" rowspan="1" colspan="1"><italic>EBF1</italic></td><td align="center" rowspan="1" colspan="1">1.12 </td><td align="center" rowspan="1" colspan="1">41.89 </td></tr><tr><td align="left" rowspan="1" colspan="1">signal transducer and activator of transcription 4</td><td align="left" rowspan="1" colspan="1"><italic>STAT4</italic></td><td align="center" rowspan="1" colspan="1">1.42 </td><td align="center" rowspan="1" colspan="1">23.28 </td></tr><tr><td align="left" rowspan="1" colspan="1">runt-related transcription factor 1; translocated to, 1 (cyclin D-related)</td><td align="left" rowspan="1" colspan="1"><italic>RUNX1T1</italic></td><td align="center" rowspan="1" colspan="1">0.97 </td><td align="center" rowspan="1" colspan="1">8.18 </td></tr><tr><td align="left" rowspan="1" colspan="1">zinc finger protein, multitype 2</td><td align="left" rowspan="1" colspan="1"><italic>ZFPM2</italic></td><td align="center" rowspan="1" colspan="1">1.05 </td><td align="center" rowspan="1" colspan="1">5.65 </td></tr><tr><td align="left" rowspan="1" colspan="1">B-cell CLL/lymphoma 11A (zinc finger protein)</td><td align="left" rowspan="1" colspan="1"><italic>BCL11A</italic></td><td align="center" rowspan="1" colspan="1">0.85 </td><td align="center" rowspan="1" colspan="1">6.92 </td></tr><tr><td align="left" rowspan="1" colspan="1">growth factor independent 1 transcription repressor</td><td align="left" rowspan="1" colspan="1"><italic>GFI1</italic></td><td align="center" rowspan="1" colspan="1">–2.21 </td><td align="center" rowspan="1" colspan="1">–5.00 </td></tr><tr><td align="left" colspan="5" rowspan="1"> Enzyme</td></tr><tr><td align="left" rowspan="6" colspan="1"/><td align="left" rowspan="1" colspan="1">prostaglandin-endoperoxide synthase 2 (prostaglandin G/H synthase and cyclooxygenase)</td><td align="left" rowspan="1" colspan="1"><italic>PTGS2</italic></td><td align="center" rowspan="1" colspan="1">2.58 </td><td align="center" rowspan="1" colspan="1">14.29 </td></tr><tr><td align="left" rowspan="1" colspan="1">adenosine deaminase</td><td align="left" rowspan="1" colspan="1"><italic>ADA</italic></td><td align="center" rowspan="1" colspan="1">1.07 </td><td align="center" rowspan="1" colspan="1">9.62 </td></tr><tr><td align="left" rowspan="1" colspan="1">sphingosine-1-phosphate lyase 1</td><td align="left" rowspan="1" colspan="1"><italic>SGPL1</italic></td><td align="center" rowspan="1" colspan="1">1.06 </td><td align="center" rowspan="1" colspan="1">5.90 </td></tr><tr><td align="left" rowspan="1" colspan="1">3’-phosphoadenosine 5’-phosphosulfate synthase 2</td><td align="left" rowspan="1" colspan="1"><italic>PAPSS2</italic></td><td align="center" rowspan="1" colspan="1">1.05 </td><td align="center" rowspan="1" colspan="1">5.47 </td></tr><tr><td align="left" rowspan="1" colspan="1">fibronectin 1</td><td align="left" rowspan="1" colspan="1"><italic>FN1</italic></td><td align="center" rowspan="1" colspan="1">0.95 </td><td align="center" rowspan="1" colspan="1">5.84 </td></tr><tr><td align="left" rowspan="1" colspan="1">coagulation factor XIII, A1 polypeptide</td><td align="left" rowspan="1" colspan="1"><italic>F13A1</italic></td><td align="center" rowspan="1" colspan="1">–1.33 </td><td align="center" rowspan="1" colspan="1">–12.62 </td></tr><tr><td align="left" colspan="5" rowspan="1"><hr/></td></tr><tr><td align="left" colspan="3" rowspan="1">Constitutively responding genes</td><td align="center" rowspan="1" colspan="1">0–4 hr</td><td align="center" rowspan="1" colspan="1">4–24 hr</td></tr><tr><td align="left" colspan="5" rowspan="1"><hr/></td></tr><tr><td align="left" colspan="3" rowspan="1"> Cytokine</td><td align="center" rowspan="1" colspan="1">&gt; 4.0</td><td align="center" rowspan="1" colspan="1">&gt; 4.0</td></tr><tr><td align="left" rowspan="4" colspan="1"/><td align="left" rowspan="1" colspan="1">interleukin 1, beta</td><td align="left" rowspan="1" colspan="1"><italic>IL1B</italic></td><td align="center" rowspan="1" colspan="1">26.00 </td><td align="center" rowspan="1" colspan="1">4.09 </td></tr><tr><td align="left" rowspan="1" colspan="1">interleukin 8</td><td align="left" rowspan="1" colspan="1"><italic>IL8</italic></td><td align="center" rowspan="1" colspan="1">16.28 </td><td align="center" rowspan="1" colspan="1">4.84 </td></tr><tr><td align="left" rowspan="1" colspan="1">interleukin 1, alpha</td><td align="left" rowspan="1" colspan="1"><italic>IL1A</italic></td><td align="center" rowspan="1" colspan="1">4.32 </td><td align="center" rowspan="1" colspan="1">16.48 </td></tr><tr><td align="left" rowspan="1" colspan="1">Epstein-Barr virus induced 3</td><td align="left" rowspan="1" colspan="1"><italic>EBI3</italic></td><td align="center" rowspan="1" colspan="1">6.64 </td><td align="center" rowspan="1" colspan="1">7.44 </td></tr><tr><td align="left" colspan="5" rowspan="1"> Enzyme</td></tr><tr><td align="left" rowspan="1" colspan="1"/><td align="left" rowspan="1" colspan="1">indoleamine 2,3-dioxygenase 1</td><td align="left" rowspan="1" colspan="1"><italic>IDO1</italic></td><td align="center" rowspan="1" colspan="1">5.67 </td><td align="center" rowspan="1" colspan="1">30.67 </td></tr></tbody></table><table-wrap-foot><p>Early responding genes were those altered at 4 hr; slowly responding genes were those altered at 24 hr.</p></table-wrap-foot></table-wrap> as “early responding genes”. Among these genes, 6 categorized as “cytokine” were markedly upregulated after 4 hr of
+treatment but were moderately upregulated after 24 hr of treatment. Moreover, 2 genes in the “transmembrane receptor” category, 2,
+2 genes in the “enzyme” category and 5 genes in the “transcription regulator” category were upregulated in THP-1 cells by L-92
+treatment at 4 hr of treatment but showed moderate upregulation at 24 hr of treatment (<xref rid="tbl_002" ref-type="table">Table
+2</xref>). In contrast, genes that showed less than a 4-fold change after 4 hr, but over a 4-fold increase in expression after
+24 hr of treatment compared with that after 4 hr were categorized as “slowly responding genes” (<xref rid="tbl_002" ref-type="table">Table 2</xref>). Among these genes, 9 categorized as “transmembranes” were markedly upregulated after 24 hr but
+showed mild changes after 4 hr of treatment. Moreover, 6 genes in the “cytokine” category and 6 genes in “transcription regulator”
+category also showed a significant increase after 24 hr but only mild changes after 4 hr of treatment with L-92 (<xref rid="tbl_002" ref-type="table">Table 2</xref>). Finally, four genes categorized as “cytokine” and 1 gene categorized as an
+“enzyme” were constitutively expressed after 4 and 24 hr of treatment (“constitutively responding genes” in <xref rid="tbl_002" ref-type="table">Table 2</xref>). These results suggest that L-92 treatment in THP-1 cells might cause a rapid change in
+expression among genes in the “cytokine” category after 4 hr of treatment and subsequently among genes involved in cell signaling
+categorized here as “transmembrane receptors” and “cytokine” (<xref rid="tbl_002" ref-type="table">Table 2</xref>). For these cell
+responses, the activation of “transcription regulator” genes observed in the early and late phases of responses seems to be
+important for subsequent gene expression.</p>
+      </sec>
+      <sec>
+        <title>Quantitative analysis of the gene expressions in THP-1 cells</title>
+        <p>To validate the gene expression changes observed in THP-1 cells in response to L-92 cell treatment (<xref rid="tbl_002" ref-type="table">Table 2</xref>), qRT-PCR analysis was performed for 6 randomly selected genes with specific primer pairs:
+<italic>TNF</italic> (early responding genes), <italic>CRLF2, CD86 and STAT4</italic> (slowly responding genes); and
+<italic>IL8</italic> and <italic>IDO1 </italic>(constitutively responding genes). As shown in <xref ref-type="fig" rid="fig_001">Fig. 1</xref><fig orientation="portrait" fig-type="figure" id="fig_001" position="float"><label>Fig. 1.</label><caption><p> Changes in gene expressions from 0 to 4 hr (black bar) and 4 to 24 hr (white bar) observed in THP-1 cells after treatment
+with L-92 cells as shown by qRT-PCR analysis. The dotted line represents a 4-fold change in expression. The mean ± SD levels
+of expression of differentially expressed genes and statistical significance of each gene’s expression between 0 and 4 hr
+(black) and 4 and 24 hr (white) are shown. *p&lt;0.05; **p&lt;0.01 (determined by Student’s t-test).</p></caption><graphic xlink:href="bmfh-33-157-g001"/></fig>, statistical changes were confirmed for most of the quantified gene expressions in L-92-treated THP-1 cells. The
+<italic>TNF</italic> gene categorized as an early responding gene was significantly upregulated at 4 hr after treatment (black)
+but not at 24 hr after treatment (white) (<xref ref-type="fig" rid="fig_001">Fig. 1</xref>). In contrast, in the genes categorized
+as slowly responding genes, <italic>CRLF2, CD86</italic> and <italic>STAT4</italic>, the change in expression of each upregulated
+gene was bigger at 24 hr (white) than that at 4 hr (black) after treatment (<xref ref-type="fig" rid="fig_001">Fig. 1</xref>).
+Genes categorized as constitutively responding genes, <italic>IL8</italic> and <italic>IDO1,</italic> were upregulated both at 4
+hr and 24hr (<xref ref-type="fig" rid="fig_001">Fig. 1</xref>). As shown in <xref ref-type="fig" rid="fig_001">Fig. 1</xref>, the
+gene expressions randomly quantified by qRT-PCR in THP-1 cells after L-92 treatment showed changes similar to those quantified by
+microarray analysis (<xref rid="tbl_002" ref-type="table">Table 2</xref>).</p>
+      </sec>
+      <sec>
+        <title>Highlighted responses in THP-1 cells</title>
+        <p>These cell responses at 4 hr and 24 hr are illustrated in <xref ref-type="fig" rid="fig_002">Fig. 2</xref><fig orientation="portrait" fig-type="figure" id="fig_002" position="float"><label>Fig. 2.</label><caption><p> Changes in gene expression in THP-1 cells after 4 hr of treatment with <italic>Lactobacillus acidophilus</italic> L-92
+cells. Genes that were significantly upregulated by L-92 treatment were categorized by the IPA method as described in the
+Materials and Methods. Upregulated genes are indicated by red arrows. Black thin arrows represent the predicted flow of the
+pathway. Genes grouped by KEGG analysis are indicated by the red dotted line.</p></caption><graphic xlink:href="bmfh-33-157-g002"/></fig> as the early response and in <xref ref-type="fig" rid="fig_003">Fig. 3</xref><fig orientation="portrait" fig-type="figure" id="fig_003" position="float"><label>Fig. 3.</label><caption><p> Changes in gene expression in THP-1 cells after 24 hr of treatment with <italic>Lactobacillus acidophilus</italic> L-92
+cells. Genes that were significantly upregulated genes by L-92 treatment were categorized by the IPA method as described in
+the Materials and Methods. Upregulated genes are indicated by red arrows. Black thin arrows represent the predicted flow of
+the pathway. Genes grouped by KEGG analysis are indicated by the red dotted line.</p></caption><graphic xlink:href="bmfh-33-157-g003"/></fig> as the slow response. As summarized in <xref ref-type="fig" rid="fig_002">Fig. 2</xref>, in the early phase of the cellular
+response (4 hr of treatment), various transcription regulator genes, such as <italic>JUN</italic>, <italic>NFkB1</italic>,
+<italic>NFkB2</italic>, <italic>HIVEP2</italic> and <italic>RELB,</italic> as well as genes encoding chemokines and cytokines,
+such as <italic>CXCL11, CCL4,, CCL3, IL1B, IL8</italic> and <italic>TNF,</italic> were upregulated by L-92 treatment. Two
+transmembrane receptor genes, <italic>TLR7</italic> and <italic>ICAM1</italic>, were also upregulated at the early phase of the
+treatment (<xref ref-type="fig" rid="fig_002">Fig. 2</xref>). Moreover, the <italic>NOD2</italic> and <italic>MyD88</italic>
+genes, which were not involved in the hematological processes in the shown in <xref rid="tbl_002" ref-type="table">Table 2</xref>,
+were selected as important genes in the MAPK signal pathway and NOD-like receptor signal pathway by KEGG pathway analysis, with
+2.99- fold and 1.25-fold upregulated gene expressions at 4 hr (p&lt;0.05 and p&lt;0.05, respectively) in response to L-92
+treatment (<xref ref-type="fig" rid="fig_002">Fig. 2</xref>). During the slow response of the THP-1 cells (24 hr of treatment),
+mainly transmembrane receptors, such as <italic>IL2RA, IL7R, CD80, CRLF2, CD86, CD5, HLA-DQA1, IL15RA</italic> and
+<italic>CSF2RA</italic>, were activated (<xref ref-type="fig" rid="fig_003">Fig. 3</xref>). Some cytokine genes, namely
+<italic>IL6, IL23A</italic> and <italic>CCL22</italic>, were also significantly upregulated.</p>
+        <p>As listed in <xref rid="tbl_002" ref-type="table">Table 2</xref> and <xref ref-type="fig" rid="fig_002">Figs. 2</xref> and<xref ref-type="fig" rid="fig_003"> 3</xref>, in the early phase of the response in THP-1 cells, mainly transcription regulator genes
+and cytokines/chemokines were activated. Subsequently, many transmembrane receptor genes were mainly upregulated in THP-1 cells in
+the late phase of treatment.</p>
+      </sec>
+    </sec>
+    <sec sec-type="discussion" id="s4">
+      <title>DISCUSSION</title>
+      <p>Increases in some Th1-type cytokines and chemokines have been observed in previous <italic>in vitro</italic> and <italic>in
+vivo</italic> studies with L-92 [<xref rid="r12" ref-type="bibr">12</xref>, <xref rid="r13" ref-type="bibr">13</xref>], although
+those studies did not include detailed analyses of the underlying mechanisms. In the present study, we first investigated the
+immunomodulatory responses that occurred in THP-1 cells as a model of APCs in response to probiotic L-92 cell exposure by using
+microarray analysis for a detailed understanding of the host gastrointestinal immune response. As expected from a previous study
+showing the probiotic anti-allergy effects of L-92 <italic>in vivo</italic>, many Th1-type cytokines and chemokines that would be
+expected to increase during anti-allergic and anti-inflammatory events were elevated in THP-1 cells treated with L-92 in the present
+study, as summarized in <xref ref-type="fig" rid="fig_002">Figs. 2</xref> and<xref ref-type="fig" rid="fig_003"> 3</xref>. The THP-1
+response in the early phase involved mainly the activation of transcription regulator genes and cytokine/chemokine genes categorized
+as the MAPK signaling pathway and the NOD-like receptor signaling pathway (<xref ref-type="fig" rid="fig_002">Fig. 2</xref>).
+Subsequently, many transmembrane receptor and transcription regulator genes in the Toll-like receptor signaling pathway were
+upregulated in the late phase of the treatment (<xref ref-type="fig" rid="fig_003">Fig. 3</xref>). Taking into account the above
+results, the transcriptional upregulation observed in THP-1 cells co-cultured with L-92 seems to well explain the previous
+<italic>in vivo</italic> immunomodulatory effects of L-92 treatment [<xref rid="r7" ref-type="bibr">7</xref>,<xref rid="r8" ref-type="bibr">8</xref>,<xref rid="r9" ref-type="bibr">9</xref>,<xref rid="r10" ref-type="bibr">10</xref>, <xref rid="r13" ref-type="bibr">13</xref>, <xref rid="r15" ref-type="bibr">15</xref>].</p>
+      <p>Regarding the activation of the Th1-type immune response by L-92 in THP-1 cells, one of the first events would be the induction of
+transcription regulator genes involved in TLR-7 signaling; this would trigger the release of some of Th1-type cytokines and
+inflammatory cytokines in the MAPK signaling pathway (<xref ref-type="fig" rid="fig_002">Fig. 2</xref>). These molecules, together
+with the upregulation of surface markers involved in the maturation of APCs such as <italic>CD86, CD80</italic> and
+<italic>CD40</italic>, stimulate the activation of Th1 cells [<xref rid="r5" ref-type="bibr">5</xref>, <xref rid="r23" ref-type="bibr">23</xref>]. These changes in gene expression observed in THP-1 cells strongly suggest that the <italic>in vivo</italic>
+anti-allergy effect of L-92 might be linked to a Th1-type host response in a phase-dependent manner in the gastrointestinal immune
+system.</p>
+      <p>Considering the constitutive upregulation of the indoleamine 2,3-dioxygenase (<italic>IDO</italic>) gene observed in the present
+study (<xref rid="tbl_002" ref-type="table">Table 2</xref>), other upregulated genes encoding cytokines, such as <italic>IL8, TNF,
+IL1B</italic> and <italic>IL12</italic>, seem to be closely linked to IDO enhancement. IDO has been identified as a key enzyme
+with immunomodulatory effects, resulting from its enzymatic activity that leads to catabolism of the essential amino acid
+L-tryptophane [<xref rid="r24" ref-type="bibr">24</xref>, <xref rid="r25" ref-type="bibr">25</xref>]. This enzyme is expressed in
+epithelial cells, macrophages, and DCs induced by proinflammatory cytokines, including type I and type II IFN [<xref rid="r26" ref-type="bibr">26</xref>]. Recent studies suggested the involvement of IL-1β, TNF-α and IL-12 in the induction of IDO in DCs [<xref rid="r27" ref-type="bibr">27</xref>, <xref rid="r28" ref-type="bibr">28</xref>] and engagement of CTLA-4 with CD80/CD86 on the
+membrane of DCs in the stimulation of IDO transcriptional expression and activity [<xref rid="r29" ref-type="bibr">29</xref>, <xref rid="r30" ref-type="bibr">30</xref>]. These observations suggest that the upregulation of CD80 and CD86 on the membrane of APCs
+caused by treatment with L-92 might be closely linked to activation of the <italic>IDO</italic> gene. IDO1 is known to induce
+regulatory T cells (Tregs) [<xref rid="r31" ref-type="bibr">31</xref>, <xref rid="r32" ref-type="bibr">32</xref>] and to inhibit
+T-cell proliferation and promote T-cell apoptosis by degradation of L-tryptophan to convert into toxic metabolites such as
+quinolinic acid and 3-hydroxy-anthranilic acid [<xref rid="r31" ref-type="bibr">31</xref>, <xref rid="r33" ref-type="bibr">33</xref>].</p>
+      <p>In conclusion, key molecules are induced in cultured THP-1 cells by L-92 stimulation that are suggested to play a central role in
+skewing toward Th1 cells and also in inducing T cell suppression networks. The present study on cultured THP-1 cell opens the way
+for understanding the immunomodulatory networks modulated by L-92 in the gastrointestinal immune system <italic>in vivo</italic>.
+The primary information on both gene profiling and the key genes altered in THP-1 cells after L-92 exposure obtained in the present
+study will be very important for a detailed understanding of the strain-dependent immune responses to other
+<italic>Lactobacillus</italic> species in future studies.</p>
+    </sec>
+  </body>
+  <back>
+    <ack>
+      <p>This study was supported in part by Grants-in-Aid for Scientific research (A) (H.O.) and Scientific Research on Innovative Areas
+(H.O.) from the Ministry of Education, Culture, Sports, Science and Technology of Japan.</p>
+    </ack>
+    <ref-list>
+      <title>REFERENCES</title>
+      <ref id="r1">
+        <label>1</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Gabryszewski</surname><given-names>SJ</given-names></name><name><surname>Bachar</surname><given-names>O</given-names></name><name><surname>Dyer</surname><given-names>KD</given-names></name><name><surname>Percopo</surname><given-names>CM</given-names></name><name><surname>Killoran</surname><given-names>KE</given-names></name><name><surname>Domachowske</surname><given-names>JB</given-names></name><name><surname>Rosenberg</surname><given-names>HF</given-names></name><name><surname>Rosenberg</surname><given-names>FH</given-names></name></person-group>
+<year>2011</year>
+<article-title><italic>Lactobacillus</italic>-mediated priming of the respiratory mucosa
+protects against lethal <italic>pneumovirus</italic> infection</article-title>. <source>J Immunol</source><volume>186</volume>:
+<fpage>1151</fpage>–<lpage>1161</lpage>. <pub-id pub-id-type="pmid">21169550</pub-id></mixed-citation>
+      </ref>
+      <ref id="r2">
+        <label>2</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Youn</surname><given-names>HN</given-names></name><name><surname>Lee</surname><given-names>DH</given-names></name><name><surname>Lee</surname><given-names>YN</given-names></name><name><surname>Park</surname><given-names>JK</given-names></name><name><surname>Yuk</surname><given-names>SS</given-names></name><name><surname>Yang</surname><given-names>SY</given-names></name><name><surname>Lee</surname><given-names>HJ</given-names></name><name><surname>Woo</surname><given-names>SH</given-names></name><name><surname>Kim</surname><given-names>HM</given-names></name><name><surname>Lee</surname><given-names>JB</given-names></name><name><surname>Park</surname><given-names>SY</given-names></name><name><surname>Choi</surname><given-names>IS</given-names></name><name><surname>Song</surname><given-names>CS</given-names></name></person-group>
+<year>2012</year>
+<article-title>Intranasal administration of live <italic>Lactobacillus</italic> species
+facilitates protection against influenza virus infection in mice</article-title>. <source>Antiviral
+Res</source><volume>93</volume>: <fpage>138</fpage>–<lpage>143</lpage>. <pub-id pub-id-type="pmid">22120759</pub-id></mixed-citation>
+      </ref>
+      <ref id="r3">
+        <label>3</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Mack</surname><given-names>DR</given-names></name></person-group>
+<year>2011</year>
+<article-title>Probiotics in inflammatory bowel diseases and associated
+conditions</article-title>. <source>Nutrients</source><volume>3</volume>: <fpage>245</fpage>–<lpage>264</lpage>.
+<pub-id pub-id-type="pmid">22254095</pub-id></mixed-citation>
+      </ref>
+      <ref id="r4">
+        <label>4</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Borchers</surname><given-names>AT</given-names></name><name><surname>Selmi</surname><given-names>C</given-names></name><name><surname>Meyers</surname><given-names>FJ</given-names></name><name><surname>Keen</surname><given-names>CL</given-names></name><name><surname>Gershwin</surname><given-names>ME</given-names></name></person-group>
+<year>2009</year>
+<article-title>Probiotics and immunity</article-title>. <source>J
+Gastroenterol</source><volume>44</volume>: <fpage>26</fpage>–<lpage>46</lpage>. <pub-id pub-id-type="pmid">19159071</pub-id></mixed-citation>
+      </ref>
+      <ref id="r5">
+        <label>5</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Fink</surname><given-names>LN</given-names></name><name><surname>Zeuthen</surname><given-names>LH</given-names></name><name><surname>Christensen</surname><given-names>HR</given-names></name><name><surname>Morandi</surname><given-names>B</given-names></name><name><surname>Frøkiaer</surname><given-names>H</given-names></name><name><surname>Ferlazzo</surname><given-names>G</given-names></name></person-group>
+<year>2007</year>
+<article-title>Distinct gut-derived lactic acid bacteria elicit divergent dendritic
+cell-mediated NK cell responses</article-title>. <source>Int Immunol</source><volume>19</volume>:
+<fpage>1319</fpage>–<lpage>1327</lpage>. <pub-id pub-id-type="pmid">17951600</pub-id></mixed-citation>
+      </ref>
+      <ref id="r6">
+        <label>6</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Zeuthen</surname><given-names>LH</given-names></name><name><surname>Christensen</surname><given-names>HR</given-names></name><name><surname>Frøkiaer</surname><given-names>H</given-names></name></person-group>
+<year>2006</year>
+<article-title>Lactic acid bacteria inducing a weak interleukin-12 and tumor necrosis factor
+alpha response in human dendritic cells inhibit strongly stimulating lactic acid bacteria but act synergistically with
+gram-negative bacteria</article-title>. <source>Clin Vaccine Immunol</source><volume>13</volume>:
+<fpage>365</fpage>–<lpage>375</lpage>. <pub-id pub-id-type="pmid">16522779</pub-id></mixed-citation>
+      </ref>
+      <ref id="r7">
+        <label>7</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Ishida</surname><given-names>Y</given-names></name><name><surname>Nakamura</surname><given-names>F</given-names></name><name><surname>Kanzato</surname><given-names>H</given-names></name><name><surname>Sawada</surname><given-names>D</given-names></name><name><surname>Yamamoto</surname><given-names>N</given-names></name><name><surname>Kagata</surname><given-names>H</given-names></name><name><surname>Oh-Ida</surname><given-names>M</given-names></name><name><surname>Takeuchi</surname><given-names>H</given-names></name><name><surname>Fujiwara</surname><given-names>S</given-names></name></person-group>
+<year>2005</year>
+<article-title>Effect of milk fermented with <italic>Lactobacillus acidophilus</italic> strain
+L-92 on symptoms of Japanese cedar pollen allergy: a randomized placebo-controlled trial</article-title>. <source>Biosci
+Biotechnol Biochem</source><volume>69</volume>: <fpage>1652</fpage>–<lpage>1660</lpage>. <pub-id pub-id-type="pmid">16195581</pub-id></mixed-citation>
+      </ref>
+      <ref id="r8">
+        <label>8</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Ishida</surname><given-names>Y</given-names></name><name><surname>Nakamura</surname><given-names>F</given-names></name><name><surname>Kanzato</surname><given-names>H</given-names></name><name><surname>Sawada</surname><given-names>D</given-names></name><name><surname>Hirata</surname><given-names>H</given-names></name><name><surname>Nishimura</surname><given-names>A</given-names></name><name><surname>Kajimoto</surname><given-names>O</given-names></name><name><surname>Fujiwara</surname><given-names>S</given-names></name></person-group>
+<year>2005</year>
+<article-title>Clinical effects of <italic>Lactobacillus acidophilus</italic> strain L-92 on
+perennial allergic rhinitis: a double-blind, placebo-controlled study</article-title>. <source>J Dairy
+Sci</source><volume>88</volume>: <fpage>527</fpage>–<lpage>533</lpage>. <pub-id pub-id-type="pmid">15653517</pub-id></mixed-citation>
+      </ref>
+      <ref id="r9">
+        <label>9</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Shah</surname><given-names>MM</given-names></name><name><surname>Miyamoto</surname><given-names>Y</given-names></name><name><surname>Yamada</surname><given-names>Y</given-names></name><name><surname>Yamashita</surname><given-names>H</given-names></name><name><surname>Tanaka</surname><given-names>H</given-names></name><name><surname>Ezaki</surname><given-names>T</given-names></name><name><surname>Nagai</surname><given-names>H</given-names></name><name><surname>Inagaki</surname><given-names>N</given-names></name></person-group>
+<year>2010</year>
+<article-title>Orally supplemented <italic>Lactobacillus acidophilus</italic> strain L-92
+inhibits passive and active cutaneous anaphylaxis as well as 2,4-dinitroflurobenzene and mite fecal antigen induced atopic
+dermatitis-like skin lesions in mice</article-title>. <source>Microbiol Immunol</source><volume>54</volume>:
+<fpage>523</fpage>–<lpage>533</lpage>. <pub-id pub-id-type="pmid">20840151</pub-id></mixed-citation>
+      </ref>
+      <ref id="r10">
+        <label>10</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Torii</surname><given-names>S</given-names></name><name><surname>Torii</surname><given-names>A</given-names></name><name><surname>Itoh</surname><given-names>K</given-names></name><name><surname>Urisu</surname><given-names>A</given-names></name><name><surname>Terada</surname><given-names>A</given-names></name><name><surname>Fujisawa</surname><given-names>T</given-names></name><name><surname>Yamada</surname><given-names>K</given-names></name><name><surname>Suzuki</surname><given-names>H</given-names></name><name><surname>Ishida</surname><given-names>Y</given-names></name><name><surname>Nakamura</surname><given-names>F</given-names></name><name><surname>Kanzato</surname><given-names>H</given-names></name><name><surname>Sawada</surname><given-names>D</given-names></name><name><surname>Nonaka</surname><given-names>A</given-names></name><name><surname>Hatanaka</surname><given-names>M</given-names></name><name><surname>Fujiwara</surname><given-names>S</given-names></name></person-group>
+<year>2011</year>
+<article-title>Effects of oral administration of <italic>Lactobacillus acidophilus</italic>
+L-92 on the symptoms and serum markers of atopic dermatitis in children</article-title>. <source>Int Arch Allergy
+Immunol</source><volume>154</volume>: <fpage>236</fpage>–<lpage>245</lpage>. <pub-id pub-id-type="pmid">20861645</pub-id></mixed-citation>
+      </ref>
+      <ref id="r11">
+        <label>11</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Ikeda</surname><given-names>N</given-names></name><name><surname>Kaneko</surname><given-names>K</given-names></name><name><surname>Ejiri</surname><given-names>M</given-names></name><name><surname>Mizutani</surname><given-names>J</given-names></name><name><surname>Ohshima</surname><given-names>K</given-names></name><name><surname>Kajimoto</surname><given-names>O</given-names></name><name><surname>Takahashi</surname><given-names>T</given-names></name><name><surname>Yamamoto</surname><given-names>N</given-names></name></person-group>
+<year>2000</year>
+<article-title>Improvement of the constipation of healthy volunteers by uptake of lactic acid
+bacteria fermented milk</article-title>. <source>J Nutr Food</source><volume>3</volume>:
+<fpage>59</fpage>–<lpage>68</lpage>.</mixed-citation>
+      </ref>
+      <ref id="r12">
+        <label>12</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Kanzato</surname><given-names>H</given-names></name><name><surname>Fujiwara</surname><given-names>S</given-names></name><name><surname>Ise</surname><given-names>W</given-names></name><name><surname>Kaminogawa</surname><given-names>S</given-names></name><name><surname>Sato</surname><given-names>R</given-names></name><name><surname>Hachimura</surname><given-names>S</given-names></name></person-group>
+<year>2008</year>
+<article-title><italic>Lactobacillus acidophilus</italic> strain L-92 induces apoptosis of
+antigen-stimulated T cells by modulating dendritic cell function</article-title>.
+<source>Immunobiology</source><volume>213</volume>: <fpage>399</fpage>–<lpage>408</lpage>. <pub-id pub-id-type="pmid">18472048</pub-id></mixed-citation>
+      </ref>
+      <ref id="r13">
+        <label>13</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Torii</surname><given-names>A</given-names></name><name><surname>Torii</surname><given-names>S</given-names></name><name><surname>Fujiwara</surname><given-names>S</given-names></name><name><surname>Tanaka</surname><given-names>H</given-names></name><name><surname>Inagaki</surname><given-names>N</given-names></name><name><surname>Nagai</surname><given-names>H</given-names></name></person-group>
+<year>2007</year>
+<article-title><italic>Lactobacillus acidophilus</italic> strain L-92 regulates the production
+of Th1 cytokine as well as Th2 cytokines</article-title>. <source>Allergol Int</source><volume>56</volume>:
+<fpage>293</fpage>–<lpage>301</lpage>. <pub-id pub-id-type="pmid">17646735</pub-id></mixed-citation>
+      </ref>
+      <ref id="r14">
+        <label>14</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Sagitani</surname><given-names>A.</given-names></name></person-group><article-title>Anti-allergic effects of <italic>Lactobacillus acidophilus</italic> L-92 strain</article-title>.
+<year>2010</year>
+<source>Jpn J Lactic Acid Bact</source><volume>21</volume>: <fpage>1</fpage>–<lpage>7</lpage> (in Japanese).
+</mixed-citation>
+      </ref>
+      <ref id="r15">
+        <label>15</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Ashida</surname><given-names>N</given-names></name><name><surname>Yanagihara</surname><given-names>S</given-names></name><name><surname>Shinoda</surname><given-names>T</given-names></name><name><surname>Yamamoto</surname><given-names>N</given-names></name></person-group>
+<year>2011</year>
+<article-title>Characterization of adhesive molecule with affinity to Caco-2 cells in
+<italic>Lactobacillus acidophilus</italic> by proteome analysis</article-title>. <source>J Biosci
+Bioeng</source><volume>112</volume>: <fpage>333</fpage>–<lpage>337</lpage>. <pub-id pub-id-type="pmid">21763196</pub-id></mixed-citation>
+      </ref>
+      <ref id="r16">
+        <label>16</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Sansonetti</surname><given-names>PJ</given-names></name></person-group>
+<year>2004</year>
+<article-title>War and peace at mucosal surfaces</article-title>. <source>Nat Rev
+Immunol</source><volume>4</volume>: <fpage>953</fpage>–<lpage>964</lpage>. <pub-id pub-id-type="pmid">15573130</pub-id></mixed-citation>
+      </ref>
+      <ref id="r17">
+        <label>17</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Akira</surname><given-names>S</given-names></name><name><surname>Takeda</surname><given-names>K</given-names></name></person-group>
+<year>2004</year>
+<article-title>Toll-like receptor signalling</article-title>. <source>Nat Rev
+Immunol</source><volume>4</volume>: <fpage>499</fpage>–<lpage>511</lpage>. <pub-id pub-id-type="pmid">15229469</pub-id></mixed-citation>
+      </ref>
+      <ref id="r18">
+        <label>18</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Weiss</surname><given-names>G</given-names></name><name><surname>Rasmussen</surname><given-names>S</given-names></name><name><surname>Nielsen Fink</surname><given-names>L</given-names></name><name><surname>Jarmer</surname><given-names>H</given-names></name><name><surname>Nøhr Nielsen</surname><given-names>B</given-names></name><name><surname>Frøkiaer</surname><given-names>H</given-names></name></person-group>
+<year>2010</year>
+<article-title><italic>Bifidobacterium bifidum</italic> actively changes the gene expression
+profile induced by <italic>Lactobacillus acidophilus</italic> in murine dendritic cells</article-title>. <source>PLoS
+ONE</source><volume>5</volume>: <fpage>e11065</fpage>. <pub-id pub-id-type="pmid">20548777</pub-id></mixed-citation>
+      </ref>
+      <ref id="r19">
+        <label>19</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Weiss</surname><given-names>G</given-names></name><name><surname>Rasmussen</surname><given-names>S</given-names></name><name><surname>Zeuthen</surname><given-names>LH</given-names></name><name><surname>Nielsen</surname><given-names>BN</given-names></name><name><surname>Jarmer</surname><given-names>H</given-names></name><name><surname>Jespersen</surname><given-names>L</given-names></name><name><surname>Frøkiaer</surname><given-names>H</given-names></name></person-group>
+<year>2010</year>
+<article-title><italic>Lactobacillus acidophilus</italic> induces virus immune defence genes
+in murine dendritic cells by a Toll-like receptor-2-dependent mechanism</article-title>.
+<source>Immunology</source><volume>131</volume>: <fpage>268</fpage>–<lpage>281</lpage>. <pub-id pub-id-type="pmid">20545783</pub-id></mixed-citation>
+      </ref>
+      <ref id="r20">
+        <label>20</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Meijerink</surname><given-names>M</given-names></name><name><surname>van Hemert</surname><given-names>S</given-names></name><name><surname>Taverne</surname><given-names>N</given-names></name><name><surname>Wels</surname><given-names>M</given-names></name><name><surname>de Vos</surname><given-names>P</given-names></name><name><surname>Bron</surname><given-names>PA</given-names></name><name><surname>Savelkoul</surname><given-names>HF</given-names></name><name><surname>van Bilsen</surname><given-names>J</given-names></name><name><surname>Kleerebezem</surname><given-names>M</given-names></name><name><surname>Wells</surname><given-names>JM</given-names></name></person-group>
+<year>2010</year>
+<article-title>Identification of genetic loci in <italic>Lactobacillus plantarum</italic> that
+modulate the immune response of dendritic cells using comparative genome hybridization</article-title>. <source>PLoS
+ONE</source><volume>5</volume>: <fpage>e10632</fpage>. <pub-id pub-id-type="pmid">20498715</pub-id></mixed-citation>
+      </ref>
+      <ref id="r21">
+        <label>21</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Kim</surname><given-names>HG</given-names></name><name><surname>Gim</surname><given-names>MG</given-names></name><name><surname>Kim</surname><given-names>JY</given-names></name><name><surname>Hwang</surname><given-names>HJ</given-names></name><name><surname>Ham</surname><given-names>MS</given-names></name><name><surname>Lee</surname><given-names>JM</given-names></name><name><surname>Hartung</surname><given-names>T</given-names></name><name><surname>Park</surname><given-names>JW</given-names></name><name><surname>Han</surname><given-names>SH</given-names></name><name><surname>Chung</surname><given-names>DK</given-names></name></person-group>
+<year>2007</year>
+<article-title>Lipoteichoic acid from <italic>Lactobacillus plantarum</italic> elicits both
+the production of interleukin-23p19 and suppression of pathogen-mediated interleukin-10 in THP-1 cells</article-title>.
+<source>FEMS Immunol Med Microbiol</source><volume>49</volume>: <fpage>205</fpage>–<lpage>214</lpage>. <pub-id pub-id-type="pmid">17328754</pub-id></mixed-citation>
+      </ref>
+      <ref id="r22">
+        <label>22</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Jin</surname><given-names>C</given-names></name><name><surname>Wu</surname><given-names>L</given-names></name><name><surname>Li</surname><given-names>J</given-names></name><name><surname>Fang</surname><given-names>M</given-names></name><name><surname>Cheng</surname><given-names>L</given-names></name><name><surname>Wu</surname><given-names>N</given-names></name></person-group>
+<year>2012</year>
+<article-title>Multiple signaling pathways are involved in the interleukine-4 regulated
+expression of DC-SIGN in THP-1 cell line</article-title>. <source>J Biomed Biotechnol</source><volume>2012</volume>:
+<fpage>357060</fpage>. <pub-id pub-id-type="pmid">22675249</pub-id></mixed-citation>
+      </ref>
+      <ref id="r23">
+        <label>23</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Liu</surname><given-names>J</given-names></name><name><surname>Wu</surname><given-names>QL</given-names></name><name><surname>Feng</surname><given-names>YH</given-names></name><name><surname>Wang</surname><given-names>YF</given-names></name><name><surname>Li</surname><given-names>XY</given-names></name><name><surname>Zuo</surname><given-names>JP</given-names></name></person-group>
+<year>2005</year>
+<article-title>Triptolide suppresses CD80 and CD86 expressions and IL-12 production in THP-1
+cells</article-title>. <source>Acta Pharmacol Sin</source><volume>26</volume>: <fpage>223</fpage>–<lpage>227</lpage>.
+<pub-id pub-id-type="pmid">15663903</pub-id></mixed-citation>
+      </ref>
+      <ref id="r24">
+        <label>24</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Munn</surname><given-names>DH</given-names></name><name><surname>Shafizadeh</surname><given-names>E</given-names></name><name><surname>Attwood</surname><given-names>JT</given-names></name><name><surname>Bondarev</surname><given-names>I</given-names></name><name><surname>Pashine</surname><given-names>A</given-names></name><name><surname>Mellor</surname><given-names>AL</given-names></name></person-group>
+<year>1999</year>
+<article-title>Inhibition of T cell proliferation by macrophage tryptophan
+catabolism</article-title>. <source>J Exp Med</source><volume>189</volume>: <fpage>1363</fpage>–<lpage>1372</lpage>.
+<pub-id pub-id-type="pmid">10224276</pub-id></mixed-citation>
+      </ref>
+      <ref id="r25">
+        <label>25</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Mellor</surname><given-names>AL</given-names></name><name><surname>Munn</surname><given-names>DH</given-names></name></person-group>
+<year>1999</year>
+<article-title>Tryptophan catabolism and T-cell tolerance: immunosuppression by
+starvation?</article-title><source>Immunol Today</source><volume>20</volume>: <fpage>469</fpage>–<lpage>473</lpage>.
+<pub-id pub-id-type="pmid">10500295</pub-id></mixed-citation>
+      </ref>
+      <ref id="r26">
+        <label>26</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Taylor</surname><given-names>MW</given-names></name><name><surname>Feng</surname><given-names>GS</given-names></name></person-group>
+<year>1991</year>
+<article-title>Relationship between interferon-gamma, indoleamine 2,3-dioxygenase, and
+tryptophan catabolism</article-title>. <source>FASEB J</source><volume>5</volume>: <fpage>2516</fpage>–<lpage>2522</lpage>.
+<pub-id pub-id-type="pmid">1907934</pub-id></mixed-citation>
+      </ref>
+      <ref id="r27">
+        <label>27</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Robinson</surname><given-names>CM</given-names></name><name><surname>Shirey</surname><given-names>KA</given-names></name><name><surname>Carlin</surname><given-names>JM</given-names></name></person-group>
+<year>2003</year>
+<article-title>Synergistic transcriptional activation of indoleamine dioxygenase by IFN-gamma
+and tumor necrosis factor-alpha</article-title>. <source>J Interferon Cytokine Res</source><volume>23</volume>:
+<fpage>413</fpage>–<lpage>421</lpage>. <pub-id pub-id-type="pmid">13678429</pub-id></mixed-citation>
+      </ref>
+      <ref id="r28">
+        <label>28</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Robinson</surname><given-names>CM</given-names></name><name><surname>Hale</surname><given-names>PT</given-names></name><name><surname>Carlin</surname><given-names>JM</given-names></name></person-group>
+<year>2005</year>
+<article-title>The role of IFN-gamma and TNF-alpha-responsive regulatory elements in the
+synergistic induction of indoleamine dioxygenase</article-title>. <source>J Interferon Cytokine Res</source><volume>25</volume>:
+<fpage>20</fpage>–<lpage>30</lpage>. <pub-id pub-id-type="pmid">15684619</pub-id></mixed-citation>
+      </ref>
+      <ref id="r29">
+        <label>29</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Fallarino</surname><given-names>F</given-names></name><name><surname>Grohmann</surname><given-names>U</given-names></name><name><surname>Hwang</surname><given-names>KW</given-names></name><name><surname>Orabona</surname><given-names>C</given-names></name><name><surname>Vacca</surname><given-names>C</given-names></name><name><surname>Bianchi</surname><given-names>R</given-names></name><name><surname>Belladonna</surname><given-names>ML</given-names></name><name><surname>Fioretti</surname><given-names>MC</given-names></name><name><surname>Alegre</surname><given-names>ML</given-names></name><name><surname>Puccetti</surname><given-names>P</given-names></name></person-group>
+<year>2003</year>
+<article-title>Modulation of tryptophan catabolism by regulatory T cells</article-title>.
+<source>Nat Immunol</source><volume>4</volume>: <fpage>1206</fpage>–<lpage>1212</lpage>. <pub-id pub-id-type="pmid">14578884</pub-id></mixed-citation>
+      </ref>
+      <ref id="r30">
+        <label>30</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Fallarino</surname><given-names>F</given-names></name><name><surname>Bianchi</surname><given-names>R</given-names></name><name><surname>Orabona</surname><given-names>C</given-names></name><name><surname>Vacca</surname><given-names>C</given-names></name><name><surname>Belladonna</surname><given-names>ML</given-names></name><name><surname>Fioretti</surname><given-names>MC</given-names></name><name><surname>Serreze</surname><given-names>DV</given-names></name><name><surname>Grohmann</surname><given-names>U</given-names></name><name><surname>Puccetti</surname><given-names>P</given-names></name></person-group>
+<year>2004</year>
+<article-title>CTLA-4-Ig activates forkhead transcription factors and protects dendritic cells
+from oxidative stress in nonobese diabetic mice</article-title>. <source>J Exp Med</source><volume>200</volume>:
+<fpage>1051</fpage>–<lpage>1062</lpage>. <pub-id pub-id-type="pmid">15492127</pub-id></mixed-citation>
+      </ref>
+      <ref id="r31">
+        <label>31</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Mellor</surname><given-names>AL</given-names></name><name><surname>Munn</surname><given-names>DH</given-names></name></person-group>
+<year>2008</year>
+<article-title>Creating immune privilege: active local suppression that benefits friends, but
+protects foes</article-title>. <source>Nat Rev Immunol</source><volume>8</volume>: <fpage>74</fpage>–<lpage>80</lpage>.
+<pub-id pub-id-type="pmid">18064049</pub-id></mixed-citation>
+      </ref>
+      <ref id="r32">
+        <label>32</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Matteoli</surname><given-names>G</given-names></name><name><surname>Mazzini</surname><given-names>E</given-names></name><name><surname>Iliev</surname><given-names>ID</given-names></name><name><surname>Mileti</surname><given-names>E</given-names></name><name><surname>Fallarino</surname><given-names>F</given-names></name><name><surname>Puccetti</surname><given-names>P</given-names></name><name><surname>Chieppa</surname><given-names>M</given-names></name><name><surname>Rescigno</surname><given-names>M</given-names></name></person-group>
+<year>2010</year>
+<article-title>Gut CD103+ dendritic cells express indoleamine 2,3-dioxygenase which influences
+T regulatory/T effector cell balance and oral tolerance induction</article-title>. <source>Gut</source><volume>59</volume>:
+<fpage>595</fpage>–<lpage>604</lpage>. <pub-id pub-id-type="pmid">20427394</pub-id></mixed-citation>
+      </ref>
+      <ref id="r33">
+        <label>33</label>
+        <mixed-citation publication-type="journal"><person-group><name><surname>Fallarino</surname><given-names>F</given-names></name><name><surname>Grohmann</surname><given-names>U</given-names></name><name><surname>Vacca</surname><given-names>C</given-names></name><name><surname>Bianchi</surname><given-names>R</given-names></name><name><surname>Orabona</surname><given-names>C</given-names></name><name><surname>Spreca</surname><given-names>A</given-names></name><name><surname>Fioretti</surname><given-names>MC</given-names></name><name><surname>Puccetti</surname><given-names>P</given-names></name></person-group>
+<year>2002</year>
+<article-title>T cell apoptosis by tryptophan catabolism</article-title>. <source>Cell Death
+Differ</source><volume>9</volume>: <fpage>1069</fpage>–<lpage>1077</lpage>. <pub-id pub-id-type="pmid">12232795</pub-id></mixed-citation>
+      </ref>
+    </ref-list>
+  </back>
+</article>
+
+</metadata><about xmlns=""><provenance xmlns="http://www.openarchives.org/OAI/2.0/provenance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/provenance http://www.openarchives.org/OAI/2.0/provenance.xsd"><originDescription harvestDate="2018-06-11T22:13:09.769Z" altered="true"><baseURL>https://www.ncbi.nlm.nih.gov/pmc/oai/oai.cgi</baseURL><identifier>oai:pubmedcentral.nih.gov:4219982</identifier><datestamp>2014-11-06</datestamp><metadataNamespace/></originDescription></provenance><oaf:datainfo><oaf:inferred>false</oaf:inferred><oaf:deletedbyinference>false</oaf:deletedbyinference><oaf:trust>0.9</oaf:trust><oaf:inferenceprovenance/><oaf:provenanceaction schemename="dnet:provenanceActions" schemeid="dnet:provenanceActions" classname="sysimport:crosswalk:repository" classid="sysimport:crosswalk:repository"/></oaf:datainfo></about></oai:record>
