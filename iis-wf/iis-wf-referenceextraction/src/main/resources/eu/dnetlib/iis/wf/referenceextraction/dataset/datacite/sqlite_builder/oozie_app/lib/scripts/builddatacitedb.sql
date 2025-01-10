@@ -33,8 +33,8 @@ as select doi,middle as words, comprspaces(j2s(prev,middle,next)) as title from 
 
 
 -- singularly distinguished titles
-create temp table uniquesplittitles 
-as select words,titles,dois from (select words,jgroup(title) as titles, jgroup(normalizetext(doi)) as dois from triples group by words having count(distinct(doi)) = 1);
+create temp table uniquesplittitles as SELECT words, title AS titles, normalizetext(doi) AS dois
+FROM triples GROUP BY words HAVING COUNT(DISTINCT doi) = 1;
 
 create temp table uniquetitleswithtriples 
 as select words,titles,dois from (select max(length(words)) as len,words,titles,dois from uniquesplittitles group by dois);
