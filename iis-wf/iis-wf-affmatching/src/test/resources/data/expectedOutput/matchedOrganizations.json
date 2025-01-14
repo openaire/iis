@@ -1,12 +1,12 @@
 {
     "documentId":"ABC",
     "organizationId":"20|UW",
-    "matchStrength":0.9999999
+    "matchStrength":0.9999995
 }
 {
     "documentId":"20002AX",
     "organizationId":"20|UW",
-    "matchStrength":0.9999999
+    "matchStrength":0.9999995
 }
 {
     "documentId":"DOC_3",
@@ -16,7 +16,7 @@
 {
     "documentId":"DOC_3",
     "organizationId":"20|ICMUW",
-    "matchStrength":0.9999931
+    "matchStrength":0.9999731
 }
 {
     "documentId":"DOC_4",
@@ -26,10 +26,10 @@
 {
     "documentId":"DOC_6",
     "organizationId":"20|WSU",
-    "matchStrength":0.9999871
+    "matchStrength":0.9999501
 }
 {
     "documentId":"DOC_6",
     "organizationId":"20|WSU_DUP",
-    "matchStrength":0.9999871
+    "matchStrength":0.9999501
 }

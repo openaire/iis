@@ -13,6 +13,6 @@
 {
   "documentId": "id-4",
   "organizationId": "20|UW",
-  "matchStrength": 0.9999999,
+  "matchStrength": 0.9999995,
   "provenance": "iis::document_referencedOrganizations_by_affiliation"
 }
