@@ -10,7 +10,7 @@
 		</property>
         <property>
             <name>dataset_datacite_sqlite_builder_java_opts</name>
-            <value>-Xmx10g</value>
+            <value>-Xmx18g</value>
             <description>java-opts, e.g. maximum heap size for a single JVM running sqlite database builder</description>
         </property>
 		<property>
