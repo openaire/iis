@@ -25,6 +25,10 @@
 			<value>100000</value>
 			<description>maximum input data split size, required by streaming version reading DocumentContentUrl to split input data into more chunks</description>
 		</property>
+        <property>
+            <name>plaintext_content_retriever_appmaster_memory_mb</name>
+            <value>2048</value>
+        </property>
         <!-- S3 related -->
         <property>
             <name>objectstore_s3_keystore_location</name>
@@ -93,6 +97,10 @@
 				<delete path="${nameNode}${output}" />
 			</prepare>
 			<configuration>
+                <property>
+                    <name>yarn.app.mapreduce.am.resource.mb</name>
+                    <value>${plaintext_content_retriever_appmaster_memory_mb}</value>
+                </property>
                 <!-- S3 content retrieval related -->
                 <property>
                     <name>hadoop.security.credential.provider.path</name>
