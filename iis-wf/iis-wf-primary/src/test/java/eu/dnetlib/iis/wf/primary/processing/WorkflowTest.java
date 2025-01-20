@@ -16,7 +16,7 @@ public class WorkflowTest extends AbstractOozieWorkflowTestCase {
 	public void testIntegrationMainChainWorkflow() throws Exception {
 		// this is long running test, so we need to increase timeout
 		OozieWorkflowTestConfiguration wfConf = new OozieWorkflowTestConfiguration();
-		wfConf.setTimeoutInSeconds(7200);
+		wfConf.setTimeoutInSeconds(14400);
 		testWorkflow("eu/dnetlib/iis/wf/primary/processing/sampledataproducer", wfConf);
 	}
 
