@@ -6,8 +6,8 @@
    ]
 }
 {  
-   "id":"fli-irrelevant",
-   "label":"France Life Imaging",
+   "id":"neuroscience-irrelevant",
+   "label":"Neuroscience",
    "params":[
       {"name": "suggestedAcknowledgement", "value":"currently irrelevant"}
    ]

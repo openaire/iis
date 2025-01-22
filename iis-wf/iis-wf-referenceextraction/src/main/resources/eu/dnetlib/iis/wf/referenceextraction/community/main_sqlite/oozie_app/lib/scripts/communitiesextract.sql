@@ -23,7 +23,7 @@ select jdict('documentId', docid, 'conceptId', 'neuroscience::subcommunity::1', 
 select docid, conceptId, conceptLabel, stripchars(middle,'.)(,[]') as middle, prev||" "||middle||" "||next as context
 from (
   setschema 'docid,prev,middle,next' select c1, textwindow2s(comprspaces(regexpr("\n", C2, " ")),1,3,1, '(?:\bFrance Life Imaging\b)|(?:\bFLI-IAM\b)') from pubs where c2 is not null
-), grants where conceptLabel="France Life Imaging") group by docid
+), grants where conceptLabel="Neuroscience") group by docid
 
 union all
 
