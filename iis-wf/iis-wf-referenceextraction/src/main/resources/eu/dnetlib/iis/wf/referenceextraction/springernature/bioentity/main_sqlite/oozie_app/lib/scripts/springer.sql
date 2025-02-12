@@ -327,6 +327,11 @@ hidden var 'Japanese_prefixes2' from 'JGA[A-Z]\d+';
 --6.12 Environmental Information Data Centre
 --hidden var 'EnvironmentalInformationDataCentre_prefixes'  from '10\.5285\/[\w|-]+'
 hidden var 'EnvironmentalInformationDataCentre_prefixes' from '(?:10\.5285\/)((?:[a-z0-9-]{1,})+(?:[\s|-]?)(?:[a-z0-9-]{4,})){0,1}(?:(?:[A-Z0-9-]{1,})+(?:[\s|-]?)(?:[A-Z0-9-]{4,})){0,1}';
+
+
+--(?:10\.5285\/)((?:[a-z0-9-]{1,})+(?:[\s|-]?)(?:[a-z0-9-]{4,})){0,1}(?:(?:[A-Z0-9-]{1,})+(?:[\s|-]?)(?:[A-Z0-9-]{4,})){0,1}
+
+
 --'(?<=10\.5285\/)[\w|-]+'
 --6.13 SIBMAD
 hidden var 'Sibmad_prefixes' from 'cds\.u-strasbg\.fr\/cgi-bin\/Dic-Simbad\?[\w|-]+';
@@ -424,7 +429,7 @@ union all
  )
 union all
 --3.8 Database of Interacting Proteins
-select  jdict('documentId', docid,'entity', 'Database of Interacting Proteins', 'biomedicalId', regexpr("("||var('DIP_prefixes2')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select  jdict('documentId', docid,'entity', 'Database of Interacting Proteins', 'biomedicalId', regexpr("(\d{1,7}N)", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('DIP_prefixes2'))
           from (select docid, text from mydata where regexprmatches(var('DIP_prefixes1'), text) = 1))
 union all
@@ -486,7 +491,7 @@ select jdict('documentId', docid,'entity', 'Xenbase', 'biomedicalId', regexpr("(
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('XenBase_prefixes')) from mydata)
 union all
 --5.3 Mouse Genome Informatics
-select jdict('documentId', docid,'entity', 'Mouse Genome Informatics', 'biomedicalId', regexpr("("||"\d+"||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'Mouse Genome Informatics', 'biomedicalId', regexpr("("||var('mousegenomeinformatics_prefixes')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (select docid, prev, middle, next
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('mousegenomeinformatics_prefixes')) from mydata)
 where regexprmatches('[A-Z1-9]MGI.\d',middle) = 0)
@@ -496,13 +501,14 @@ select jdict('documentId', docid,'entity', 'Australian Ocean Data Network (AODN)
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('AODN_prefixes')) from mydata)
 union all
 --5.5 British Oceanographic Data Centre (NERC Data Centres)
-select jdict('documentId', docid,'entity', 'British Oceanographic Data Centre (BODC)', 'biomedicalId',
-                        case when regexprmatches('www\.bodc\.ac\.uk\/data\/published_data_library\/catalogue\/10\.5285', middle||next)
-                        then regexpr("(?:www\.bodc\.ac\.uk\/data\/published_data_library\/catalogue\/10\.5285\/([a-z0-9-‐\s]+)\/?)", middle||next)
-                        else regexpr("(\d+)", middle||next) end,
-'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'British Oceanographic Data Centre (BODC)', 'biomedicalId',biomedicalid, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+from
+(select docid,prev,middle,next, case when regexprmatches('documents|online_delivery', middle) then regexpr("www\.bodc\.ac\.uk\/data\/[^\/]+\/[^\/]+\/([^\s|\/|\.|)|(|A-Z]+)", middlenext)
+else regexpr("www\.bodc\.ac\.uk\/data\/[^\/]+\/[^\/]+\/[^\/]+\/\s?\s?([^\s|\/|\.|)|(|A-Z]+)", middlenext) end as biomedicalid
+from
+(select docid,prev,middle,next, case when next is null then middle else middle||next end as middlenext
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('BODC_prefixes')) from mydata)
-where regexprmatches("\.pdf", middle) = 0
+where regexprmatches("\.pdf", middle) = 0))
 union all
 --5.6 Centre for Environmental Data Analysis (NERC Data Centres)
 select jdict('documentId', docid,'entity', 'Centre for Environmental Data Analysis (CEDA)', 'biomedicalId', regexpr(var('CEDA_prefixes'), middle),  'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -527,7 +533,7 @@ from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n"
 where regexprmatches('chinese',lower(prev||middle||next)) = 0
 union all
 --6.2 Virtual Skeleton
-select jdict('documentId', docid,'entity', 'Vitual Skeleton Database', 'biomedicalId', regexpr("("||"\d+"||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+select jdict('documentId', docid,'entity', 'Virtual Skeleton Database', 'biomedicalId', regexpr("("||"\d+"||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('VirtualSkeleton_prefixes')) from  mydata)
 union all
 --6.3 VectorBase
@@ -562,10 +568,10 @@ union all
 --6.8 Australian Antarctic Data Centre
 select jdict('documentId', docid,'entity', 'Australian Antarctic Data Centre', 'biomedicalId', regexpr("("||var('AustralianAntarcticDataCentre_prefixes2')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from ( setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('AustralianAntarcticDataCentre_prefixes')) from mydata)
-union all
---6.9 caNanoLab
-select jdict('documentId', docid,'entity', 'caNanoLab', 'biomedicalId', regexpr("("||"\d+"||")", middle) , 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('caNanoLab_prefixes')) from mydata)
+-- union all
+-- --6.9 caNanoLab --> I get 0 results
+-- select jdict('documentId', docid,'entity', 'caNanoLab', 'biomedicalId', regexpr("("||"\d+"||")", middle) , 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+-- from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('caNanoLab_prefixes')) from mydata)
 union all
 --6.10 GenomeRNAi
 select jdict('documentId', docid,'entity', 'Genome RNai', 'biomedicalId', regexpr(var('GenomeRNAi_prefixes2'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -581,8 +587,12 @@ from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n"
 union all
 --6.12 Environmental Information Data Centre
 select jdict('documentId', docid,'entity', 'Environmental Information Data Centre', 'biomedicalId',  regexpr(var("EnvironmentalInformationDataCentre_prefixes"), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EnvironmentalInformationDataCentre_prefixes')) from mydata)
-where length(middle>20)
+from (
+select docid,prev,middle,next, case when  regexpr("10\.5285\/([a-zA-Z0-9]{8}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{12})",middle) is not null
+then regexpr("10\.5285\/([a-zA-Z0-9]{8}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{12})",middle)
+else regexpr("10\.5285\/([a-zA-Z0-9]{8}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{12})",middle||next) end as id
+from  (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EnvironmentalInformationDataCentre_prefixes')) from mydata)
+where regexprmatches("o-bib", middle) = 0  and length(middle>20) and id is not null)
 union all
 --6.13 SIBMAD Astronomical Database
 select jdict('documentId', docid,'entity', 'SIMBAD Astronomical Database', 'biomedicalId',  regexpr("("||var("Sibmad_prefixes2")||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -591,10 +601,10 @@ union all
 --6.14 Influenza Reseach Database
 select jdict('documentId', docid,'entity', 'Influenza Reseach Database', 'biomedicalId',  regexpr(var("Influenza_prefixes2"), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('Influenza_prefixes')) from mydata)
-union all
---6.15 Kinetic Models of Biological Systems
-select jdict('documentId', docid,'entity', 'Kinetic Models of Biological Systems', 'biomedicalId', regexpr("("||"\d+"||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('KiMoSys_prefixes')) from mydata)
+-- union all -- I get 0 results
+-- --6.15 Kinetic Models of Biological Systems
+-- select jdict('documentId', docid,'entity', 'Kinetic Models of Biological Systems', 'biomedicalId', regexpr("("||"\d+"||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+-- from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('KiMoSys_prefixes')) from mydata)
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 union all
 --dbgap --Giannhs
