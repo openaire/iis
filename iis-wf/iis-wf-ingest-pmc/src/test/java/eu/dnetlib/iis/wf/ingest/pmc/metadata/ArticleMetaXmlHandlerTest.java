@@ -226,7 +226,7 @@ public class ArticleMetaXmlHandlerTest {
         
         List<Affiliation> affs = metadata.getAffiliations();
         
-        assertEquals(6, affs.size());
+        assertEquals(7, affs.size());
         
         assertEquals("DE", affs.get(0).getCountryCode());
         assertEquals("Germany", affs.get(0).getCountryName());
@@ -264,6 +264,13 @@ public class ArticleMetaXmlHandlerTest {
         assertEquals("Programa de Genómica Evolutiva, Centro de Ciencias Genómicas, Universidad Nacional Autónoma de México", affs.get(5).getOrganization());
         assertEquals("Apartado Postal 565-A, C.P 62210, Cuernavaca, Morelos", affs.get(5).getAddress());
         assertEquals("Programa de Genómica Evolutiva, Centro de Ciencias Genómicas, Universidad Nacional Autónoma de México, Apartado Postal 565-A, C.P 62210, Cuernavaca, Morelos, México", affs.get(5).getRawText());
+
+        // this case does not defined add-line element
+        assertEquals("Department of Oncogenomics, Academic Medical Center, Amsterdam, 1105 AZ The Netherlands", affs.get(6).getRawText());
+        assertEquals("NL", affs.get(6).getCountryCode());
+        assertEquals("The Netherlands", affs.get(6).getCountryName());
+        assertEquals("Department of Oncogenomics, Academic Medical Center", affs.get(6).getOrganization());
+        assertEquals("Amsterdam, 1105 AZ The Netherlands", affs.get(6).getAddress());
 
     }
     
