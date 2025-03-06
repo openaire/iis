@@ -71,6 +71,65 @@ public class ImportInformationSpaceJobUtilsTest extends TestWithSharedSparkSessi
         }
     }
 
+    @Nested
+    public class ApplyDedupMappingOnTopTest {
+
+        @Test
+        @DisplayName("Deduplication mapping is empty")
+        public void givenEmptyDedupMapping_whenApplyDedupMappingOnTop_thenOriginalMappingIsReturned() {
+            JavaRDD<IdentifierMapping> originalIdMapping = jsc.parallelize(Arrays.asList(
+                    createIdentifierMapping("new1", "original1"),
+                    createIdentifierMapping("new2", "original2")
+            ));
+            JavaRDD<IdentifierMapping> dedupMapping = jsc.emptyRDD();
+
+            List<IdentifierMapping> result = ImportInformationSpaceJobUtils.applyDedupMappingOnTop(originalIdMapping, dedupMapping).collect();
+
+            assertThat(result.size(), equalTo(2));
+            assertThat(result, hasItem(createIdentifierMapping("new1", "original1")));
+            assertThat(result, hasItem(createIdentifierMapping("new2", "original2")));
+        }
+
+        @Test
+        @DisplayName("Deduplication mapping is applied")
+        public void givenDedupMapping_whenApplyDedupMappingOnTop_thenMappingsAreUpdated() {
+            JavaRDD<IdentifierMapping> originalIdMapping = jsc.parallelize(Arrays.asList(
+                    createIdentifierMapping("new1", "original1"),
+                    createIdentifierMapping("new2", "original2")
+            ));
+            JavaRDD<IdentifierMapping> dedupMapping = jsc.parallelize(Arrays.asList(
+                    createIdentifierMapping("dedup1", "new1"),
+                    createIdentifierMapping("dedup2", "new2")
+            ));
+
+            List<IdentifierMapping> result = ImportInformationSpaceJobUtils.applyDedupMappingOnTop(originalIdMapping, dedupMapping).collect();
+
+            assertThat(result.size(), equalTo(2));
+            assertThat(result, hasItem(createIdentifierMapping("dedup1", "original1")));
+            assertThat(result, hasItem(createIdentifierMapping("dedup2", "original2" )));
+        }
+
+        @Test
+        @DisplayName("Partial deduplication mapping is applied")
+        public void givenPartialDedupMapping_whenApplyDedupMappingOnTop_thenOnlyMatchedMappingsAreUpdated() {
+            JavaRDD<IdentifierMapping> originalIdMapping = jsc.parallelize(Arrays.asList(
+                    createIdentifierMapping("new1", "original1"),
+                    createIdentifierMapping("new2", "original2"),
+                    createIdentifierMapping("new3", "original3")
+            ));
+            JavaRDD<IdentifierMapping> dedupMapping = jsc.parallelize(Collections.singletonList(
+                    createIdentifierMapping("dedup1", "new1")
+            ));
+
+            List<IdentifierMapping> result = ImportInformationSpaceJobUtils.applyDedupMappingOnTop(originalIdMapping, dedupMapping).collect();
+
+            assertThat(result.size(), equalTo(3));
+            assertThat(result, hasItem(createIdentifierMapping("dedup1", "original1")));
+            assertThat(result, hasItem(createIdentifierMapping("new2", "original2")));
+            assertThat(result, hasItem(createIdentifierMapping("new3", "original3")));
+        }
+    }
+    
     private static IdentifierMapping createIdentifierMapping(String newId, String originalId) {
         return IdentifierMapping.newBuilder().setNewId(newId).setOriginalId(originalId).build();
     }
@@ -82,3 +141,4 @@ public class ImportInformationSpaceJobUtilsTest extends TestWithSharedSparkSessi
         return entity;
     }
 }
+
