@@ -132,3 +132,16 @@ as select dsetID,dois,doi, lower(titles) as titles, lower(words) as words,bag,pu
 
 create index titlesandtriples_index 
 on titlesandtriples(words,titles,bag,publisher,creator,generaltype);
+
+INSERT INTO dois
+SELECT dsetID, 
+       new_doi, 
+       normalizetext(new_doi), 
+       typegeneral
+FROM (
+    SELECT dsetID, 
+           REPLACE(doi, 'pangaea', 'pangea') AS new_doi, 
+           typegeneral
+    FROM dois
+    WHERE doi LIKE '%pangaea%'
+);
