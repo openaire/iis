@@ -8,6 +8,9 @@
 -- cd /storage/eleni/openAIRE/05.Biomedical_Springer
 -- cat pubs.json | python madis/src/mexec.py -f query.sql -d data.db > result.json
 -- cat pubs.json | python ~/Desktop/openAIRE/madis2/src/mexec.py -f springerFromFouf_EL_v5.sql -d  /home/openaire/springer.db > results.json
+
+--/storage/eleni/openAIRE/11.BIOENTITIES_2024$ cat pubs.json | python ~/Desktop/openAIRE/madis2/src/mexec.py -f springer_v7.sql -d  springer.db > results_v7b.json
+
 -- --Create pubs.json as follows:
 -- --a)
 
@@ -508,7 +511,7 @@ else regexpr("www\.bodc\.ac\.uk\/data\/[^\/]+\/[^\/]+\/[^\/]+\/\s?\s?([^\s|\/|\.
 from
 (select docid,prev,middle,next, case when next is null then middle else middle||next end as middlenext
 from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('BODC_prefixes')) from mydata)
-where regexprmatches("\.pdf", middle) = 0))
+where regexprmatches("\.pdf", middle) = 0 and length(middle)>20 ))
 union all
 --5.6 Centre for Environmental Data Analysis (NERC Data Centres)
 select jdict('documentId', docid,'entity', 'Centre for Environmental Data Analysis (CEDA)', 'biomedicalId', regexpr(var('CEDA_prefixes'), middle),  'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -567,12 +570,13 @@ where length(regexpr("("||var("ArchaeologyDataService_prefixes2")||")", middle))
 union all
 --6.8 Australian Antarctic Data Centre
 select jdict('documentId', docid,'entity', 'Australian Antarctic Data Centre', 'biomedicalId', regexpr("("||var('AustralianAntarcticDataCentre_prefixes2')||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from ( setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('AustralianAntarcticDataCentre_prefixes')) from mydata)
--- union all
--- --6.9 caNanoLab --> I get 0 results
+from (select * from ( setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('AustralianAntarcticDataCentre_prefixes')) from mydata)
+       where length(regexpr("("||var('AustralianAntarcticDataCentre_prefixes2')||")", middle)) = 9 or length(regexpr("("||var('AustralianAntarcticDataCentre_prefixes2')||")", middle))=13 )
+union all
+--6.9 caNanoLab --> I get 0 results
 -- select jdict('documentId', docid,'entity', 'caNanoLab', 'biomedicalId', regexpr("("||"\d+"||")", middle) , 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 -- from (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('caNanoLab_prefixes')) from mydata)
-union all
+-- union all
 --6.10 GenomeRNAi
 select jdict('documentId', docid,'entity', 'Genome RNai', 'biomedicalId', regexpr(var('GenomeRNAi_prefixes2'), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
 from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('GenomeRNAi_prefixes2'))
@@ -586,13 +590,15 @@ from (setschema 'docid,prev,middle,next' select docid, textwindow2s(regexpr("\n"
       )
 union all
 --6.12 Environmental Information Data Centre
-select jdict('documentId', docid,'entity', 'Environmental Information Data Centre', 'biomedicalId',  regexpr(var("EnvironmentalInformationDataCentre_prefixes"), middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
-from (
-select docid,prev,middle,next, case when  regexpr("10\.5285\/([a-zA-Z0-9]{8}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{12})",middle) is not null
-then regexpr("10\.5285\/([a-zA-Z0-9]{8}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{12})",middle)
-else regexpr("10\.5285\/([a-zA-Z0-9]{8}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{12})",middle||next) end as id
-from  (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EnvironmentalInformationDataCentre_prefixes')) from mydata)
-where regexprmatches("o-bib", middle) = 0  and length(middle>20) and id is not null)
+select jdict('documentId', docid,'entity', ' ', 'biomedicalId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
+from (     select docid,prev,middle,next,
+                  case when  regexpr("10\.5285\/([a-zA-Z0-9]{8}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{12})",middle) is not null
+                  then regexpr("10\.5285\/([a-zA-Z0-9]{8}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{12})",middle)
+                  else regexpr("10\.5285\/([a-zA-Z0-9]{8}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{4}-?[a-zA-Z0-9]{12})",middle||next) end
+                  as id
+          from  (setschema 'docid,prev,middle,next' select  docid, textwindow2s(regexpr("\n",text," "), 10, 1, 10, var('EnvironmentalInformationDataCentre_prefixes')) from mydata)
+          where regexprmatches("o-bib", middle) = 0  and length(middle>20) and id is not null
+      )
 union all
 --6.13 SIBMAD Astronomical Database
 select jdict('documentId', docid,'entity', 'SIMBAD Astronomical Database', 'biomedicalId',  regexpr("("||var("Sibmad_prefixes2")||")", middle), 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1
@@ -632,7 +638,7 @@ select jdict('documentId', docid, 'entity', 'CHEMBL', 'biomedicalId', match, 'co
 ----------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------
 
--- create temp table remove_ids_ENA as
+-- create table remove_ids_ENA as
 -- select * from  (file  header:t 'remove.tsv');
 
 
