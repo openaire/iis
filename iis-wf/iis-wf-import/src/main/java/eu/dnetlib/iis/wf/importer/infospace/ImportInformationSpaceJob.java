@@ -11,7 +11,6 @@ import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.MapFunction;
@@ -59,7 +58,6 @@ import eu.dnetlib.iis.wf.importer.infospace.truncator.AvroTruncator;
 import eu.dnetlib.iis.wf.importer.infospace.truncator.DataSetReferenceAvroTruncator;
 import eu.dnetlib.iis.wf.importer.infospace.truncator.DocumentMetadataAvroTruncator;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
-import scala.Tuple2;
 
 /**
  * 
@@ -194,7 +192,7 @@ public class ImportInformationSpaceJob {
             JavaRDD<IdentifierMapping> dedupMapping = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, deduplicationMappingConverter,
                     REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES);
             
-            JavaRDD<IdentifierMapping> identifierMapping = ImportInformationSpaceJobUtils.applyDedupMappingOnTop(
+            JavaRDD<IdentifierMapping> identifierMapping = ImportInformationSpaceJobUtils.mergeMappings(
                     produceGraphIdToObjectStoreIdMapping(sourceDataset, sourceOtherResearchProduct, sourcePublication,
                             sourceSoftware, dataInfoBasedApprover, session),
                     dedupMapping);

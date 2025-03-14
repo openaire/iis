@@ -1,18 +1,20 @@
 package eu.dnetlib.iis.wf.importer.infospace;
 
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.explode;
+
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.sql.Column;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
+
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
 import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
-import scala.Tuple2;
-
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.sql.*;
-
-import static org.apache.spark.sql.functions.col;
-import static org.apache.spark.sql.functions.explode;
 
 /**
  * Common utilities used in {@link ImportInformationSpaceJob}.
@@ -24,37 +26,13 @@ public class ImportInformationSpaceJobUtils {
     }
     
     /**
-     * Applies deduplication mapping on top of the original to persistent identifier mapping.
+     * Merges deduplication mappings with the original to persistent identifier mappings.
      * @param originalIdMapping mapping between the original id and persistent id
      * @param dedupMapping mapping between the persistent id and deduplicated id
-     * @return originalIdMapping having newId fields mapped to dedupMapping#newId whenever there was a match on originalIdMapping#newId and dedupMapping#originalId
+     * @return merged mappings
      */
-    public static JavaRDD<IdentifierMapping> applyDedupMappingOnTop(JavaRDD<IdentifierMapping> originalIdMapping, JavaRDD<IdentifierMapping> dedupMapping) {
-        if (dedupMapping.isEmpty()) {
-            return originalIdMapping;
-        } else {
-            // Convert to pair RDDs for joining
-            JavaPairRDD<String, IdentifierMapping> originalByNewId = originalIdMapping
-                    .mapToPair(mapping -> new Tuple2<>(mapping.getNewId().toString(), mapping));
-
-            JavaPairRDD<String, IdentifierMapping> dedupByOriginalId = dedupMapping
-                    .mapToPair(mapping -> new Tuple2<>(mapping.getOriginalId().toString(), mapping));
-
-            // Left join: originalIdMapping.newId = dedupMapping.originalId
-            return originalByNewId.leftOuterJoin(dedupByOriginalId).map(tuple -> {
-                IdentifierMapping original = tuple._2._1;
-                org.apache.spark.api.java.Optional<IdentifierMapping> dedupOpt = tuple._2._2;
-
-                if (dedupOpt.isPresent()) {
-                    // For matched entries: use originalIdMapping.originalId and dedupMapping.newId
-                    return IdentifierMapping.newBuilder().setOriginalId(original.getOriginalId())
-                            .setNewId(dedupOpt.get().getNewId()).build();
-                } else {
-                    // For non-matched entries: keep original mapping unchanged
-                    return original;
-                }
-            });
-        }
+    public static JavaRDD<IdentifierMapping> mergeMappings(JavaRDD<IdentifierMapping> originalIdMapping, JavaRDD<IdentifierMapping> dedupMapping) {
+        return originalIdMapping.union(dedupMapping).distinct();
     }
 
 
