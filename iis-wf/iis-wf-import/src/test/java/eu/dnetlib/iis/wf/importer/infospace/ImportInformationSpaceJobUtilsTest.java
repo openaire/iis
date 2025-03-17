@@ -71,6 +71,67 @@ public class ImportInformationSpaceJobUtilsTest extends TestWithSharedSparkSessi
         }
     }
 
+    @Nested
+    public class MergeMappingsTest {
+
+        @Test
+        @DisplayName("Deduplication mapping is empty")
+        public void givenEmptyDedupMapping_whenMergeMappings_thenOriginalMappingIsReturned() {
+            JavaRDD<IdentifierMapping> originalIdMapping = jsc.parallelize(Arrays.asList(
+                    createIdentifierMapping("new1", "original1"),
+                    createIdentifierMapping("new2", "original2")
+            ));
+            JavaRDD<IdentifierMapping> dedupMapping = jsc.emptyRDD();
+
+            List<IdentifierMapping> result = ImportInformationSpaceJobUtils.mergeMappings(originalIdMapping, dedupMapping).collect();
+
+            assertThat(result.size(), equalTo(2));
+            assertThat(result, hasItem(createIdentifierMapping("new1", "original1")));
+            assertThat(result, hasItem(createIdentifierMapping("new2", "original2")));
+        }
+
+        @Test
+        @DisplayName("original mapping is empty")
+        public void givenEmptyOriginalMapping_whenMergeMappings_thenDeduplicationMappingIsReturned() {
+            JavaRDD<IdentifierMapping> dedupMapping = jsc.parallelize(Arrays.asList(
+                    createIdentifierMapping("new1", "original1"),
+                    createIdentifierMapping("new2", "original2")
+            ));
+            JavaRDD<IdentifierMapping> originalIdMapping = jsc.emptyRDD();
+
+            List<IdentifierMapping> result = ImportInformationSpaceJobUtils.mergeMappings(originalIdMapping, dedupMapping).collect();
+
+            assertThat(result.size(), equalTo(2));
+            assertThat(result, hasItem(createIdentifierMapping("new1", "original1")));
+            assertThat(result, hasItem(createIdentifierMapping("new2", "original2")));
+        }
+        
+        @Test
+        @DisplayName("non empty mappings are merged")
+        public void givenDedupMapping_whenMergeMappings_thenMappingsAreMerged() {
+            JavaRDD<IdentifierMapping> originalIdMapping = jsc.parallelize(Arrays.asList(
+                    createIdentifierMapping("new1", "original1"),
+                    createIdentifierMapping("new2", "original2"),
+                    createIdentifierMapping("new3", "shared1")
+            ));
+            JavaRDD<IdentifierMapping> dedupMapping = jsc.parallelize(Arrays.asList(
+                    createIdentifierMapping("dedup1", "new1"),
+                    createIdentifierMapping("dedup2", "new2"),
+                    createIdentifierMapping("new3", "shared1")
+            ));
+
+            List<IdentifierMapping> result = ImportInformationSpaceJobUtils.mergeMappings(originalIdMapping, dedupMapping).collect();
+
+            assertThat(result.size(), equalTo(5));
+            assertThat(result, hasItem(createIdentifierMapping("new1", "original1")));
+            assertThat(result, hasItem(createIdentifierMapping("new2", "original2" )));
+            assertThat(result, hasItem(createIdentifierMapping("dedup1", "new1")));
+            assertThat(result, hasItem(createIdentifierMapping("dedup2", "new2" )));
+            assertThat(result, hasItem(createIdentifierMapping("new3", "shared1" )));
+        }
+
+    }
+    
     private static IdentifierMapping createIdentifierMapping(String newId, String originalId) {
         return IdentifierMapping.newBuilder().setNewId(newId).setOriginalId(originalId).build();
     }
@@ -82,3 +143,4 @@ public class ImportInformationSpaceJobUtilsTest extends TestWithSharedSparkSessi
         return entity;
     }
 }
+

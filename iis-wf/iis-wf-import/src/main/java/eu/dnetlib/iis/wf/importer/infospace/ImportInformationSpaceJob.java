@@ -45,6 +45,7 @@ import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
 import eu.dnetlib.iis.wf.importer.infospace.approver.ResultApprover;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DatasetMetadataConverter;
+import eu.dnetlib.iis.wf.importer.infospace.converter.DeduplicationMappingConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentMetadataConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.DocumentToProjectRelationConverter;
 import eu.dnetlib.iis.wf.importer.infospace.converter.OafEntityToAvroConverter;
@@ -81,15 +82,21 @@ public class ImportInformationSpaceJob {
     
     private static final String REL_TYPE_RESULT_PROJECT = "resultProject";
     
+    private static final String REL_TYPE_RESULT_RESULT = "resultResult";
+    
     
     private static final String SUBREL_TYPE_PARTICIPATION = "participation";
     
     private static final String SUBREL_TYPE_OUTCOME = "outcome";
     
+    private static final String SUBREL_TYPE_DEDUP = "dedup";
+    
     
     private static final String REL_NAME_HAS_PARTICIPANT = "hasParticipant";
     
     private static final String REL_NAME_IS_PRODUCED_BY = "isProducedBy";
+    
+    private static final String REL_NAME_MERGES = "merges";
     
 
     // reports
@@ -139,6 +146,7 @@ public class ImportInformationSpaceJob {
 
             OafRelToAvroConverter<ProjectToOrganization> projectOrganizationConverter = new ProjectToOrganizationRelationConverter();
             OafRelToAvroConverter<DocumentToProject> docProjectConverter = new DocumentToProjectRelationConverter();
+            OafRelToAvroConverter<IdentifierMapping> deduplicationMappingConverter = new DeduplicationMappingConverter();
 
             DocumentMetadataAvroTruncator documentMetadataAvroTruncator = createDocumentMetadataAvroTruncator(params);
             DataSetReferenceAvroTruncator dataSetReferenceAvroTruncator = createDataSetReferenceAvroTruncator(params);
@@ -181,14 +189,18 @@ public class ImportInformationSpaceJob {
                     REL_TYPE_RESULT_PROJECT, SUBREL_TYPE_OUTCOME, REL_NAME_IS_PRODUCED_BY);
             JavaRDD<ProjectToOrganization> projOrgRelation = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, projectOrganizationConverter,
                     REL_TYPE_PROJECT_ORGANIZATION, SUBREL_TYPE_PARTICIPATION, REL_NAME_HAS_PARTICIPANT);
-
-            JavaRDD<IdentifierMapping> identifierMapping = produceGraphIdToObjectStoreIdMapping(sourceDataset, sourceOtherResearchProduct,
-                    sourcePublication, sourceSoftware, dataInfoBasedApprover, session);
-
+            JavaRDD<IdentifierMapping> dedupMapping = filterAndParseRelationToAvro(sourceRelation, dataInfoBasedApprover, deduplicationMappingConverter,
+                    REL_TYPE_RESULT_RESULT, SUBREL_TYPE_DEDUP, REL_NAME_MERGES);
+            
+            JavaRDD<IdentifierMapping> identifierMapping = ImportInformationSpaceJobUtils.mergeMappings(
+                    produceGraphIdToObjectStoreIdMapping(sourceDataset, sourceOtherResearchProduct, sourcePublication,
+                            sourceSoftware, dataInfoBasedApprover, session),
+                    dedupMapping);
+            
             storeInOutput(sc, docMeta, dataset, project, organization, service, docProjRelation, projOrgRelation, identifierMapping, params);
         });
     }
-
+    
     /**
      * Creates a {@link DocumentMetadataAvroTruncator} from job parameters.
      */

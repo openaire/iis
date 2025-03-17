@@ -1,15 +1,20 @@
 package eu.dnetlib.iis.wf.importer.infospace;
 
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.explode;
+
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.sql.Column;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
+
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.schemas.IdentifierMapping;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameSupport;
 import eu.dnetlib.iis.wf.importer.infospace.approver.DataInfoBasedApprover;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.sql.*;
-
-import static org.apache.spark.sql.functions.col;
-import static org.apache.spark.sql.functions.explode;
 
 /**
  * Common utilities used in {@link ImportInformationSpaceJob}.
@@ -19,6 +24,17 @@ public class ImportInformationSpaceJobUtils {
     private ImportInformationSpaceJobUtils() {
 
     }
+    
+    /**
+     * Merges deduplication mappings with the original to persistent identifier mappings.
+     * @param originalIdMapping mapping between the original id and persistent id
+     * @param dedupMapping mapping between the persistent id and deduplicated id
+     * @return merged mappings
+     */
+    public static JavaRDD<IdentifierMapping> mergeMappings(JavaRDD<IdentifierMapping> originalIdMapping, JavaRDD<IdentifierMapping> dedupMapping) {
+        return originalIdMapping.union(dedupMapping).distinct();
+    }
+
 
     /**
      * Produces a mapping from graph id to object store id.
