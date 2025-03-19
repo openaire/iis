@@ -30,10 +30,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Transformer responsible for converting TEI XML documents (produced by Grobid)
- * into ExtractedDocumentMetadata Avro records.
+ * Transformer responsible for converting TEI XML documents (produced by Grobid) into ExtractedDocumentMetadata Avro records.
+ * @author mhorst
  */
 public class TeiToExtractedDocumentMetadataTransformer {
+    
     private static final Logger logger = LoggerFactory.getLogger(TeiToExtractedDocumentMetadataTransformer.class);
 
     private static final String TEI_NAMESPACE = "http://www.tei-c.org/ns/1.0";
@@ -46,7 +47,10 @@ public class TeiToExtractedDocumentMetadataTransformer {
      * @return ExtractedDocumentMetadata record
      * @throws Exception if transformation fails
      */
-    public ExtractedDocumentMetadata transformToExtractedDocumentMetadata(String id, String teiXml) throws Exception {
+    public static ExtractedDocumentMetadata transformToExtractedDocumentMetadata(String id, String teiXml) throws Exception {
+        if (id == null) {
+            throw new RuntimeException("unable to set null id");
+        }
         Document document = parseXmlString(teiXml);
         XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -150,7 +154,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return documentBuilder.build();
     }
 
-    private Document parseXmlString(String xml) throws ParserConfigurationException, SAXException, IOException {
+    private static Document parseXmlString(String xml) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -237,7 +241,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
     }
 */
     
-    private String extractSingleValue(Node node, XPath xPath, String expression) {
+    private static String extractSingleValue(Node node, XPath xPath, String expression) {
         try {
             Node resultNode = (Node) xPath.evaluate(expression, node, XPathConstants.NODE);
             if (resultNode != null) {
@@ -249,7 +253,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
 
-    private Node extractSingleNode(Node node, XPath xPath, String expression) {
+    private static Node extractSingleNode(Node node, XPath xPath, String expression) {
         try {
             Node resultNode = (Node) xPath.evaluate(expression, node, XPathConstants.NODE);
             if (resultNode != null) {
@@ -261,7 +265,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
     
-    private String extractAbstract(Document document, XPath xPath) {
+    private static String extractAbstract(Document document, XPath xPath) {
         try {
             // Look for abstract in different possible locations
             Node abstractNode = (Node) xPath.evaluate("//tei:teiHeader//tei:profileDesc/tei:abstract", document, XPathConstants.NODE);
@@ -290,7 +294,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
 
-    private Integer extractPublicationYear(Document document, XPath xPath) {
+    private static Integer extractPublicationYear(Document document, XPath xPath) {
         String yearStr = extractSingleValue(document, xPath, "//tei:publicationStmt/tei:date/@when");
         if (StringUtils.isEmpty(yearStr)) {
             yearStr = extractSingleValue(document, xPath, "//tei:biblStruct//tei:date/@when");
@@ -312,7 +316,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
 
-    private Range extractPageRange(Document document, XPath xPath) {
+    private static Range extractPageRange(Document document, XPath xPath) {
         try {
             Node pageNode = (Node) xPath.evaluate("//tei:teiHeader//tei:biblStruct//tei:biblScope[@unit='page']", document,
                     XPathConstants.NODE);
@@ -350,7 +354,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
 
-    private List<CharSequence> extractKeywords(Document document, XPath xPath) {
+    private static List<CharSequence> extractKeywords(Document document, XPath xPath) {
         try {
             NodeList keywordNodes = (NodeList) xPath.evaluate("//tei:teiHeader//tei:keywords/tei:term", document,
                     XPathConstants.NODESET);
@@ -370,7 +374,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
 
-    private void extractAuthorsAndAffiliations(Document document, XPath xPath, List<Author> authors,
+    private static void extractAuthorsAndAffiliations(Document document, XPath xPath, List<Author> authors,
             List<Affiliation> affiliations) {
         try {
             // Extract affiliations first
@@ -485,7 +489,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         }
     }
 
-    private List<ReferenceMetadata> extractReferences(Document document, XPath xPath) {
+    private static List<ReferenceMetadata> extractReferences(Document document, XPath xPath) {
         List<ReferenceMetadata> references = new ArrayList<>();
         try {
             // Look for references in biblStruct elements within the bibliography section
@@ -660,7 +664,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return references;
     }
 
-    private String extractLanguage(Document document, XPath xPath) {
+    private static String extractLanguage(Document document, XPath xPath) {
         try {
             Node langNode = (Node) xPath.evaluate("//tei:teiHeader//tei:profileDesc/tei:langUsage/tei:language", document,
                     XPathConstants.NODE);
