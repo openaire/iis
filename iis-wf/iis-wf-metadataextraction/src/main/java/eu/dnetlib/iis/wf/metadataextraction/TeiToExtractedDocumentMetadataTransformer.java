@@ -111,7 +111,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
             documentBuilder.setIssue(issue);
         }
 
-        Range pageRange = extractPageRange(document, xPath);
+        Range pageRange = extractPageRange(document, xPath, "//tei:teiHeader//tei:biblStruct//tei:biblScope[@unit='page']");
         if (pageRange != null) {
             documentBuilder.setPages(pageRange);
         }
@@ -128,7 +128,8 @@ public class TeiToExtractedDocumentMetadataTransformer {
             documentBuilder.setKeywords(keywords);
         }
         
-        Map<CharSequence, CharSequence> externalIdentifiers = extractExternalIdentifiers(document, xPath);
+        Map<CharSequence, CharSequence> externalIdentifiers = extractExternalIdentifiers(
+                document, xPath, "//tei:teiHeader//tei:biblStruct/tei:idno");
         if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
             documentBuilder.setExternalIdentifiers(externalIdentifiers);
         }
@@ -313,10 +314,10 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
 
-    private static Integer extractPublicationYear(Document document, XPath xPath) {
-        String yearStr = extractSingleValue(document, xPath, "//tei:publicationStmt/tei:date/@when");
+    private static Integer extractPublicationYear(Node node, XPath xPath) {
+        String yearStr = extractSingleValue(node, xPath, "//tei:publicationStmt/tei:date/@when");
         if (StringUtils.isEmpty(yearStr)) {
-            yearStr = extractSingleValue(document, xPath, "//tei:biblStruct//tei:date/@when");
+            yearStr = extractSingleValue(node, xPath, "//tei:biblStruct//tei:date/@when");
         }
 
         if (StringUtils.isNotEmpty(yearStr)) {
@@ -335,10 +336,9 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
 
-    private static Range extractPageRange(Document document, XPath xPath) {
+    private static Range extractPageRange(Node node, XPath xPath, String expression) {
         try {
-            Node pageNode = (Node) xPath.evaluate("//tei:teiHeader//tei:biblStruct//tei:biblScope[@unit='page']", document,
-                    XPathConstants.NODE);
+            Node pageNode = (Node) xPath.evaluate(expression, node, XPathConstants.NODE);
             if (pageNode != null) {
                 Element pageElem = (Element) pageNode;
                 String from = pageElem.getAttribute("from");
@@ -393,11 +393,10 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
 
-    private static Map<CharSequence, CharSequence> extractExternalIdentifiers(Document document, XPath xPath) {
+    private static Map<CharSequence, CharSequence> extractExternalIdentifiers(Node node, XPath xPath, String expression) {
         try {
             // FIXME make sure we cover all the cases
-            NodeList extIdNodes = (NodeList) xPath.evaluate("//tei:teiHeader//tei:biblStruct/tei:idno", document,
-                    XPathConstants.NODESET);
+            NodeList extIdNodes = (NodeList) xPath.evaluate(expression, node, XPathConstants.NODESET);
             if (extIdNodes != null && extIdNodes.getLength() > 0) {
                 Map<CharSequence, CharSequence> externalIds = new HashMap<>();
                 for (int i = 0; i < extIdNodes.getLength(); i++) {
@@ -416,6 +415,23 @@ public class TeiToExtractedDocumentMetadataTransformer {
         return null;
     }
 
+    private static String buildAuthorName(Element authorNode) {
+        StringBuffer authorName = new StringBuffer();
+        NodeList forenames = authorNode.getElementsByTagName("forename");
+        for(int j=0; j<forenames.getLength(); j++) {
+            Node forename = forenames.item(j);
+            authorName.append(forename.getTextContent());
+            authorName.append(' ');
+        }
+        NodeList surnames = authorNode.getElementsByTagName("surname");
+        for(int j=0; j<surnames.getLength(); j++) {
+            Node surname = surnames.item(j);
+            authorName.append(surname.getTextContent());
+            authorName.append(' ');
+        }
+        return authorName.toString().trim();
+    }
+    
     private static void extractAuthorsAndAffiliations(Document document, XPath xPath, List<Author> authors,
             List<Affiliation> affiliations) {
         try {
@@ -482,23 +498,10 @@ public class TeiToExtractedDocumentMetadataTransformer {
 
             for (int i = 0; i < authorNodes.getLength(); i++) {
                 Element authorNode = (Element) authorNodes.item(i);
-                
-                StringBuffer authorName = new StringBuffer();
-                NodeList forenames = authorNode.getElementsByTagName("forename");
-                for(int j=0; j<forenames.getLength(); j++) {
-                    Node forename = forenames.item(j);
-                    authorName.append(forename.getTextContent());
-                    authorName.append(' ');
-                }
-                NodeList surnames = authorNode.getElementsByTagName("surname");
-                for(int j=0; j<surnames.getLength(); j++) {
-                    Node surname = surnames.item(j);
-                    authorName.append(surname.getTextContent());
-                    authorName.append(' ');
-                }
+                String authorName = buildAuthorName(authorNode);
 
                 if (StringUtils.isNotEmpty(authorName)) {
-                    Author.Builder authorBuilder = Author.newBuilder().setAuthorFullName(authorName.toString().trim());
+                    Author.Builder authorBuilder = Author.newBuilder().setAuthorFullName(authorName);
 
                     // Find author's affiliations
                     NodeList authorAffRefs = (NodeList) xPath.evaluate(".//tei:affiliation", authorNode,
@@ -557,6 +560,8 @@ public class TeiToExtractedDocumentMetadataTransformer {
                 refBuilder.setPosition(i + 1);
                 
                 // Look for a corresponding reference in the main text
+                // mh: commenting out autogenerated code
+                /*
                 if (StringUtils.isNotEmpty(refId)) {
                     try {
                         NodeList refNodes = (NodeList) xPath.evaluate("//tei:ref[@target='#" + refId + "']", document, XPathConstants.NODESET);
@@ -573,6 +578,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
                         logger.debug("Could not extract position for reference: " + refId, e);
                     }
                 }
+                */
                 
                 // Extract reference text - ensures we have at least some text
                 String rawText = extractSingleValue(biblNode, xPath, ".//tei:note[@type='raw_reference']");
@@ -589,9 +595,6 @@ public class TeiToExtractedDocumentMetadataTransformer {
                 if (StringUtils.isEmpty(title)) {
                     // Try alternative title locations
                     title = extractSingleValue(biblNode, xPath, ".//tei:analytic//tei:title");
-                    if (StringUtils.isEmpty(title)) {
-                        title = extractSingleValue(biblNode, xPath, ".//tei:monogr//tei:title");
-                    }
                 }
                 
                 if (StringUtils.isNotEmpty(title)) {
@@ -609,23 +612,12 @@ public class TeiToExtractedDocumentMetadataTransformer {
                     List<CharSequence> refAuthors = new ArrayList<>();
                     for (int j = 0; j < refAuthorNodes.getLength(); j++) {
                         Element authorElem = (Element) refAuthorNodes.item(j);
-                        String authorName;
-                        
-                        // Try to extract structured name parts
-                        String forename = extractSingleValue(authorElem, xPath, ".//tei:forename");
-                        String surname = extractSingleValue(authorElem, xPath, ".//tei:surname");
-                        
-                        if (StringUtils.isNotEmpty(forename) || StringUtils.isNotEmpty(surname)) {
-                            authorName = (StringUtils.defaultString(forename) + " " + StringUtils.defaultString(surname)).trim();
-                        } else {
-                            authorName = authorElem.getTextContent().trim();
-                        }
-                        
+                        // FIXME with this way of building authorName we are loosing dots after the first letters of forenames
+                        String authorName = buildAuthorName(authorElem);
                         if (StringUtils.isNotEmpty(authorName)) {
                             refAuthors.add(authorName);
                         }
                     }
-                    
                     if (!refAuthors.isEmpty()) {
                         basicMetadataBuilder.setAuthors(refAuthors);
                     }
@@ -656,13 +648,49 @@ public class TeiToExtractedDocumentMetadataTransformer {
                     }
                 }
                 
+                // extract publisher
+                String publisher = extractSingleValue(biblNode, xPath, ".//tei:imprint/tei:publisher");
+                if (StringUtils.isNotEmpty(publisher)) {
+                    basicMetadataBuilder.setPublisher(publisher);
+                }
+                
+                // extract volume
+                String volume = extractSingleValue(biblNode, xPath, ".//tei:imprint/tei:biblScope[@unit='volume']");
+                if (StringUtils.isNotEmpty(volume)) {
+                    basicMetadataBuilder.setVolume(volume);
+                }
+
+                // extract issue
+                String issue = extractSingleValue(biblNode, xPath, ".//tei:imprint/tei:biblScope[@unit='issue']");
+                if (StringUtils.isNotEmpty(issue)) {
+                    basicMetadataBuilder.setIssue(issue);
+                }
+                
+                // extract pages
+                Range pageRange = extractPageRange(biblNode, xPath, ".//tei:imprint/tei:biblScope[@unit='page']");
+                if (pageRange != null) {
+                    basicMetadataBuilder.setPages(pageRange);
+                }
+
+                // TODO extract location
+                // TODO extract edition
+                // TODO extract series
+                // TODO extract url
+                
+                // extract external identifiers
+                Map<CharSequence, CharSequence> externalIdentifiers = extractExternalIdentifiers(
+                        biblNode, xPath, ".//tei:idno");
+                if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+                    basicMetadataBuilder.setExternalIds(externalIdentifiers);
+                }
+                
+                // FIXME make sure the source field is aligned with the source provided by CERMINE
                 // Extract source (journal/book title)
                 String source = extractSingleValue(biblNode, xPath, ".//tei:monogr/tei:title");
                 if (StringUtils.isEmpty(source)) {
                     // Try alternative source locations
                     source = extractSingleValue(biblNode, xPath, ".//tei:imprint/tei:publisher");
                 }
-                
                 if (StringUtils.isNotEmpty(source)) {
                     basicMetadataBuilder.setSource(source);
                 }
@@ -673,6 +701,8 @@ public class TeiToExtractedDocumentMetadataTransformer {
             }
             
             // If we still don't have any references, try to extract from any references in text
+            // mh: commenting out autogenerated code
+            /*
             if (references.isEmpty()) {
                 NodeList refNodes = (NodeList) xPath.evaluate("//tei:ref[@type='bibr']", document, XPathConstants.NODESET);
                 for (int i = 0; refNodes != null && i < refNodes.getLength(); i++) {
@@ -696,6 +726,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
                     }
                 }
             }
+            */
             
         } catch (XPathExpressionException e) {
             logger.warn("Error extracting references", e);

@@ -270,7 +270,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertEquals("10.1017/s1041610213001804", metadata.getExternalIdentifiers().get("DOI"));
         assertEquals("A3E9BE5498C69FF0308825B2B002878D", metadata.getExternalIdentifiers().get("MD5"));
         
-        // Verify references
+        // Verify references - briefly, there is a dedicated test case for checking references
         List<ReferenceMetadata> references = metadata.getReferences();
         assertNotNull(references, "References should not be null");
         assertFalse(references.isEmpty(), "References should not be empty");
@@ -293,35 +293,58 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertNotNull(references, "References should not be null");
         assertFalse(references.isEmpty(), "References should not be empty");
         
-        // Verify we extracted at least 20 references
-        assertTrue(references.size() >= 20, "Should extract at least 20 references, found: " + references.size());
+        // Verify we extracted all references
+        assertEquals(25, references.size(), "Should extract 25 references, found: " + references.size());
         
         // Check for specific references from the sample
-        boolean foundBaumeisterReference = false;
-        boolean foundFratiglioni = false;
-        boolean foundGreenReference = false;
+        // 1st reference without authors
+        ReferenceMetadata currentReference = references.get(0);
+        assertNotNull(currentReference);
+        assertEquals(Integer.valueOf(1), currentReference.getPosition());
+        assertEquals("American Psychiatric Association. (2000). Diagnostic and Statistical Manual of Mental Disorders, 4th ed., text rev. Washington, DC: American Psychiatric Association.", currentReference.getText());
+        assertEquals("Diagnostic and Statistical Manual of Mental Disorders", currentReference.getBasicMetadata().getTitle());
+        assertNull(currentReference.getBasicMetadata().getAuthors());
+        assertNull(currentReference.getBasicMetadata().getPages());
         
-//      FIXME add more detailed checks
+        assertEquals("Diagnostic and Statistical Manual of Mental Disorders", currentReference.getBasicMetadata().getSource());
+        assertNull(currentReference.getBasicMetadata().getVolume());
+        assertEquals("2000", currentReference.getBasicMetadata().getYear());
+        assertNull(currentReference.getBasicMetadata().getEdition());
+        assertEquals("American Psychiatric Association", currentReference.getBasicMetadata().getPublisher());
+        assertNull(currentReference.getBasicMetadata().getLocation());
+        assertNull(currentReference.getBasicMetadata().getSeries());
+        assertNull(currentReference.getBasicMetadata().getIssue());
+        assertNull(currentReference.getBasicMetadata().getUrl());
+        assertNull(currentReference.getBasicMetadata().getExternalIds());
+
+        // 2nd reference with authors
+        currentReference = references.get(1);
+        assertNotNull(currentReference);
+        assertEquals(Integer.valueOf(2), currentReference.getPosition());
+        assertEquals("Baumeister, R. F., Bratslavsky, E., Finkenauer, C. and Vohs, K. D. (2001). Bad is stronger than good. Review of General Psychology, 5, 323-370. doi:10.1037// 1089-2680.5.4.323.", currentReference.getText());
+        assertEquals("Bad is stronger than good", currentReference.getBasicMetadata().getTitle());
+        assertNotNull(currentReference.getBasicMetadata().getAuthors());
+        assertEquals("R F Baumeister", currentReference.getBasicMetadata().getAuthors().get(0));
+        assertEquals("E Bratslavsky", currentReference.getBasicMetadata().getAuthors().get(1));
+        assertEquals("C Finkenauer", currentReference.getBasicMetadata().getAuthors().get(2));
+        assertEquals("K D Vohs", currentReference.getBasicMetadata().getAuthors().get(3));
+
+        assertNotNull(currentReference.getBasicMetadata().getPages());
+        assertEquals("323", currentReference.getBasicMetadata().getPages().getStart());
+        assertEquals("370", currentReference.getBasicMetadata().getPages().getEnd());
         
-        for (ReferenceMetadata reference : references) {
-            String text = reference.getText().toString().toLowerCase();
-            
-            if (text.contains("baumeister") && text.contains("bad is stronger than good")) {
-                foundBaumeisterReference = true;
-            } else if (text.contains("fratiglioni") && text.contains("active and socially integrated lifestyle")) {
-                foundFratiglioni = true;
-            } else if (text.contains("green") && text.contains("glucocorticoids increase amyloid")) {
-                foundGreenReference = true;
-            }
-            
-            // Verify the reference has basic structure
-            assertNotNull(reference.getText(), "Reference text should not be null");
-            assertTrue(reference.getText().length() > 10, "Reference text should have reasonable length");
-            assertNotNull(reference.getPosition(), "Reference should have position");
-        }
+        assertEquals("Review of General Psychology", currentReference.getBasicMetadata().getSource());
+        assertEquals("5", currentReference.getBasicMetadata().getVolume());
+        assertEquals("2001", currentReference.getBasicMetadata().getYear());
+        assertNull(currentReference.getBasicMetadata().getPublisher());
+        assertNull(currentReference.getBasicMetadata().getLocation());
+        assertNull(currentReference.getBasicMetadata().getSeries());
+        assertNull(currentReference.getBasicMetadata().getEdition());
+        assertNull(currentReference.getBasicMetadata().getIssue());
+        assertNull(currentReference.getBasicMetadata().getUrl());
         
-        assertTrue(foundBaumeisterReference, "Should find reference to Baumeister paper about 'Bad is stronger than good'");
-        assertTrue(foundFratiglioni, "Should find reference to Fratiglioni paper about 'active lifestyle'");
-        assertTrue(foundGreenReference, "Should find reference to Green paper about 'glucocorticoids'");
+        assertNotNull(currentReference.getBasicMetadata().getExternalIds());
+        assertEquals(1, currentReference.getBasicMetadata().getExternalIds().size());
+        assertEquals("10.1037//1089-2680.5.4.323", currentReference.getBasicMetadata().getExternalIds().get("DOI"));
     }
 }
