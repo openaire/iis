@@ -38,6 +38,8 @@ public class TeiToExtractedDocumentMetadataTransformer {
     private static final Logger logger = LoggerFactory.getLogger(TeiToExtractedDocumentMetadataTransformer.class);
 
     private static final String TEI_NAMESPACE = "http://www.tei-c.org/ns/1.0";
+    
+    // ------------------------------------------ LOGIC ---------------------------------------------------
 
     /**
      * Transforms TEI XML content into an ExtractedDocumentMetadata record.
@@ -153,6 +155,8 @@ public class TeiToExtractedDocumentMetadataTransformer {
 
         return documentBuilder.build();
     }
+    
+    // ------------------------------------------ PRIVATE ---------------------------------------------------
 
     private static Document parseXmlString(String xml) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
