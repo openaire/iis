@@ -389,12 +389,14 @@ public class TeiToExtractedDocumentMetadataTransformer {
                 Affiliation.Builder affBuilder = Affiliation.newBuilder();
                 
                 // Extract raw text of the affiliation (required field)
-                String rawText = extractSingleValue(affNode, xPath, ".//tei:note[@type='raw_affiliation']");
+                Node rawAffNode = extractSingleNode(affNode, xPath, ".//tei:note[@type='raw_affiliation']");
+                // getting last child in order to skip unwanted label element whenever defined
+                String rawText = rawAffNode.getLastChild().getTextContent().trim();
                 if (StringUtils.isNotEmpty(rawText)) {
                     affBuilder.setRawText(rawText);    
                 } else {
-                    // FIXME should we build an affiliation on our own when missing? 
                     // rawText is a mandatory field
+                    // FIXME should we build an affiliation on our own when missing? 
                     throw new RuntimeException("no raw affiliation text defined for affiliation!");
                 }
                 

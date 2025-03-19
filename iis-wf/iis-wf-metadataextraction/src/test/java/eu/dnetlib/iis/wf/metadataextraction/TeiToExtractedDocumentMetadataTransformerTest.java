@@ -22,12 +22,10 @@ import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 
 public class TeiToExtractedDocumentMetadataTransformerTest {
 
-    private TeiToExtractedDocumentMetadataTransformer transformer;
     private String sampleTeiXml;
 
     @BeforeEach
     public void setUp() throws Exception {
-        transformer = new TeiToExtractedDocumentMetadataTransformer();
         // Load sample TEI XML file from resources
         try (InputStream inputStream = getClass().getResourceAsStream("/eu/dnetlib/iis/wf/metadataextraction/grobid/input/sample1.tei.xml")) {
             assertNotNull(inputStream, "Sample TEI XML file not found in resources");
@@ -47,7 +45,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
                 "</TEI>";
 
         // When
-        ExtractedDocumentMetadata metadata = transformer.transformToExtractedDocumentMetadata(documentId, minimalTei);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, minimalTei);
 
         // Then
         assertNotNull(metadata, "Extracted metadata should not be null");
@@ -88,7 +86,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
                 "</TEI>";
 
         // When
-        ExtractedDocumentMetadata metadata = transformer.transformToExtractedDocumentMetadata(documentId, customTei);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, customTei);
 
         // Then
         assertNotNull(metadata, "Extracted metadata should not be null");
@@ -115,7 +113,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         // When & Then
         assertThrows(
             Exception.class,
-            () -> transformer.transformToExtractedDocumentMetadata(documentId, invalidXml),
+            () -> TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, invalidXml),
             "Should throw an exception for invalid XML"
         );
     }
@@ -128,7 +126,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         // When & Then
         assertThrows(
             Exception.class,
-            () -> transformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml),
+            () -> TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml),
             "Should throw an exception for invalid XML"
         );
     }
@@ -139,7 +137,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         String documentId = "test-doc-id-123";
 
         // When
-        ExtractedDocumentMetadata metadata = transformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml);
 
         // Then
         assertNotNull(metadata, "Extracted metadata should not be null");
@@ -175,24 +173,32 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertNotNull(authors, "Authors should not be null");
         assertEquals(4, authors.size(), "Should extract 4 authors from the sample file");
         
-        // Verifying a specific author
         Author author = authors.get(0);
         assertEquals("Anna Sundström", author.getAuthorFullName());
         assertNotNull(author.getAffiliationPositions());
         assertEquals(0, author.getAffiliationPositions().get(0));
-        // FIXME make sure affiliation positions are aligned between CERMINE and Grobid (starting from the same index 0 or 1)
+
+        author = authors.get(1);
+        assertEquals("Michael Rönnlund", author.getAuthorFullName());
+        assertNotNull(author.getAffiliationPositions());
+        assertEquals(1, author.getAffiliationPositions().get(0));
+
+        author = authors.get(2);
+        assertEquals("Rolf Adolfsson", author.getAuthorFullName());
+        assertNotNull(author.getAffiliationPositions());
+        assertEquals(2, author.getAffiliationPositions().get(0));
+
+        author = authors.get(3);
+        assertEquals("Lars-Göran Nilsson", author.getAuthorFullName());
+        assertNotNull(author.getAffiliationPositions());
+        assertEquals(3, author.getAffiliationPositions().get(0));
+
         
         // Verify affiliations
         List<Affiliation> affiliations = metadata.getAffiliations();
         assertNotNull(affiliations, "Affiliations should not be null");
         assertFalse(affiliations.isEmpty(), "Affiliations should not be empty");
         assertEquals(4, affiliations.size());
-        
-        // Verify each affiliation has raw text set
-        for (Affiliation affiliation : affiliations) {
-            assertNotNull(affiliation.getRawText(), "Affiliation raw text should not be null");
-            assertFalse(affiliation.getRawText().toString().isEmpty(), "Affiliation raw text should not be empty");
-        }
         
         // Verifying all the fields for the first affiliation
         // FIXME, we should get a compound organization name! Check how it was handled by CERMINE and align this solution
@@ -201,9 +207,33 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertEquals("Sweden", affiliations.get(0).getCountryName());
         assertEquals("SE", affiliations.get(0).getCountryCode());
         assertEquals(
-                "1 Centre for Population Studies/ Ageing and Living Conditions , and Department of Psychology , Umeå University , Umeå , Sweden",
+                "Centre for Population Studies/ Ageing and Living Conditions , and Department of Psychology , Umeå University , Umeå , Sweden",
                 affiliations.get(0).getRawText());
-
+        
+        assertEquals("Department of Psychology", affiliations.get(1).getOrganization());
+        assertEquals("Umeå,Sweden", affiliations.get(1).getAddress());
+        assertEquals("Sweden", affiliations.get(1).getCountryName());
+        assertEquals("SE", affiliations.get(1).getCountryCode());
+        assertEquals(
+                "Department of Psychology , Umeå University , Umeå , Sweden",
+                affiliations.get(1).getRawText());
+        
+        assertEquals("Department of Clinical Sciences", affiliations.get(2).getOrganization());
+        assertEquals("Umeå,Sweden", affiliations.get(2).getAddress());
+        assertEquals("Sweden", affiliations.get(2).getCountryName());
+        assertEquals("SE", affiliations.get(2).getCountryCode());
+        assertEquals(
+                "Department of Clinical Sciences , Division of Psychiatry , Umeå University , Umeå , Sweden",
+                affiliations.get(2).getRawText());
+        
+        assertEquals("Department of Psychology", affiliations.get(3).getOrganization());
+        assertEquals("Stockholm,Sweden", affiliations.get(3).getAddress());
+        assertEquals("Sweden", affiliations.get(3).getCountryName());
+        assertEquals("SE", affiliations.get(3).getCountryCode());
+        assertEquals(
+                "Department of Psychology , Stockholm University , and Stockholm Brain Institute , Stockholm , Sweden",
+                affiliations.get(3).getRawText());
+        
         // Verify abstract contains the correct content
         String abstractText = metadata.getAbstract$().toString();
         assertTrue(abstractText.contains("Background:"), "Abstract should contain 'Background' section");
@@ -246,7 +276,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         String documentId = "ref-test";
         
         // When
-        ExtractedDocumentMetadata metadata = transformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml);
         
         // Then - verify references
         List<ReferenceMetadata> references = metadata.getReferences();
