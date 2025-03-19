@@ -226,20 +226,6 @@ public class TeiToExtractedDocumentMetadataTransformer {
 
         return plainText.toString();
     }
-/*
-    private String extractTextContent(Document document, XPath xPath) throws XPathExpressionException {
-        StringBuilder textBuilder = new StringBuilder();
-
-        // Extract text from all div elements
-        NodeList divs = (NodeList) xPath.evaluate("//tei:div", document, XPathConstants.NODESET);
-        for (int i = 0; i < divs.getLength(); i++) {
-            Node div = divs.item(i);
-            textBuilder.append(div.getTextContent().trim()).append("\n\n");
-        }
-
-        return textBuilder.toString().trim();
-    }
-*/
     
     private static String extractSingleValue(Node node, XPath xPath, String expression) {
         try {
@@ -258,6 +244,30 @@ public class TeiToExtractedDocumentMetadataTransformer {
             Node resultNode = (Node) xPath.evaluate(expression, node, XPathConstants.NODE);
             if (resultNode != null) {
                 return resultNode;
+            }
+        } catch (XPathExpressionException e) {
+            logger.warn("Error extracting value with XPath: " + expression, e);
+        }
+        return null;
+    }
+    
+    private static String extractSingleConcatValueFromChildNodes(Node node, XPath xPath, String expression) {
+        try {
+            StringBuilder concatenatedNameBuilder = new StringBuilder(); 
+            NodeList nodes = (NodeList) xPath.evaluate(expression, node, XPathConstants.NODESET);
+            if (nodes != null && nodes.getLength() > 0) {
+                for (int j = 0; j < nodes.getLength(); j++) {
+                    String currentTextContent = nodes.item(j).getTextContent().trim();
+                    if (StringUtils.isNotEmpty(currentTextContent)) {
+                        concatenatedNameBuilder.append(currentTextContent);
+                        if (j < nodes.getLength()-1) {
+                            concatenatedNameBuilder.append(", ");
+                        }
+                    }
+                }
+                if (StringUtils.isNotEmpty(concatenatedNameBuilder)) {
+                    return concatenatedNameBuilder.toString().trim();
+                }
             }
         } catch (XPathExpressionException e) {
             logger.warn("Error extracting value with XPath: " + expression, e);
@@ -402,24 +412,8 @@ public class TeiToExtractedDocumentMetadataTransformer {
                 
                 // building an organization name from multiple orgName elements
                 // relying on original elements order without relying on type attribute
-                StringBuilder orgNameBuilder = new StringBuilder(); 
-                NodeList orgNodes = (NodeList) xPath.evaluate(".//tei:orgName", affNode,
-                        XPathConstants.NODESET);
-                if (orgNodes != null && orgNodes.getLength() > 0) {
-                    for (int j = 0; j < orgNodes.getLength(); j++) {
-                        String currentOrgName = orgNodes.item(j).getTextContent().trim();
-                        if (StringUtils.isNotEmpty(currentOrgName)) {
-                            orgNameBuilder.append(currentOrgName);
-                            if (j < orgNodes.getLength()-1) {
-                                orgNameBuilder.append(", ");
-                            }
-                        }
-                    }
-                    if (StringUtils.isNotEmpty(orgNameBuilder)) {
-                        affBuilder.setOrganization(orgNameBuilder.toString().trim());
-                    }
-                }
-
+                affBuilder.setOrganization(extractSingleConcatValueFromChildNodes(affNode, xPath, ".//tei:orgName"));
+                
                 Node countryNode = extractSingleNode(affNode, xPath, ".//tei:country");
                 if (countryNode != null) {
                     // setting country name
@@ -435,13 +429,11 @@ public class TeiToExtractedDocumentMetadataTransformer {
                     }
                 }
 
-                // FIXME we should be able to concatenate address when multiple elements defined
-                // alternatively extract sub elements and build string out of them
-                String address = extractSingleValue(affNode, xPath, ".//tei:address");
-                if (StringUtils.isNotEmpty(address)) {
-                    String normaizedAddress = address.trim().replace(" ", "").replace('\n', ','); 
-                    affBuilder.setAddress(normaizedAddress);
-                }
+                // building an address from multiple address subelements
+                // relying on original elements order without relying on type attribute
+                // FIXME make sure there are always child elements (such as settlement, region, country) 
+                // or if it could potentially include text content alone 
+                affBuilder.setAddress(extractSingleConcatValueFromChildNodes(affNode, xPath, ".//tei:address/*"));
 
                 Affiliation affiliation = affBuilder.build();
                 affiliations.add(affiliation);
