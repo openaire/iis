@@ -107,7 +107,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
     }
     
     @Test
-    public void testExceptionHandling() {
+    public void testExceptionHandlingForInvalidXML() {
         // Given
         String documentId = "invalid-doc";
         String invalidXml = "This is not valid XML";
@@ -116,6 +116,19 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertThrows(
             Exception.class,
             () -> transformer.transformToExtractedDocumentMetadata(documentId, invalidXml),
+            "Should throw an exception for invalid XML"
+        );
+    }
+    
+    @Test
+    public void testExceptionHandlingForMissingId() {
+        // Given
+        String documentId = null;
+        
+        // When & Then
+        assertThrows(
+            Exception.class,
+            () -> transformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml),
             "Should throw an exception for invalid XML"
         );
     }
