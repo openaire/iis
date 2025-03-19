@@ -128,6 +128,11 @@ public class TeiToExtractedDocumentMetadataTransformer {
             documentBuilder.setKeywords(keywords);
         }
         
+        Map<CharSequence, CharSequence> externalIdentifiers = extractExternalIdentifiers(document, xPath);
+        if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+            documentBuilder.setExternalIdentifiers(externalIdentifiers);
+        }
+        
         // Extract language if available
         String language = extractLanguage(document, xPath);
         if (StringUtils.isNotEmpty(language)) {
@@ -367,7 +372,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         }
         return null;
     }
-
+    
     private static List<CharSequence> extractKeywords(Document document, XPath xPath) {
         try {
             NodeList keywordNodes = (NodeList) xPath.evaluate("//tei:teiHeader//tei:keywords/tei:term", document,
@@ -384,6 +389,29 @@ public class TeiToExtractedDocumentMetadataTransformer {
             }
         } catch (XPathExpressionException e) {
             logger.warn("Error extracting keywords", e);
+        }
+        return null;
+    }
+
+    private static Map<CharSequence, CharSequence> extractExternalIdentifiers(Document document, XPath xPath) {
+        try {
+            // FIXME make sure we cover all the cases
+            NodeList extIdNodes = (NodeList) xPath.evaluate("//tei:teiHeader//tei:biblStruct/tei:idno", document,
+                    XPathConstants.NODESET);
+            if (extIdNodes != null && extIdNodes.getLength() > 0) {
+                Map<CharSequence, CharSequence> externalIds = new HashMap<>();
+                for (int i = 0; i < extIdNodes.getLength(); i++) {
+                    Element currentIdElement = (Element) extIdNodes.item(i);
+                    String extIdKey = currentIdElement.getAttribute("type");
+                    String extIdValue = currentIdElement.getTextContent().trim();
+                    if (StringUtils.isNotEmpty(extIdKey) && StringUtils.isNotEmpty(extIdValue)) {
+                        externalIds.put(extIdKey, extIdValue);
+                    }
+                }
+                return externalIds;
+            }
+        } catch (XPathExpressionException e) {
+            logger.warn("Error extracting external identifiers", e);
         }
         return null;
     }
