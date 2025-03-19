@@ -264,6 +264,12 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertEquals("risk factor", keywords.get(4));
         assertEquals("longitudinal", keywords.get(5));
 
+        // Verify external identifiers
+        assertNotNull(metadata.getExternalIdentifiers(), "External identifiers should not be null");
+        assertEquals(2, metadata.getExternalIdentifiers().size(), "External identifiers should have 2 entries");
+        assertEquals("10.1017/s1041610213001804", metadata.getExternalIdentifiers().get("DOI"));
+        assertEquals("A3E9BE5498C69FF0308825B2B002878D", metadata.getExternalIdentifiers().get("MD5"));
+        
         // Verify references
         List<ReferenceMetadata> references = metadata.getReferences();
         assertNotNull(references, "References should not be null");
