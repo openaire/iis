@@ -51,8 +51,21 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertNotNull(metadata, "Extracted metadata should not be null");
         assertEquals(documentId, metadata.getId(), "Document ID should match the provided ID");
         assertEquals("This is a minimal test document.\n\n", metadata.getText(), "Text content should match the provided content");
+        assertEquals("This is a minimal test document.", metadata.getAbstract$(), "Abstract content should match the provided content");
         assertNull(metadata.getTitle(), "Title should be null for minimal content");
         assertNull(metadata.getYear(), "Year should be null for minimal content");
+        assertNull(metadata.getIssue(), "Issue should be null for minimal content");
+        assertNull(metadata.getJournal(), "Journal should be null for minimal content");
+        assertNull(metadata.getLanguage(), "Language should be null for minimal content");
+        assertNull(metadata.getVolume(), "Volume should be null for minimal content");
+        assertNull(metadata.getPublisher(), "Publisher should be null for minimal content");
+        assertNull(metadata.getPublicationTypeName(), "Publication type name should be null for minimal content");
+        assertNull(metadata.getPages(), "Pages should be null for minimal content");
+        assertNull(metadata.getAuthors(), "Authors should be null for minimal content");
+        assertNull(metadata.getKeywords(), "Keywords should be null for minimal content");
+        assertNull(metadata.getExternalIdentifiers(), "External identifiers should be null for minimal content");
+        assertNull(metadata.getAffiliations(), "Affiliations should be null for minimal content");
+        assertNull(metadata.getReferences(), "References should be null for minimal content");
     }
 
     @Test
