@@ -256,22 +256,14 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         // Verify keywords
         List<CharSequence> keywords = metadata.getKeywords();
         assertNotNull(keywords, "Keywords should not be null");
-        assertTrue(keywords.size() >= 5, "Should extract at least 5 keywords");
-        
-        // Check specific keywords
-        boolean foundDementia = false;
-        boolean foundStress = false;
-        for (CharSequence keyword : keywords) {
-            String keywordStr = keyword.toString();
-            if (keywordStr.equals("dementia")) {
-                foundDementia = true;
-            } else if (keywordStr.equals("stress")) {
-                foundStress = true;
-            }
-        }
-        assertTrue(foundDementia, "Should find keyword 'dementia'");
-        assertTrue(foundStress, "Should find keyword 'stress'");
-        
+        assertEquals(6, keywords.size(), "Should extract at least 5 keywords");
+        assertEquals("dementia", keywords.get(0));
+        assertEquals("Alzheimer's disease", keywords.get(1));
+        assertEquals("life events", keywords.get(2));
+        assertEquals("stress", keywords.get(3));
+        assertEquals("risk factor", keywords.get(4));
+        assertEquals("longitudinal", keywords.get(5));
+
         // Verify references
         List<ReferenceMetadata> references = metadata.getReferences();
         assertNotNull(references, "References should not be null");
