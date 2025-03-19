@@ -202,7 +202,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         
         // Verifying all the fields for the first affiliation
         assertEquals("Centre for Population Studies, Department of Psychology, Ageing and Living Conditions, Umeå University", affiliations.get(0).getOrganization());
-        assertEquals("Umeå,Sweden", affiliations.get(0).getAddress());
+        assertEquals("Umeå, Sweden", affiliations.get(0).getAddress());
         assertEquals("Sweden", affiliations.get(0).getCountryName());
         assertEquals("SE", affiliations.get(0).getCountryCode());
         assertEquals(
@@ -210,7 +210,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
                 affiliations.get(0).getRawText());
         
         assertEquals("Department of Psychology, Umeå University", affiliations.get(1).getOrganization());
-        assertEquals("Umeå,Sweden", affiliations.get(1).getAddress());
+        assertEquals("Umeå, Sweden", affiliations.get(1).getAddress());
         assertEquals("Sweden", affiliations.get(1).getCountryName());
         assertEquals("SE", affiliations.get(1).getCountryCode());
         assertEquals(
@@ -218,7 +218,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
                 affiliations.get(1).getRawText());
         
         assertEquals("Department of Clinical Sciences, Division of Psychiatry, Umeå University", affiliations.get(2).getOrganization());
-        assertEquals("Umeå,Sweden", affiliations.get(2).getAddress());
+        assertEquals("Umeå, Sweden", affiliations.get(2).getAddress());
         assertEquals("Sweden", affiliations.get(2).getCountryName());
         assertEquals("SE", affiliations.get(2).getCountryCode());
         assertEquals(
@@ -226,7 +226,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
                 affiliations.get(2).getRawText());
         
         assertEquals("Department of Psychology, Stockholm University, Stockholm Brain Institute", affiliations.get(3).getOrganization());
-        assertEquals("Stockholm,Sweden", affiliations.get(3).getAddress());
+        assertEquals("Stockholm, Sweden", affiliations.get(3).getAddress());
         assertEquals("Sweden", affiliations.get(3).getCountryName());
         assertEquals("SE", affiliations.get(3).getCountryCode());
         assertEquals(
