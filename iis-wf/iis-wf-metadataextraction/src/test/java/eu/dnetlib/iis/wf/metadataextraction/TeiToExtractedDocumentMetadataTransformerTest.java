@@ -201,8 +201,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertEquals(4, affiliations.size());
         
         // Verifying all the fields for the first affiliation
-        // FIXME, we should get a compound organization name! Check how it was handled by CERMINE and align this solution
-        assertEquals("Centre for Population Studies", affiliations.get(0).getOrganization());
+        assertEquals("Centre for Population Studies, Department of Psychology, Ageing and Living Conditions, Umeå University", affiliations.get(0).getOrganization());
         assertEquals("Umeå,Sweden", affiliations.get(0).getAddress());
         assertEquals("Sweden", affiliations.get(0).getCountryName());
         assertEquals("SE", affiliations.get(0).getCountryCode());
@@ -210,7 +209,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
                 "Centre for Population Studies/ Ageing and Living Conditions , and Department of Psychology , Umeå University , Umeå , Sweden",
                 affiliations.get(0).getRawText());
         
-        assertEquals("Department of Psychology", affiliations.get(1).getOrganization());
+        assertEquals("Department of Psychology, Umeå University", affiliations.get(1).getOrganization());
         assertEquals("Umeå,Sweden", affiliations.get(1).getAddress());
         assertEquals("Sweden", affiliations.get(1).getCountryName());
         assertEquals("SE", affiliations.get(1).getCountryCode());
@@ -218,7 +217,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
                 "Department of Psychology , Umeå University , Umeå , Sweden",
                 affiliations.get(1).getRawText());
         
-        assertEquals("Department of Clinical Sciences", affiliations.get(2).getOrganization());
+        assertEquals("Department of Clinical Sciences, Division of Psychiatry, Umeå University", affiliations.get(2).getOrganization());
         assertEquals("Umeå,Sweden", affiliations.get(2).getAddress());
         assertEquals("Sweden", affiliations.get(2).getCountryName());
         assertEquals("SE", affiliations.get(2).getCountryCode());
@@ -226,7 +225,7 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
                 "Department of Clinical Sciences , Division of Psychiatry , Umeå University , Umeå , Sweden",
                 affiliations.get(2).getRawText());
         
-        assertEquals("Department of Psychology", affiliations.get(3).getOrganization());
+        assertEquals("Department of Psychology, Stockholm University, Stockholm Brain Institute", affiliations.get(3).getOrganization());
         assertEquals("Stockholm,Sweden", affiliations.get(3).getAddress());
         assertEquals("Sweden", affiliations.get(3).getCountryName());
         assertEquals("SE", affiliations.get(3).getCountryCode());

@@ -400,10 +400,24 @@ public class TeiToExtractedDocumentMetadataTransformer {
                     throw new RuntimeException("no raw affiliation text defined for affiliation!");
                 }
                 
-                // FIXME, we should get a compound organization name instead of just the first lvl name
-                String orgName = extractSingleValue(affNode, xPath, ".//tei:orgName");
-                if (StringUtils.isNotEmpty(orgName)) {
-                    affBuilder.setOrganization(orgName);
+                // building an organization name from multiple orgName elements
+                // relying on original elements order without relying on type attribute
+                StringBuilder orgNameBuilder = new StringBuilder(); 
+                NodeList orgNodes = (NodeList) xPath.evaluate(".//tei:orgName", affNode,
+                        XPathConstants.NODESET);
+                if (orgNodes != null && orgNodes.getLength() > 0) {
+                    for (int j = 0; j < orgNodes.getLength(); j++) {
+                        String currentOrgName = orgNodes.item(j).getTextContent().trim();
+                        if (StringUtils.isNotEmpty(currentOrgName)) {
+                            orgNameBuilder.append(currentOrgName);
+                            if (j < orgNodes.getLength()-1) {
+                                orgNameBuilder.append(", ");
+                            }
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(orgNameBuilder)) {
+                        affBuilder.setOrganization(orgNameBuilder.toString().trim());
+                    }
                 }
 
                 Node countryNode = extractSingleNode(affNode, xPath, ".//tei:country");
