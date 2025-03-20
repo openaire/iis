@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.metadataextraction;
+package eu.dnetlib.iis.wf.metadataextraction.grobid;
 
 import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
 import eu.dnetlib.iis.metadataextraction.schemas.Author;

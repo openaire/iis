@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+<teiHeader>
+  <fileDesc>
+    <titleStmt>
+      <title>Test Document Title</title>
+    </titleStmt>
+    <publicationStmt>
+      <date when="2022">2022</date>
+      <publisher>Test Publisher</publisher>
+    </publicationStmt>
+  </fileDesc>
+  <profileDesc>
+    <abstract>
+      <p>This is a test abstract.</p>
+    </abstract>
+    <langUsage>
+      <language ident="en">English</language>
+    </langUsage>
+  </profileDesc>
+</teiHeader>
+<div xmlns="http://www.tei-c.org/ns/1.0">
+<p>This is the main content of the test document.</p>
+</div>
+</TEI>
