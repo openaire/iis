@@ -31,6 +31,8 @@ import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.wf.importer.content.approver.ContentApprover;
 import eu.dnetlib.iis.wf.importer.content.approver.InvalidCountableContentApproverWrapper;
 import eu.dnetlib.iis.wf.importer.content.approver.PDFHeaderBasedContentApprover;
+import eu.dnetlib.iis.wf.metadataextraction.grobid.GrobidClient;
+import eu.dnetlib.iis.wf.metadataextraction.grobid.TeiToExtractedDocumentMetadataTransformer;
 import pl.edu.icm.cermine.ContentExtractor;
 import pl.edu.icm.cermine.configuration.ExtractionConfigBuilder;
 import pl.edu.icm.cermine.configuration.ExtractionConfigProperty;
@@ -53,6 +55,8 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     public static final String NAMED_OUTPUT_FAULT = "output.fault";
     
     public static final String EXCLUDED_IDS = "excluded.ids";
+    
+    public static final String GROBID_SERVER_URL = "grobid.server.url";
     
     public static final String LOG_FAULT_PROCESSING_TIME_THRESHOLD_SECS = "log.fault.processing.time.threshold.secs";
     
@@ -97,7 +101,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     private long intervalTime = 0;
 
     /**
-     * Processing timeout threshold, metadata extraction for given record will be interrupted when threshold exceeded.
+     * Processing timeout threshold, CERMINE metadata extraction for given record will be interrupted when threshold exceeded.
      */
     private Integer interruptionTimeoutSecs;
     
@@ -116,6 +120,11 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      * Content approver module.
      */
     private ContentApprover contentApprover;
+    
+    /**
+     * Grobid client responsible for communication with external grobid server.
+     */
+    private GrobidClient grobidClient;
     
     /**
      * Hadoop counters enum of invalid records 
@@ -137,6 +146,15 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         namedOutputFault = context.getConfiguration().get(NAMED_OUTPUT_FAULT);
         if (namedOutputFault == null || namedOutputFault.isEmpty()) {
             throw new RuntimeException("no named output provided for fault");
+        }
+        
+        String grobidServerUrl = context.getConfiguration().get(GROBID_SERVER_URL);
+        if (grobidServerUrl != null && !grobidServerUrl.trim().isEmpty()
+                && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(grobidServerUrl)) {
+            log.info("enabling metadata extraction relying on Grobid, url address: " + grobidServerUrl);
+            this.grobidClient = new GrobidClient(grobidServerUrl);
+        } else {
+            log.info("enabling metadata extraction relying on CERMINE");
         }
 
         String excludedIdsCSV = context.getConfiguration().get(EXCLUDED_IDS);
@@ -168,6 +186,9 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     @Override
     public void cleanup(Context context) throws IOException, InterruptedException {
         mos.close();
+        if (this.grobidClient != null) {
+            this.grobidClient.close();    
+        }
     }
     
     /* (non-Javadoc)
@@ -223,17 +244,12 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         
         log.info("starting processing for id: " + documentId);
         long startTime = System.currentTimeMillis();
-        
         try {
-            // disabling images extraction
-            ExtractionConfigBuilder builder = new ExtractionConfigBuilder(); 
-            builder.setProperty(ExtractionConfigProperty.IMAGES_EXTRACTION, false);
-            ExtractionConfigRegister.set(builder.buildConfiguration());
-            
-            ContentExtractor extractor = interruptionTimeoutSecs != null ? new ContentExtractor(interruptionTimeoutSecs)
-                    : new ContentExtractor();
-            extractor.setPDF(contentStream);
-            handleContent(extractor, documentId);
+            if (grobidClient != null) {
+                processStreamWithGrobid(documentId, contentStream);
+            } else {
+                processStreamWithCermine(documentId, contentStream); 
+            }
         } catch (Exception e) {
             log.error((e.getCause() instanceof InvalidPdfException) ? "Invalid PDF file" 
                     : "got unexpected exception, just logging", e);
@@ -246,6 +262,34 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
 
     
     //------------------------ PRIVATE --------------------------
+
+    /**
+     * Parses content stream by relying on external Grobid server.
+     * @param documentId source document identifier
+     * @param contentStream PDF content stream to be processed
+     */
+    private void processStreamWithGrobid(String documentId, InputStream contentStream)  throws Exception {
+        String teiXml = grobidClient.processPdfInputStream(contentStream);
+        mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
+                TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, teiXml)));
+    }
+    
+    /**
+     * Parses content stream by relying on embedded CERMINE library.
+     * @param documentId source document identifier
+     * @param contentStream PDF content stream to be processed
+     */
+    private void processStreamWithCermine(String documentId, InputStream contentStream)  throws Exception {
+     // disabling images extraction
+        ExtractionConfigBuilder builder = new ExtractionConfigBuilder(); 
+        builder.setProperty(ExtractionConfigProperty.IMAGES_EXTRACTION, false);
+        ExtractionConfigRegister.set(builder.buildConfiguration());
+        
+        ContentExtractor extractor = interruptionTimeoutSecs != null ? new ContentExtractor(interruptionTimeoutSecs)
+                : new ContentExtractor();
+        extractor.setPDF(contentStream);
+        handleContentWithCermine(extractor, documentId);
+    }
     
     /**
      * Extracts metadata and plaintext from content using extractor. Writes data to namedOutputMeta.
@@ -253,7 +297,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      * @param extractor content extractor holding PDF stream
      * @param documentId document identifier
      */
-    private void handleContent(ContentExtractor extractor, String documentId) throws TimeoutException, AnalysisException, IOException, InterruptedException, TransformationException {
+    private void handleContentWithCermine(ContentExtractor extractor, String documentId) throws TimeoutException, AnalysisException, IOException, InterruptedException, TransformationException {
         Element resultElem = extractor.getContentAsNLM();
         Document doc = new Document(resultElem);
         String text = null;
