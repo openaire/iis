@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.metadataextraction.grobid;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author mhorst
  */
-public class GrobidClient {
+public class GrobidClient implements Closeable {
     
     private static final Logger logger = LoggerFactory.getLogger(GrobidClient.class);
 
@@ -33,11 +34,17 @@ public class GrobidClient {
     private final String grobidUrl;
     
     /**
+     * HTTP client to be closed once the GrobidClient is closed. 
+     */
+    private final CloseableHttpClient httpClient;
+    
+    /**
      * Default constructor accepting Grobid server location as parameter.
      * @param grobidUrl grobid server location
      */
     public GrobidClient(String grobidUrl) {
         this.grobidUrl = grobidUrl;
+        this.httpClient = HttpClients.createDefault();
     }
     
     // ------------------------------------- LOGIC ----------------------------------------------
@@ -54,12 +61,12 @@ public class GrobidClient {
         logger.info("Processing PDF from file: {}", inputFile);
         logger.info("Using Grobid server at {}", grobidUrl);
         
-        GrobidClient client = new GrobidClient(grobidUrl);
-        long startTime = System.currentTimeMillis();
-        String result = client.processPdfFile(inputFile);
-        System.out.println(result);
-        System.out.println("result generated in " + (System.currentTimeMillis()-startTime) + "ms");
-
+        try (GrobidClient client = new GrobidClient(grobidUrl)) {
+            long startTime = System.currentTimeMillis();
+            String result = client.processPdfFile(inputFile);
+            System.out.println(result);
+            System.out.println("result generated in " + (System.currentTimeMillis()-startTime) + "ms");
+        }
     }
     
     /**
@@ -96,25 +103,30 @@ public class GrobidClient {
         
         HttpEntity multipart = builder.build();
         httpPost.setEntity(multipart);
-        // FIXME once integrated with the workflow we cannot instantiate client for each request, need to do this at init phase and close at destroy phase
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                int statusCode = response.getStatusLine().getStatusCode();
-                
-                if (statusCode != 200) {
-                    String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-                    throw new IOException("Grobid request failed with status code " + statusCode + ": " + error);
-                }
-                
-                HttpEntity responseEntity = response.getEntity();
-                if (responseEntity != null) {
-                    return EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
-                } else {
-                    throw new IOException("No response entity received from Grobid");
-                }
+
+        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            
+            if (statusCode != 200) {
+                String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                throw new IOException("Grobid request failed with status code " + statusCode + ": " + error);
+            }
+            
+            HttpEntity responseEntity = response.getEntity();
+            if (responseEntity != null) {
+                return EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+            } else {
+                throw new IOException("No response entity received from Grobid");
             }
         }
         
     }
     
+    @Override
+    public void close() throws IOException {
+        if (httpClient != null) {
+            httpClient.close();
+        }
+    }    
+
 }
