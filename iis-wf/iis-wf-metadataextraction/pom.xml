@@ -127,6 +127,11 @@
             <artifactId>bcpkix-jdk15on</artifactId>
         </dependency>
 		
+		<!-- required by Grobid client -->
+		<dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+        </dependency>
 	</dependencies>
 
 </project>

@@ -1,4 +1,4 @@
-package eu.dnetlib.iis.wf.metadataextraction;
+package eu.dnetlib.iis.wf.metadataextraction.grobid;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
