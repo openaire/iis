@@ -39,6 +39,21 @@
 			<description>excluded identifiers list</description>
 		</property>
 		<property>
+            <name>grobid_server_url</name>
+            <value>$UNDEFINED$</value>
+            <description>Grobid server address, when undefined embedded CERMINE will be used instead</description>
+        </property>
+        <property>
+            <name>grobid_server_connection_timeout</name>
+            <value>60000</value>
+            <description>Grobid server connection timeout</description>
+        </property>
+        <property>
+            <name>grobid_server_read_timeout</name>
+            <value>60000</value>
+            <description>Grobid server read timeout</description>
+        </property>
+        <property>
 			<name>log_fault_processing_time_threshold_secs</name>
 			<value>60</value>
 			<description>processing time threshold expressed in seconds. 
@@ -198,6 +213,18 @@
 				    <name>excluded.ids</name>
 				   <value>${excluded_ids}</value>
 				</property>
+				<property>
+                    <name>grobid.server.url</name>
+                   <value>${grobid_server_url}</value>
+                </property>
+                <property>
+                    <name>grobid.server.connection.timeout</name>
+                   <value>${grobid_server_connection_timeout}</value>
+                </property>
+                <property>
+                    <name>grobid.server.read.timeout</name>
+                   <value>${grobid_server_read_timeout}</value>
+                </property>
                 <property>
                     <name>interrupt.processing.time.threshold.secs</name>
                    <value>${interrupt_processing_time_threshold_secs}</value>
