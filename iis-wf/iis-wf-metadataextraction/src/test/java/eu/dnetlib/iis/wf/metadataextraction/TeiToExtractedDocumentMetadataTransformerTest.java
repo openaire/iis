@@ -20,9 +20,15 @@ import eu.dnetlib.iis.metadataextraction.schemas.Author;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 
+/**
+ * {@link TeiToExtractedDocumentMetadataTransformer} test class.
+ * @author mhorst
+ */
 public class TeiToExtractedDocumentMetadataTransformerTest {
 
     private String sampleTeiXml;
+    private String basicTeiXml;
+    private String minimalTeiXml;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -31,21 +37,23 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
             assertNotNull(inputStream, "Sample TEI XML file not found in resources");
             sampleTeiXml = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
         }
+        try (InputStream inputStream = getClass().getResourceAsStream("/eu/dnetlib/iis/wf/metadataextraction/grobid/input/basic.tei.xml")) {
+            assertNotNull(inputStream, "Basic TEI XML file not found in resources");
+            basicTeiXml = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+        }
+        try (InputStream inputStream = getClass().getResourceAsStream("/eu/dnetlib/iis/wf/metadataextraction/grobid/input/minimal.tei.xml")) {
+            assertNotNull(inputStream, "Minimal TEI XML file not found in resources");
+            minimalTeiXml = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+        }
     }
 
     @Test
     public void testTransformWithMinimalContent() throws Exception {
         // Given
         String documentId = "minimal-doc";
-        String minimalTei = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">\n" +
-                "<div xmlns=\"http://www.tei-c.org/ns/1.0\">\n" +
-                "<p>This is a minimal test document.</p>\n" +
-                "</div>\n" +
-                "</TEI>";
-
+        
         // When
-        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, minimalTei);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, minimalTeiXml);
 
         // Then
         assertNotNull(metadata, "Extracted metadata should not be null");
@@ -69,37 +77,12 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
     }
 
     @Test
-    public void testExtractionWithCustomTei() throws Exception {
+    public void testExtractionWithBasicTei() throws Exception {
         // Given
-        String documentId = "custom-doc";
-        String customTei = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">\n" +
-                "<teiHeader>\n" +
-                "  <fileDesc>\n" +
-                "    <titleStmt>\n" +
-                "      <title>Test Document Title</title>\n" +
-                "    </titleStmt>\n" +
-                "    <publicationStmt>\n" +
-                "      <date when=\"2022\">2022</date>\n" +
-                "      <publisher>Test Publisher</publisher>\n" +
-                "    </publicationStmt>\n" +
-                "  </fileDesc>\n" +
-                "  <profileDesc>\n" +
-                "    <abstract>\n" +
-                "      <p>This is a test abstract.</p>\n" +
-                "    </abstract>\n" +
-                "    <langUsage>\n" +
-                "      <language ident=\"en\">English</language>\n" +
-                "    </langUsage>\n" +
-                "  </profileDesc>\n" +
-                "</teiHeader>\n" +
-                "<div xmlns=\"http://www.tei-c.org/ns/1.0\">\n" +
-                "<p>This is the main content of the test document.</p>\n" +
-                "</div>\n" +
-                "</TEI>";
+        String documentId = "basic-doc";
 
         // When
-        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, customTei);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, basicTeiXml);
 
         // Then
         assertNotNull(metadata, "Extracted metadata should not be null");
