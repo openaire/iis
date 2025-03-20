@@ -120,6 +120,12 @@
 			<artifactId>paranamer</artifactId>
 		</dependency>
 		<!-- Needed by Avro } -->
+		
+		<!-- required by Grobid client -->
+		<dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+        </dependency>
 	</dependencies>
 
 </project>
