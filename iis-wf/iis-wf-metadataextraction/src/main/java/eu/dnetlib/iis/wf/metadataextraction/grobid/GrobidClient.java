@@ -14,10 +14,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import eu.dnetlib.iis.wf.importer.HttpClientUtils;
 
 /**
  * HTTP client communicating with Grobid server.
@@ -41,10 +42,12 @@ public class GrobidClient implements Closeable {
     /**
      * Default constructor accepting Grobid server location as parameter.
      * @param grobidUrl grobid server location
+     * @param connectionTimeout
+     * @param readTimeout
      */
-    public GrobidClient(String grobidUrl) {
+    public GrobidClient(String grobidUrl, int connectionTimeout, int readTimeout) {
         this.grobidUrl = grobidUrl;
-        this.httpClient = HttpClients.createDefault();
+        this.httpClient = HttpClientUtils.buildHttpClient(connectionTimeout, readTimeout);
     }
     
     // ------------------------------------- LOGIC ----------------------------------------------
@@ -61,7 +64,7 @@ public class GrobidClient implements Closeable {
         logger.info("Processing PDF from file: {}", inputFile);
         logger.info("Using Grobid server at {}", grobidUrl);
         
-        try (GrobidClient client = new GrobidClient(grobidUrl)) {
+        try (GrobidClient client = new GrobidClient(grobidUrl, 60000, 60000)) {
             long startTime = System.currentTimeMillis();
             String result = client.processPdfFile(inputFile);
             System.out.println(result);

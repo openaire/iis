@@ -58,6 +58,10 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     
     public static final String GROBID_SERVER_URL = "grobid.server.url";
     
+    public static final String GROBID_SERVER_READ_TIMEOUT = "grobid.server.read.timeout";
+    
+    public static final String GROBID_SERVER_CONNECTION_TIMEOUT = "grobid.server.connection.timeout";
+    
     public static final String LOG_FAULT_PROCESSING_TIME_THRESHOLD_SECS = "log.fault.processing.time.threshold.secs";
     
     public static final String INTERRUPT_PROCESSING_TIME_THRESHOLD_SECS = "interrupt.processing.time.threshold.secs";
@@ -152,7 +156,19 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         if (grobidServerUrl != null && !grobidServerUrl.trim().isEmpty()
                 && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(grobidServerUrl)) {
             log.info("enabling metadata extraction relying on Grobid, url address: " + grobidServerUrl);
-            this.grobidClient = new GrobidClient(grobidServerUrl);
+            int connectionTimeout = 60000;
+            String connectionTimeoutStr = context.getConfiguration().get(GROBID_SERVER_CONNECTION_TIMEOUT);
+            if (connectionTimeoutStr != null && !connectionTimeoutStr.trim().isEmpty() && 
+                    !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(connectionTimeoutStr)) {
+                connectionTimeout = Integer.parseInt(connectionTimeoutStr); 
+            }
+            int readTimeout = 60000;
+            String readTimeoutStr = context.getConfiguration().get(GROBID_SERVER_READ_TIMEOUT);
+            if (readTimeoutStr != null && !readTimeoutStr.trim().isEmpty() && 
+                    !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readTimeoutStr)) {
+                readTimeout = Integer.parseInt(readTimeoutStr); 
+            }
+            this.grobidClient = new GrobidClient(grobidServerUrl, connectionTimeout, readTimeout);
         } else {
             log.info("enabling metadata extraction relying on CERMINE");
         }
