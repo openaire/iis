@@ -87,6 +87,10 @@
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
+            <property>
+                <name>mapreduce.job.user.classpath.first</name>
+                <value>true</value>
+            </property>
         </configuration>
     </global>
     
