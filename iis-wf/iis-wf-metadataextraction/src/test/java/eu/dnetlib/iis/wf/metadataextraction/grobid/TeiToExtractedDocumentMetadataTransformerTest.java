@@ -258,9 +258,16 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertNotNull(references, "References should not be null");
         assertFalse(references.isEmpty(), "References should not be empty");
         
-        // Check that text content is not empty
+        // Check that text content is not empty and that in inludes all relevant sections
         assertNotNull(metadata.getText(), "Text content should not be null");
-        assertTrue(metadata.getText().length() > 1000, "Text content should have significant length");
+        String plaintext = metadata.getText().toString();
+        assertTrue(plaintext.length() > 1000, "Text content should have significant length");
+        assertTrue(plaintext.contains("Stressful life events are not associated with the development of dementia"), "plaintext should contain title");
+        assertTrue(plaintext.contains("The impact of stressful life events as a risk factor of dementia diseases"), "plaintext should contain abstract");
+        assertTrue(plaintext.contains("We considered a range of potential confounders collected at the baseline examination"), "plaintext should contain text extracted from div section");
+        assertTrue(plaintext.contains("Baumeister, R. F., Bratslavsky, E., Finkenauer, C. and Vohs, K. D. (2001). Bad is stronger than good. "), "plaintext should contain text extracted from the bibliographic reference section");
+        
+        
     }
 
     @Test
