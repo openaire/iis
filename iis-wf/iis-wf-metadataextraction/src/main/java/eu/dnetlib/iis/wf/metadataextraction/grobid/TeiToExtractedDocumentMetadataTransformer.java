@@ -206,23 +206,17 @@ public class TeiToExtractedDocumentMetadataTransformer {
             }
 
             // Extract body text
-            NodeList divNodes = document.getElementsByTagName("div");
-            for (int i = 0; i < divNodes.getLength(); i++) {
-                Element divElement = (Element) divNodes.item(i);
-
-                // Get heading if available
-                NodeList headNodes = divElement.getElementsByTagName("head");
-                if (headNodes.getLength() > 0) {
-                    plainText.append(headNodes.item(0).getTextContent().trim()).append("\n\n");
-                }
-
-                // Get paragraphs
-                NodeList paragraphs = divElement.getElementsByTagName("p");
-                for (int j = 0; j < paragraphs.getLength(); j++) {
-                    plainText.append(paragraphs.item(j).getTextContent().trim()).append("\n\n");
-                }
+            Node bodyNode = document.getElementsByTagName("body").item(0);
+            if (bodyNode != null) {
+                processNodeContent(bodyNode, plainText);
             }
-
+            
+            // Extract back text
+            Node backNode = document.getElementsByTagName("back").item(0);
+            if (backNode != null) {
+                processNodeContent(backNode, plainText);
+            }
+            
             // Extract references/bibliography
             NodeList bibNodes = document.getElementsByTagName("listBibl");
             if (bibNodes.getLength() > 0) {
@@ -240,6 +234,25 @@ public class TeiToExtractedDocumentMetadataTransformer {
         }
 
         return plainText.toString();
+    }
+    
+    /**
+     * Process node content recursively to avoid text duplication.
+     */
+    private static void processNodeContent(Node node, StringBuilder plainText) {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            if (child.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+            String nodeName = child.getNodeName();
+            if ("div".equals(nodeName)) {
+                processNodeContent(child, plainText);
+            } else if ("p".equals(nodeName) || "head".equals(nodeName)) {
+                plainText.append(child.getTextContent().trim()).append("\n\n");
+            } 
+        }
     }
     
     private static String extractSingleValue(Node node, XPath xPath, String expression) {
