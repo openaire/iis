@@ -266,8 +266,6 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertTrue(plaintext.contains("The impact of stressful life events as a risk factor of dementia diseases"), "plaintext should contain abstract");
         assertTrue(plaintext.contains("We considered a range of potential confounders collected at the baseline examination"), "plaintext should contain text extracted from div section");
         assertTrue(plaintext.contains("Baumeister, R. F., Bratslavsky, E., Finkenauer, C. and Vohs, K. D. (2001). Bad is stronger than good. "), "plaintext should contain text extracted from the bibliographic reference section");
-        
-        
     }
 
     @Test
