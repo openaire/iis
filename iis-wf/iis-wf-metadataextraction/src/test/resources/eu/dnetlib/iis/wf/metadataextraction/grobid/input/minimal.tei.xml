@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
+<body>
 <div xmlns="http://www.tei-c.org/ns/1.0">
 <p>This is a minimal test document.</p>
 </div>
+</body>
 </TEI>

@@ -19,7 +19,9 @@
     </langUsage>
   </profileDesc>
 </teiHeader>
+<body>
 <div xmlns="http://www.tei-c.org/ns/1.0">
 <p>This is the main content of the test document.</p>
 </div>
+</body>
 </TEI>
