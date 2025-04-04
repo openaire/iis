@@ -1,0 +1,37 @@
+{
+    "id":"50|doi_________::d36eeb1f95335af209276f15e052a51f",
+    "title":"irrelevant",
+    "abstract":null,
+    "language":null,
+    "keywords":null,
+    "externalIdentifiers":null,
+    "journal":null,
+    "year":null,
+    "publisher":null,
+    "references":null,
+    "authors": [
+        {"authorFullName": "author1", "affiliationPositions": [0]},
+        {"authorFullName": "author2", "affiliationPositions": [1]}
+    ],
+    "affiliations":[
+        {
+        "organization":"Politecnico di Milano",
+        "countryName":null,
+        "countryCode":null,
+        "address":null,
+        "rawText":"Politecnico di Milano"
+        },
+        {
+        "organization":"Università degli Studi di Pisa",
+        "countryName":null,
+        "countryCode":null,
+        "address":null,
+        "rawText":"Università degli Studi di Pisa"
+        }
+    ],
+    "volume":null,
+    "issue":null,
+    "pages":null,
+    "publicationTypeName":null,
+    "text":""
+}

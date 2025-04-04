@@ -109,7 +109,48 @@ public class AffMatchingJobTest {
     }
     
     
-    
+    @Test
+    public void affiliationMatchingJobForItalianFalsePositives() throws IOException {
+        
+        
+        // given
+
+        String jsonInputOrgPath = ClassPathResourceProvider
+                .getResourcePath("data/inputItalian/organizations.json");
+        String jsonInputAffPath = ClassPathResourceProvider
+                .getResourcePath("data/inputItalian/affiliations.json");
+        String jsonInputInferredDocProjPath = ClassPathResourceProvider
+                .getResourcePath("data/inputItalian/docProjInferred.json");
+        String jsonInputDocProjPath = ClassPathResourceProvider
+                .getResourcePath("data/inputItalian/docProj.json");
+        String jsonInputProjOrgPath = ClassPathResourceProvider
+                .getResourcePath("data/inputItalian/projOrg.json");
+
+        String jsonOutputPath = ClassPathResourceProvider
+                .getResourcePath("data/expectedOutputItalian/matchedOrganizations.json");
+        String jsonOutputReportPath = ClassPathResourceProvider
+                .getResourcePath("data/expectedOutputItalian/report.json");
+        
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputOrgPath, Organization.class), inputOrgDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputAffPath, ExtractedDocumentMetadata.class), inputAffDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputInferredDocProjPath, DocumentToProject.class), inputInferredDocProjDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputDocProjPath, eu.dnetlib.iis.importer.schemas.DocumentToProject.class), inputDocProjDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputProjOrgPath, ProjectToOrganization.class), inputProjOrgDirPath);
+        
+        // execute & assert
+        
+        executeJobAndAssert(jsonOutputPath, jsonOutputReportPath);
+    }
     
     //------------------------ PRIVATE --------------------------
     
