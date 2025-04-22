@@ -12,9 +12,7 @@
         </property>
         <property>
             <name>input_matched_citations</name>
-            <value>$UNDEFINED$</value>
-            <description>input directory holding already matched citations to be excluded from processing as eu.dnetlib.iis.common.citations.schemas.Citation avro datastore. Omitted when set to $UNDEFINED$ value.
-            </description>
+            <description>input directory holding already matched citations to be excluded from processing as eu.dnetlib.iis.common.citations.schemas.Citation avro datastore. </description>
         </property>
         <property>
             <name>output_citations</name>
