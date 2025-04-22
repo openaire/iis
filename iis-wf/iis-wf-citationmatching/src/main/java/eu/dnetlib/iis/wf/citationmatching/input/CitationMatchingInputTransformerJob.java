@@ -2,7 +2,6 @@ package eu.dnetlib.iis.wf.citationmatching.input;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -78,16 +77,6 @@ public class CitationMatchingInputTransformerJob {
                     existingCacheId, CacheRecordType.data, Citations.class);
 
             //droping all bibrefs from input for all the matchable records present in cache
-
-            // FIXME we had to change the logic: do not care about the positions, we just exclude every bibref for publication stored in the cache (so processed already before)
-            // BUT WE SHOULD NOT SIMPLY DROP ALL THE RECORDS, JUST ALL THE BIBREFS FOR THAT RECORDS!!!!
-//            JavaPairRDD<CharSequence, Iterable<Integer>> groupedCachedCitations = cachedCitations.flatMapToPair(fullRecord -> {
-//                return fullRecord.getCitations().stream().map(
-//                        citation -> new Tuple2<>(fullRecord.getDocumentId(), citation.getPosition()))
-//                        .iterator();
-//            }).groupByKey();
-//          JavaPairRDD<CharSequence, Iterable<Integer>> joinedMatchedWithCachedCitations = groupedCachedCitations.union(groupedMatchedCitations).reduceByKey((x, y) -> mergePositions(x, y));
-            
             JavaPairRDD<CharSequence, Boolean> groupedCachedCitations = cachedCitations.mapToPair(x -> new Tuple2<>(x.getDocumentId(), true));
             
             JavaPairRDD<CharSequence, Iterable<Integer>> groupedMatchedCitations = matchedCitations
@@ -128,21 +117,5 @@ public class CitationMatchingInputTransformerJob {
         private String output;
         
     }
-    
-    /**
-     * Merging positions coming from two collections.
-     * @param collection1 first positions collection to be merged
-     * @param collection2 second positions colection to be merged 
-     * @return merged set of positions
-     */
-    private static Set<Integer> mergePositions(Iterable<Integer> collection1, Iterable<Integer> collection2) {
-        Set<Integer> mergedSet = Sets.newHashSet();
-        if (collection1 != null) {
-            collection1.forEach(mergedSet::add);
-        }
-        if (collection2 != null) {
-            collection2.forEach(mergedSet::add);
-        }
-        return mergedSet;
-    }
+
 }
