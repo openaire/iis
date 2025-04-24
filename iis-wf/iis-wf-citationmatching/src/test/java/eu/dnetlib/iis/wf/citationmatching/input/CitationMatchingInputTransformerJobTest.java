@@ -11,14 +11,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mock;
 
 import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
 import eu.dnetlib.iis.common.citations.schemas.Citation;
-import eu.dnetlib.iis.common.lock.LockManager;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
@@ -48,9 +46,6 @@ public class CitationMatchingInputTransformerJobTest {
     private Path cacheRootDir;
     
     private static TestingServer zookeeperServer;
-
-    @Mock
-    private LockManager lockManager;
     
     @BeforeAll
     public static void beforeAll() throws Exception {

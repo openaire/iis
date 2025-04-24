@@ -1,0 +1,19 @@
+{
+  "documentId": "id-1",
+  "citations": [
+    {
+      "position": 1,
+      "rawText": null,
+      "destinationDocumentId": "id-2",
+      "confidenceLevel": 0.8892515,
+      "externalDestinationDocumentIds": {}
+    },
+    {
+      "position": 2,
+      "rawText": null,
+      "destinationDocumentId": "id-20",
+      "confidenceLevel": 0.5,
+      "externalDestinationDocumentIds": {}
+    }
+  ]
+}

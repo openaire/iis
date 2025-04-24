@@ -32,7 +32,7 @@ public class DocumentToCitationDocumentConverterTest {
     public void convert_NULL_DOCUMENT() {
         
         // execute
-        assertThrows(NullPointerException.class, () -> converter.convert(null, emptyReferencePositions));
+        assertThrows(NullPointerException.class, () -> converter.convert(null, emptyReferencePositions, false));
     }
     
     @Test
@@ -54,7 +54,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         // execute
         
-        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions);
+        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions, false);
         
         
         // assert
@@ -113,7 +113,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         // execute
         
-        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions);
+        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions, false);
         
         
         // assert
@@ -149,6 +149,53 @@ public class DocumentToCitationDocumentConverterTest {
         
         assertEquals(expectedReference2, retDocumentMetadata.getReferences().get(1));
         
+    }
+    
+    @Test
+    public void convert_WITH_DISCARDED_REFERENCES() {
+        
+        // given
+        
+        eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata inputReference1 = eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata.newBuilder()
+                .setPosition(1)
+                .setBasicMetadata(eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata.newBuilder()
+                        .setTitle("First Reference Title")
+                        .setAuthors(Lists.newArrayList("author-id-3"))
+                        .setSource("Other Journal")
+                        .setPages(new Range("10", "11"))
+                        .setYear("2005")
+                        .build())
+                .setText("reference 1 raw text")
+                .build();
+        
+        eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata inputReference2 = eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata.newBuilder()
+                .setPosition(2)
+                .setBasicMetadata(eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata.newBuilder()
+                        .setTitle("Second Reference Title")
+                        .setAuthors(Lists.newArrayList("author-id-1", "author-id-4"))
+                        .setSource("Some Journal")
+                        .setPages(new Range("10", "23"))
+                        .setYear("2000")
+                        .build())
+                .setText("reference 2 raw text")
+                .build();
+        
+        ExtractedDocumentMetadataMergedWithOriginal inputDocument = ExtractedDocumentMetadataMergedWithOriginal.newBuilder()
+                .setId("document-id")
+                .setImportedAuthors(Lists.newArrayList())
+                .setReferences(Lists.newArrayList(inputReference1, inputReference2))
+                .setPublicationType(new PublicationType(true, false))
+                .build();
+        
+        
+        // execute
+        
+        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions, true);
+        
+        
+        // assert
+        
+        assertEquals(0, retDocumentMetadata.getReferences().size());
     }
     
     @Test
@@ -189,7 +236,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         // execute
         
-        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, Sets.newHashSet(2));
+        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, Sets.newHashSet(2), false);
         
         
         // assert
@@ -227,7 +274,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         // execute
         
-        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions);
+        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions, false);
         
         
         // assert
@@ -258,7 +305,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         // execute
         
-        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions);
+        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions, false);
         
         
         // assert
@@ -302,7 +349,7 @@ public class DocumentToCitationDocumentConverterTest {
         
         // execute
         
-        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions);
+        DocumentMetadata retDocumentMetadata = converter.convert(inputDocument, emptyReferencePositions, false);
         
         
         // assert
