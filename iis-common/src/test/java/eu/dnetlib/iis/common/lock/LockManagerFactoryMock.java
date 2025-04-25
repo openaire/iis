@@ -1,10 +1,6 @@
-package eu.dnetlib.iis.wf.referenceextraction;
+package eu.dnetlib.iis.common.lock;
 
 import org.apache.hadoop.conf.Configuration;
-
-import eu.dnetlib.iis.common.lock.LockManager;
-import eu.dnetlib.iis.common.lock.LockManagerFactory;
-
 /**
  * Mock implementation of lock manager.
  * 

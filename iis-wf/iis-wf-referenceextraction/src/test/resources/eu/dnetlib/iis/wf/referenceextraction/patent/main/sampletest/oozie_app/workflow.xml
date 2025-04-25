@@ -56,7 +56,7 @@
                 </property>
                 <property>
                     <name>patentLockManagerFactoryClassName</name>
-                    <value>eu.dnetlib.iis.wf.referenceextraction.LockManagerFactoryMock</value>
+                    <value>eu.dnetlib.iis.common.lock.LockManagerFactoryMock</value>
                 </property>
                 <property>
                     <name>input_document_text</name>
