@@ -237,6 +237,10 @@
             <name>citationmatchingFuzzyNumberOfPartitions</name>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
+        <property>
+            <name>citationmatchingFuzzyCacheLocation</name>
+            <description>fuzzy citation matching HDFS cache location</description>
+        </property>
         <!-- action set id properties -->
         <property>
             <name>export_action_set_id_document_similarities_standard</name>

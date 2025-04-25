@@ -326,6 +326,10 @@
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
         <property>
+            <name>citationmatchingFuzzyCacheLocation</name>
+            <description>fuzzy citation matching HDFS cache location</description>
+        </property>
+        <property>
             <name>referenceextractionCommunitySparkDriverMemory</name>
             <value>${sparkDriverMemory}</value>
             <description>memory for individual executor</description>
@@ -1583,6 +1587,10 @@
                 <property>
                     <name>numberOfPartitions</name>
                     <value>${citationmatchingFuzzyNumberOfPartitions}</value>
+                </property>
+                <property>
+                    <name>cacheRootDir</name>
+                    <value>${citationmatchingFuzzyCacheLocation}</value>
                 </property>
             </configuration>
         </sub-workflow>
