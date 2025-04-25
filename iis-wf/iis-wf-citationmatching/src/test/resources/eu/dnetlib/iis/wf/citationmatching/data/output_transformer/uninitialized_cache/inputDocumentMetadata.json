@@ -48,3 +48,29 @@
   },
   "publicationTypeName": null
 }
+{
+  "id": "id-4",
+  "year": 1980,
+  "publisher": null,
+  "language": null,
+  "title": null,
+  "externalIdentifiers": {
+    "id-1": "val-extr-1",
+    "id-3": "val-extr-3"
+  },
+  "journal": null,
+  "extractedAuthorFullNames": null,
+  "pages": null,
+  "volume": null,
+  "importedAuthors": null,
+  "keywords": null,
+  "references": null,
+  "issue": null,
+  "abstract": null,
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "publicationTypeName": null
+}
+

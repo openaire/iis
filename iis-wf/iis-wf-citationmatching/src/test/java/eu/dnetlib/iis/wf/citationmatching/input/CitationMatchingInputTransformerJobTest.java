@@ -16,6 +16,8 @@ import eu.dnetlib.iis.citationmatching.schemas.DocumentMetadata;
 import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
 import eu.dnetlib.iis.common.citations.schemas.Citation;
 import eu.dnetlib.iis.common.utils.AvroAssertTestUtil;
 import eu.dnetlib.iis.common.utils.AvroTestUtils;
@@ -150,7 +152,7 @@ public class CitationMatchingInputTransformerJobTest {
         String cacheId = "000001";
         AvroTestUtils.createLocalAvroDataStore(
                 JsonAvroTestUtils.readJsonDataStore(jsonInputCachedCitationsFile, Citations.class),
-                cacheRootDir.toString() + '/' + cacheId + "/data/");
+                CacheStorageUtils.getCacheLocation(cacheRootDir, cacheId, CacheRecordType.data).toString());
         CacheMetadataManagingProcess cacheProcess = new CacheMetadataManagingProcess();
         cacheProcess.writeCacheId(conf, cacheRootDir, cacheId);
         

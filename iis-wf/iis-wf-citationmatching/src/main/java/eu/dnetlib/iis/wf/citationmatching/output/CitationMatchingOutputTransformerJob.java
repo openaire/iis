@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.Optional;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -56,6 +58,7 @@ public class CitationMatchingOutputTransformerJob {
         
         SparkConf conf = new SparkConf();
         conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        conf.set("spark.kryo.registrator", "pl.edu.icm.sparkutils.avro.AvroCompatibleKryoRegistrator");
         
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
             
@@ -71,6 +74,8 @@ public class CitationMatchingOutputTransformerJob {
             JavaRDD<Citation> inputMatchedCitations = avroLoader.loadJavaRDD(sc, params.inputMatchedCitations, Citation.class);
             JavaRDD<eu.dnetlib.iis.common.citations.schemas.Citation> transformedMatchedCitations = 
                     inputMatchedCitations.map(inputCitation -> citationToCommonCitationConverter.convert(inputCitation));
+            // caching because this RDD is used for writing in cache and at output
+            transformedMatchedCitations.cache();
             
             JavaPairRDD<CharSequence, CitationEntry> transformedMatchedCitationsPair = transformedMatchedCitations.mapToPair(
                     x -> new Tuple2<CharSequence, CitationEntry>(x.getSourceDocumentId(), x.getEntry())); 
@@ -86,32 +91,32 @@ public class CitationMatchingOutputTransformerJob {
             
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> inputDocuments = avroLoader.loadJavaRDD(sc,
                     params.inputMetadata, ExtractedDocumentMetadataMergedWithOriginal.class);
-            inputDocuments.cache();
+            JavaPairRDD<CharSequence, Integer> inputDocumentsIdtoYear = inputDocuments.mapToPair(x -> new Tuple2<CharSequence, Integer>(x.getId(), x.getYear())); 
+            // caching because this RDD is used for filtering data for both caching and generating final output
+            inputDocumentsIdtoYear.cache();
 
-            // caching only a subset of matched citations coming from a paper published earlier that X years ago.
+            // caching only a subset of matched citations coming from a paper published earlier that X years ago
+            // and only the ones which were not cached before (required to cache also entries with no matches which will
+            // not be a part of transformedMatchedCitations but we should avoid incuding them in a subsequent run)
             int publicationYearThreadshold = Year.now().getValue() - params.cacheOlderThanXYears;
-            JavaPairRDD<CharSequence, Boolean> inputDocumentIdsAll = inputDocuments.mapToPair(x -> new Tuple2<CharSequence, Boolean>(x.getId(), true));
-            JavaPairRDD<CharSequence, Boolean> inputDocumentIdsEligibleForCaching = inputDocuments.filter(x -> x.getYear() < publicationYearThreadshold).mapToPair(
-                    x -> new Tuple2<CharSequence, Boolean>(x.getId(), true));
-            // TODO what to do with the ones not having a publication year specified: include in cache or rather discard for further rerun?
-            // currently they are not stored in cache, so they will be rerun
-            // TODO check how many of records having text do not have publication year specified - this will reveal how many will be constantly rerun
-            
-            // subset of matched citations which are eligible for caching 
-            JavaRDD<Citations> inputMatchedCitationsEligibleForCaching = transformedMatchedCitationsPair.join(inputDocumentIdsEligibleForCaching)
-                    .mapToPair(x -> new Tuple2<CharSequence, CitationEntry>(x._1, x._2._1))
+            JavaPairRDD<CharSequence, Integer> inputDocumentIdsEligibleForCaching = inputDocumentsIdtoYear
+                    .filter(x -> (x._2() != null && x._2() < publicationYearThreadshold))
+                    .subtractByKey(allCachedCitations.mapToPair(x -> new Tuple2<>(x.getDocumentId(), 1)));
+
+            JavaRDD<Citations> inputMatchedCitationsEligibleForCaching = inputDocumentIdsEligibleForCaching.leftOuterJoin(transformedMatchedCitationsPair)
+                    .mapToPair(x -> new Tuple2<CharSequence, Optional<CitationEntry>>(x._1, x._2._2))
                     .groupByKey().map(x -> convertCitations(x._1, x._2));
             
             // unioning with already cached entries and storing as a new cache entry
-            // notice: currently we do not care about faults, there are no faults generated in this process
             CacheStorageUtils.storeInCache(avroSaver, Citations.SCHEMA$,
                     allCachedCitations.union(inputMatchedCitationsEligibleForCaching), sc.emptyRDD(), cacheRootDir,
                     lockManager, cacheManager, hadoopConf, numberOfEmittedFiles);
             
             // removing citations from cache which were not presented at input of citation matching in this run (inner join with citation matching input)
+            // and the entries without any match which would simply become an unneccesary garbage affecting the counters
             JavaRDD<eu.dnetlib.iis.common.citations.schemas.Citation> cachedCitationsToBeReturned = allCachedCitations
-                    .mapToPair(x -> new Tuple2<CharSequence, Citations>(x.getDocumentId(), x)).join(inputDocumentIdsAll)
-                    .flatMap(x -> convertCitations(x._2._1));
+                    .mapToPair(x -> new Tuple2<CharSequence, Citations>(x.getDocumentId(), x)).join(inputDocumentsIdtoYear)
+                    .flatMap(x -> convertCitationsDropUnmatchedEntries(x._2._1));
             
             avroSaver.saveJavaRDD(cachedCitationsToBeReturned.union(transformedMatchedCitations), eu.dnetlib.iis.common.citations.schemas.Citation.SCHEMA$, params.output);
         }
@@ -151,10 +156,12 @@ public class CitationMatchingOutputTransformerJob {
      * @param documentId document id
      * @param citationEntries citation entries
      */
-    private static Citations convertCitations(CharSequence documentId, Iterable<CitationEntry> citationEntries) {
+    private static Citations convertCitations(CharSequence documentId, Iterable<Optional<CitationEntry>> citationEntries) {
         List<CitationEntry> citations = new ArrayList<>();
-        for (CitationEntry entry : citationEntries) {
-            citations.add(entry);
+        for (Optional<CitationEntry> entry : citationEntries) {
+            if (entry.isPresent()) {
+                citations.add(entry.get());    
+            }
         }
         Citations.Builder citationsBuilder = Citations.newBuilder();
         citationsBuilder.setDocumentId(documentId);
@@ -164,17 +171,20 @@ public class CitationMatchingOutputTransformerJob {
     
     /**
      * Converts {@link Citations} object into an {@link Iterator} over the individual {@link eu.dnetlib.iis.common.citations.schemas.Citation} records.
+     * Removes entries not having any matched citation to avoid introducing unmatched entries at output.
      */
-    private static Iterator<eu.dnetlib.iis.common.citations.schemas.Citation> convertCitations(
+    private static Iterator<eu.dnetlib.iis.common.citations.schemas.Citation> convertCitationsDropUnmatchedEntries(
             Citations citationsObject) {
         List<eu.dnetlib.iis.common.citations.schemas.Citation> citationsList = new ArrayList<>(
                 citationsObject.getCitations().size());
         for (CitationEntry entry : citationsObject.getCitations()) {
-            eu.dnetlib.iis.common.citations.schemas.Citation.Builder citationBuilder = eu.dnetlib.iis.common.citations.schemas.Citation
-                    .newBuilder();
-            citationBuilder.setSourceDocumentId(citationsObject.getDocumentId());
-            citationBuilder.setEntry(entry);
-            citationsList.add(citationBuilder.build());
+            if (StringUtils.isNotBlank(entry.getDestinationDocumentId())) {
+                eu.dnetlib.iis.common.citations.schemas.Citation.Builder citationBuilder = eu.dnetlib.iis.common.citations.schemas.Citation
+                        .newBuilder();
+                citationBuilder.setSourceDocumentId(citationsObject.getDocumentId());
+                citationBuilder.setEntry(entry);
+                citationsList.add(citationBuilder.build());    
+            }
         }
         return citationsList.iterator();
     }
