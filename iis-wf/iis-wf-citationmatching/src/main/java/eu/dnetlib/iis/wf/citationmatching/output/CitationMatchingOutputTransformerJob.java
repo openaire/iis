@@ -107,10 +107,12 @@ public class CitationMatchingOutputTransformerJob {
                     .mapToPair(x -> new Tuple2<CharSequence, Optional<CitationEntry>>(x._1, x._2._2))
                     .groupByKey().map(x -> convertCitations(x._1, x._2));
             
-            // unioning with already cached entries and storing as a new cache entry
-            CacheStorageUtils.storeInCache(avroSaver, Citations.SCHEMA$,
-                    allCachedCitations.union(inputMatchedCitationsEligibleForCaching), sc.emptyRDD(), cacheRootDir,
-                    lockManager, cacheManager, hadoopConf, numberOfEmittedFiles);
+            if (!inputMatchedCitationsEligibleForCaching.isEmpty()) {
+                // unioning with already cached entries and storing as a new cache entry
+                CacheStorageUtils.storeInCache(avroSaver, Citations.SCHEMA$,
+                        allCachedCitations.union(inputMatchedCitationsEligibleForCaching), sc.emptyRDD(), cacheRootDir,
+                        lockManager, cacheManager, hadoopConf, numberOfEmittedFiles);
+            }
             
             // removing citations from cache which were not presented at input of citation matching in this run (inner join with citation matching input)
             // and the entries without any match which would simply become an unneccesary garbage affecting the counters
