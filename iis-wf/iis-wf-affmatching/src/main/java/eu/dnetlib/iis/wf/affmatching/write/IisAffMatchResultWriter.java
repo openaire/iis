@@ -59,13 +59,12 @@ public class IisAffMatchResultWriter implements AffMatchResultWriter {
                 .reduceByKey((match1, match2) -> matchedOrgStrengthRecalculation.recalculateStrength(match1, match2))
                 .values();
         
-        distinctMatchedOrganizations.cache();
+        JavaRDD<MatchedOrganization> repartitionedMatchedOrganizations = distinctMatchedOrganizations.repartition(numberOfEmittedFiles);
+        repartitionedMatchedOrganizations.cache();
         
-        sparkAvroSaver.saveJavaRDD(distinctMatchedOrganizations.repartition(numberOfEmittedFiles), MatchedOrganization.SCHEMA$, outputPath);
+        sparkAvroSaver.saveJavaRDD(repartitionedMatchedOrganizations, MatchedOrganization.SCHEMA$, outputPath);
         
-        
-        
-        List<ReportEntry> reportEntries = reportGenerator.generateReport(distinctMatchedOrganizations);
+        List<ReportEntry> reportEntries = reportGenerator.generateReport(repartitionedMatchedOrganizations);
         
         sparkAvroSaver.saveJavaRDD(sc.parallelize(reportEntries, 1), ReportEntry.SCHEMA$, outputReportPath);
         

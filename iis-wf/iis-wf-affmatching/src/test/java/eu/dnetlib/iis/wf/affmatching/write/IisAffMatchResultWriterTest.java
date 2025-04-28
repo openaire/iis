@@ -147,7 +147,7 @@ public class IisAffMatchResultWriterTest {
         when(matchedOrganizationsDocOrgIdKey.reduceByKey(any())).thenReturn(distinctMatchedOrganizations);
         when(distinctMatchedOrganizations.values()).thenReturn(distinctMatchedOrganizationsValues);
         when(distinctMatchedOrganizationsValues.repartition(2)).thenReturn(distinctMatchedOrganizationsValuesRepartition);
-        when(reportGenerator.generateReport(distinctMatchedOrganizationsValues)).thenReturn(reportEntries);
+        when(reportGenerator.generateReport(distinctMatchedOrganizationsValuesRepartition)).thenReturn(reportEntries);
         when(sc.parallelize(reportEntries, 1)).thenReturn(rddReportEntries);
         
         
