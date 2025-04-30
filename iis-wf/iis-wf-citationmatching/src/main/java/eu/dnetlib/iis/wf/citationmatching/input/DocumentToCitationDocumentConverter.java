@@ -26,17 +26,19 @@ public class DocumentToCitationDocumentConverter {
     
     /**
      * Converts {@link ExtractedDocumentMetadataMergedWithOriginal} to {@link DocumentMetadata}.<br/>
+     * @param sourceDocument source document to be converted
      * @param matchedReferencePositions already matched positions of references which should be removed from input, cannot be null
+     * @param discardAllReferences flag indicating all references should be discarded
      * 
      */
-    public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal sourceDocument, Set<Integer> matchedReferencePositions) {
+    public DocumentMetadata convert(ExtractedDocumentMetadataMergedWithOriginal sourceDocument, Set<Integer> matchedReferencePositions, boolean discardAllReferences) {
         
         Preconditions.checkNotNull(sourceDocument);
         
         DocumentMetadata destDocument = DocumentMetadata.newBuilder()
                 .setId(sourceDocument.getId())
                 .setBasicMetadata(convertBasicMetadata(sourceDocument))
-                .setReferences(convertReferences(sourceDocument.getReferences(), matchedReferencePositions))
+                .setReferences(convertReferences(sourceDocument.getReferences(), matchedReferencePositions, discardAllReferences))
                 .build();
         
         return destDocument;
@@ -62,7 +64,7 @@ public class DocumentToCitationDocumentConverter {
     }
     
     private List<ReferenceMetadata> convertReferences(List<eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata> sourceReferences,
-            Set<Integer> matchedReferencePositions) {
+            Set<Integer> matchedReferencePositions, boolean discardAllReferences) {
         
         List<ReferenceMetadata> destReferences = Lists.newArrayList();
         
@@ -71,7 +73,7 @@ public class DocumentToCitationDocumentConverter {
         }
         
         sourceReferences.stream()
-                .filter(sourceReference -> !matchedReferencePositions.contains(sourceReference.getPosition()))
+                .filter(sourceReference -> !discardAllReferences && !matchedReferencePositions.contains(sourceReference.getPosition()))
                 .forEach(sourceReference -> destReferences.add(convertReference(sourceReference)));
         
         return destReferences;

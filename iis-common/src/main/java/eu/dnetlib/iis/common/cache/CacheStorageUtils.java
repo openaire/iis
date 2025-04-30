@@ -1,6 +1,8 @@
 package eu.dnetlib.iis.common.cache;
 
+import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -13,19 +15,19 @@ import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.lock.LockManager;
-import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
+
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 
 /**
- * Shared methods for managing {@link DocumentText} cache storage.
+ * Shared methods for managing {@link SpecificRecord} cache storage.
  * @author mhorst
  *
  */
-public class DocumentTextCacheStorageUtils {
+public class CacheStorageUtils {
     
-    private DocumentTextCacheStorageUtils() {}
+    private CacheStorageUtils() {}
 
     // ---------------------------- LOGIC ---------------------------------
     
@@ -46,7 +48,7 @@ public class DocumentTextCacheStorageUtils {
             Path cacheRootDir, String existingCacheId, CacheRecordType cacheRecordType, Class<T> avroRecordClass) {
         return CacheMetadataManagingProcess.UNDEFINED.equals(existingCacheId) ? sc.emptyRDD()
                 : avroLoader.loadJavaRDD(sc,
-                        DocumentTextCacheStorageUtils.getCacheLocation(cacheRootDir, existingCacheId, cacheRecordType).toString(),
+                        CacheStorageUtils.getCacheLocation(cacheRootDir, existingCacheId, cacheRecordType).toString(),
                         avroRecordClass);
     }
     
@@ -54,7 +56,8 @@ public class DocumentTextCacheStorageUtils {
      * Stores new cache entry on HDFS. 
      * Utilizes lock manager to avoid storing new cache entries in the very same location by two independent job executions.
      */
-    public static void storeInCache(SparkAvroSaver avroSaver, JavaRDD<DocumentText> toBeStoredEntities, JavaRDD<Fault> toBeStoredFaults, 
+    public static void storeInCache(SparkAvroSaver avroSaver, 
+            Schema recordSchema, JavaRDD<? extends SpecificRecord> toBeStoredEntities, JavaRDD<Fault> toBeStoredFaults, 
             Path cacheRootDir, LockManager lockManager, CacheMetadataManagingProcess cacheManager, 
             Configuration hadoopConf, int numberOfEmittedFiles) throws Exception {
 
@@ -66,8 +69,8 @@ public class DocumentTextCacheStorageUtils {
             
             try {
                 // store in cache
-                avroSaver.saveJavaRDD(toBeStoredEntities.repartition(numberOfEmittedFiles), DocumentText.SCHEMA$,
-                        getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.text).toString());
+                avroSaver.saveJavaRDD(toBeStoredEntities.repartition(numberOfEmittedFiles), recordSchema,
+                        getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.data).toString());
                 avroSaver.saveJavaRDD(toBeStoredFaults.repartition(numberOfEmittedFiles), Fault.SCHEMA$,
                         getCacheLocation(cacheRootDir, newCacheId, CacheRecordType.fault).toString());
                 // writing new cache id
@@ -89,7 +92,7 @@ public class DocumentTextCacheStorageUtils {
      *
      */
     public enum CacheRecordType {
-        text,
+        data,
         fault
     }
     

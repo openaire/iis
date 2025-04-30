@@ -1,0 +1,110 @@
+{
+  "id": "id-1-not-in-cache-but-mined-eligible-to-be-cached",
+  "year": 1980,
+  "publisher": null,
+  "language": null,
+  "title": "This entry is not expected to be found in pre-initialized cache but is among input citation records. Should be returned at output and should be cached because it is old",
+  "externalIdentifiers": {},
+  "journal": null,
+  "extractedAuthorFullNames": null,
+  "pages": null,
+  "volume": null,
+  "importedAuthors": null,
+  "keywords": null,
+  "references": null,
+  "issue": null,
+  "abstract": null,
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "publicationTypeName": null
+}
+{
+  "id": "id-2-not-in-cache-but-mined-non-eligible-to-be-cached-too-recent",
+  "year": 2220,
+  "publisher": null,
+  "language": null,
+  "title": "This entry is not expected to be found in pre-initialized cache but is among input citation records. Should be returned at output but should not be cached because it too recent",
+  "externalIdentifiers": {},
+  "journal": null,
+  "extractedAuthorFullNames": null,
+  "pages": null,
+  "volume": null,
+  "importedAuthors": null,
+  "keywords": null,
+  "references": null,
+  "issue": null,
+  "abstract": null,
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "publicationTypeName": null
+}
+{
+  "id": "id-2b-not-in-cache-but-mined-non-eligible-to-be-cached-no-publication-year",
+  "year": null,
+  "publisher": null,
+  "language": null,
+  "title": "This entry is not expected to be found in pre-initialized cache but is among input citation records. Should be returned at output but should not be cached because it has no publication year defined so we don't know if it is fresh or not",
+  "externalIdentifiers": {},
+  "journal": null,
+  "extractedAuthorFullNames": null,
+  "pages": null,
+  "volume": null,
+  "importedAuthors": null,
+  "keywords": null,
+  "references": null,
+  "issue": null,
+  "abstract": null,
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "publicationTypeName": null
+}
+{
+  "id": "id-3-cached",
+  "year": 2200,
+  "publisher": null,
+  "language": null,
+  "title": "This entry is expected to be found in pre-initialized cache. Should be returned at output and should be put in a newly created cache regardless publication year because it was already in cache",
+  "externalIdentifiers": {},
+  "journal": null,
+  "extractedAuthorFullNames": null,
+  "pages": null,
+  "volume": null,
+  "importedAuthors": null,
+  "keywords": null,
+  "references": null,
+  "issue": null,
+  "abstract": null,
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "publicationTypeName": null
+}
+{
+  "id": "id-4-cached-to-be-excluded-from-output",
+  "year": 2200,
+  "publisher": null,
+  "language": null,
+  "title": "This entry is expected to be found in pre-initialized cache. Should not be returned at output because it has no matches but it should be put in a newly created cache regardless publication year because it was already in cache",
+  "externalIdentifiers": {},
+  "journal": null,
+  "extractedAuthorFullNames": null,
+  "pages": null,
+  "volume": null,
+  "importedAuthors": null,
+  "keywords": null,
+  "references": null,
+  "issue": null,
+  "abstract": null,
+  "publicationType": {
+    "article": false,
+    "dataset": false
+  },
+  "publicationTypeName": null
+}

@@ -1,0 +1,18 @@
+{
+  "sourceDocumentId": "id-1",
+  "position": 1,
+  "destinationDocumentId": "id-2",
+  "confidenceLevel": 0.8892515
+}
+{
+  "sourceDocumentId": "id-1",
+  "position": 2,
+  "destinationDocumentId": "id-20",
+  "confidenceLevel": 0.5
+}
+{
+  "sourceDocumentId": "id-3",
+  "position": 1,
+  "destinationDocumentId": "id-4",
+  "confidenceLevel": 0.9
+}

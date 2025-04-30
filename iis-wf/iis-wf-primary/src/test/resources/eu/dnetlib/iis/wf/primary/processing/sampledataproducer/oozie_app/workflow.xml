@@ -395,6 +395,14 @@
 					<name>citationmatchingFuzzyNumberOfPartitions</name>
 					<value>1000</value>
 				</property>
+				<property>
+                    <name>citationmatchingFuzzyCacheLocation</name>
+                    <value>${workingDir}/cache/citationmatching</value>
+                </property>
+                <property>
+                    <name>citationmatchingCacheLockManagerFactoryClassName</name>
+                    <value>eu.dnetlib.iis.common.lock.LockManagerFactoryMock</value>
+                </property>
                 <property>
                     <name>researchInitiativeReferenceExtractionSparkExecutorOverhead</name>
                     <value>512</value>
@@ -409,11 +417,11 @@
                 </property>
                 <property>
                     <name>webcrawlLockManagerFactoryClassName</name>
-                    <value>eu.dnetlib.iis.wf.primary.processing.LockManagerFactoryMock</value>
+                    <value>eu.dnetlib.iis.common.lock.LockManagerFactoryMock</value>
                 </property>
                 <property>
                     <name>patentLockManagerFactoryClassName</name>
-                    <value>eu.dnetlib.iis.wf.primary.processing.LockManagerFactoryMock</value>
+                    <value>eu.dnetlib.iis.common.lock.LockManagerFactoryMock</value>
                 </property>
                 <property>
                     <name>software_webcrawl_cache_location</name>

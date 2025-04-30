@@ -1,0 +1,56 @@
+{
+  "documentId": "id-3-cached",
+  "citations": [
+    {
+      "position": 1,
+      "rawText": null,
+      "destinationDocumentId": "id-4",
+      "confidenceLevel": 0.9,
+      "externalDestinationDocumentIds": {}
+    },
+    {
+      "position": 2,
+      "rawText": null,
+      "destinationDocumentId": "id-8",
+      "confidenceLevel": 0.9,
+      "externalDestinationDocumentIds": {}
+    }
+  ]
+}
+{
+  "documentId": "id-4-cached-to-be-excluded-from-output-due-to-lack-of-matches",
+  "citations": []
+}
+{
+  "documentId": "id-5-cached-to-be-excluded-from-output-due-to-not-being-present-at-input",
+  "citations": [
+    {
+      "position": 1,
+      "rawText": null,
+      "destinationDocumentId": "id-8",
+      "confidenceLevel": 0.5,
+      "externalDestinationDocumentIds": {}
+    }
+  ]
+}
+
+
+{
+  "documentId": "id-1-not-in-cache-but-mined-eligible-to-be-cached",
+  "citations": [
+    {
+      "position": 1,
+      "rawText": null,
+      "destinationDocumentId": "id-2",
+      "confidenceLevel": 0.8892515,
+      "externalDestinationDocumentIds": {}
+    },
+    {
+      "position": 2,
+      "rawText": null,
+      "destinationDocumentId": "id-20",
+      "confidenceLevel": 0.5,
+      "externalDestinationDocumentIds": {}
+    }
+  ]
+}
