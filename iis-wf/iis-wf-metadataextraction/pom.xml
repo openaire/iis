@@ -120,6 +120,13 @@
 			<artifactId>paranamer</artifactId>
 		</dependency>
 		<!-- Needed by Avro } -->
+		
+		<!-- #1541 and #1412 fix, required when dealing with encrypted PDF files -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+        </dependency>
+		
 	</dependencies>
 
 </project>
