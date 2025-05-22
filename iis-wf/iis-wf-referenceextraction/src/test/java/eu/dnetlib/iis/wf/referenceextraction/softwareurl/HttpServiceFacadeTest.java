@@ -76,8 +76,8 @@ public class HttpServiceFacadeTest {
         @DisplayName("Http service facade retrieves truncated content successfully for HTTP 200 server reply and valid entity")
         public void testGetContentForHttp200WithTruncation() throws Exception {
             // given
-            String content = "this is content line\nthis is content line";
-            HttpServiceFacade service = new HttpServiceFacade(connectionTimeout, readTimeout, content.length() / 2 - 1, throttleSleepTime,
+            String content = "this is the first content line\nthis is the second and the last content line";
+            HttpServiceFacade service = new HttpServiceFacade(connectionTimeout, readTimeout, 35, throttleSleepTime,
                     maxRetriesCount) {
 
                 private static final long serialVersionUID = 1L;
@@ -104,9 +104,44 @@ public class HttpServiceFacadeTest {
             // assert
             assertNotNull(response);
             assertEquals(FacadeContentRetrieverResponse.Success.class, response.getClass());
-            assertEquals("this is content line", response.getContent());
+            assertEquals("this is the first content line", response.getContent());
         }
 
+        @Test
+        @DisplayName("Http service facade retrieves truncated content successfully when a first line is too long")
+        public void testGetContentForHttp200WithTruncationFirstLineAlreadyTooLong() throws Exception {
+            // given
+            String content = "this is the first content line\\nthis is the second and the last content line";
+            HttpServiceFacade service = new HttpServiceFacade(connectionTimeout, readTimeout, 5, throttleSleepTime,
+                    maxRetriesCount) {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected CloseableHttpClient buildHttpClient(int connectionTimeout, int readTimeout) {
+                    return httpClient;
+                }
+            };
+
+            // content retrieval mock
+            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
+            StatusLine getContentStatusLine = mock(StatusLine.class);
+            HttpEntity getContentHttpEntity = mock(HttpEntity.class);
+            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
+            when(getContentStatusLine.getStatusCode()).thenReturn(200);
+            when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
+            when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(content.getBytes()));
+            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
+
+            // execute
+            FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
+
+            // assert
+            assertNotNull(response);
+            assertEquals(FacadeContentRetrieverResponse.Success.class, response.getClass());
+            assertEquals("", response.getContent());
+        }
+        
         @Test
         @DisplayName("Http service facade does not retrieve content for HTTP 200 server reply and null entity")
         public void testGetContentForHttp200WithNullEntity() throws Exception {
@@ -160,7 +195,6 @@ public class HttpServiceFacadeTest {
         @DisplayName("Http service facade retrieves content successfully for HTTP 301 followed by HTTP 200 server replies")
         public void testGetMovedContentForHttp301And200() throws Exception {
             // given
-            String originalResult = "this is original result";
             String movedResult = "this is moved result";
             HttpServiceFacade service = prepareValidService();
             Header mockedHeader = mock(Header.class);
@@ -310,6 +344,7 @@ public class HttpServiceFacadeTest {
     @DisplayName("Http service facade returns transient failure when content retrieval throws an exception")
     public void testGetContentWithAnException() {
         // given
+        @SuppressWarnings("serial")
         HttpServiceFacade service = new HttpServiceFacade(connectionTimeout, readTimeout, maxPageContentLength, throttleSleepTime,
                 maxRetriesCount) {
             @Override
@@ -349,6 +384,7 @@ public class HttpServiceFacadeTest {
         assertNotNull(deserService);
     }
 
+    @SuppressWarnings("serial")
     private HttpServiceFacade prepareValidService() {
         return new HttpServiceFacade(connectionTimeout, readTimeout, maxPageContentLength, throttleSleepTime,
                 maxRetriesCount) {
