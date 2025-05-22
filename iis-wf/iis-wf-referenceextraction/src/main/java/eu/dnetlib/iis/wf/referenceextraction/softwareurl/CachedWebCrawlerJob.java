@@ -23,10 +23,10 @@ import com.google.common.collect.Maps;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
-import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils;
-import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
-import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CachedStorageJobParameters;
-import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.OutputPaths;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.CachedStorageJobParameters;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.OutputPaths;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.lock.LockManager;
 import eu.dnetlib.iis.common.lock.LockManagerUtils;
@@ -91,10 +91,10 @@ public class CachedWebCrawlerJob {
             // skipping already extracted
 
             //TODO: https://github.com/openaire/iis/issues/1238
-            JavaRDD<DocumentText> cachedSources = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
-                    existingCacheId, CacheRecordType.text, DocumentText.class)
+            JavaRDD<DocumentText> cachedSources = CacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+                    existingCacheId, CacheRecordType.data, DocumentText.class)
                     .filter(x -> StringUtils.isNotBlank(x.getText()));
-            JavaRDD<Fault> cachedFaults = DocumentTextCacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+            JavaRDD<Fault> cachedFaults = CacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
                     existingCacheId, CacheRecordType.fault, Fault.class);
 
             JavaPairRDD<CharSequence, Optional<DocumentText>> cacheByUrl = cachedSources
@@ -121,7 +121,7 @@ public class CachedWebCrawlerJob {
                     returnedFromRemoteService);
             if (!retrievedSourcesToBeCached.isEmpty() || !faultsToBeCached.isEmpty()) {
                 // storing new cache entry
-                DocumentTextCacheStorageUtils.storeInCache(avroSaver, cachedSources.union(retrievedSourcesToBeCached),
+                CacheStorageUtils.storeInCache(avroSaver, DocumentText.SCHEMA$, cachedSources.union(retrievedSourcesToBeCached),
                         cachedFaults.union(faultsToBeCached), cacheRootDir, lockManager, cacheManager, hadoopConf,
                         numberOfEmittedFiles);
             }

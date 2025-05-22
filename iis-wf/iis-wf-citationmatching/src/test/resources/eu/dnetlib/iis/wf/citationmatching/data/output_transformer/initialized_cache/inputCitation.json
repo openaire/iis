@@ -1,0 +1,24 @@
+{
+  "sourceDocumentId": "id-1-not-in-cache-but-mined-eligible-to-be-cached",
+  "position": 1,
+  "destinationDocumentId": "id-2",
+  "confidenceLevel": 0.8892515
+}
+{
+  "sourceDocumentId": "id-1-not-in-cache-but-mined-eligible-to-be-cached",
+  "position": 2,
+  "destinationDocumentId": "id-20",
+  "confidenceLevel": 0.5
+}
+{
+  "sourceDocumentId": "id-2-not-in-cache-but-mined-non-eligible-to-be-cached-too-recent",
+  "position": 1,
+  "destinationDocumentId": "id-3",
+  "confidenceLevel": 0.7
+}
+{
+  "sourceDocumentId": "id-2b-not-in-cache-but-mined-non-eligible-to-be-cached-no-publication-year",
+  "position": 1,
+  "destinationDocumentId": "id-4",
+  "confidenceLevel": 0.9
+}
