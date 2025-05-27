@@ -102,9 +102,14 @@
             <description>lock manager factory class name, to be used for synchronizing access to cache directory</description>
         </property>
         <property>
-            <name>citationmatchingCacheNumberOfEmittedFiles</name>
+            <name>citationmatchingNumberOfEmittedFilesInCache</name>
             <value>1000</value>
-            <description>number of files created by citation matching caching module</description>
+            <description>number of files created by citation matching caching module in cache</description>
+        </property>
+        <property>
+            <name>citationmatchingNumberOfEmittedFiles</name>
+            <value>1000</value>
+            <description>number of files generated as citation matching final outcome</description>
         </property>
     </parameters>
 
@@ -223,7 +228,8 @@
             <arg>-cacheRootDir=${cacheRootDir}</arg>
             <arg>-cacheOlderThanXYears=${cacheOlderThanXYears}</arg>
             <arg>-lockManagerFactoryClassName=${citationmatchingCacheLockManagerFactoryClassName}</arg>
-            <arg>-numberOfEmittedFiles=${citationmatchingCacheNumberOfEmittedFiles}</arg>
+            <arg>-numberOfEmittedFilesInCache=${citationmatchingNumberOfEmittedFilesInCache}</arg>
+            <arg>-numberOfEmittedFiles=${citationmatchingNumberOfEmittedFiles}</arg>
             <arg>-output=${output_citations}</arg>
         </spark>
         <ok to="end"/>
