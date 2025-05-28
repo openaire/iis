@@ -67,6 +67,8 @@ public class CitationMatchingOutputTransformerJob {
         	HdfsUtils.remove(hadoopConf, params.output);
         	
         	int numberOfEmittedFiles = params.numberOfEmittedFiles;
+        	
+        	int numberOfEmittedFilesInCache = params.numberOfEmittedFilesInCache;
             
             LockManager lockManager = LockManagerUtils.instantiateLockManager(params.lockManagerFactoryClassName,
                     hadoopConf);
@@ -111,7 +113,7 @@ public class CitationMatchingOutputTransformerJob {
                 // unioning with already cached entries and storing as a new cache entry
                 CacheStorageUtils.storeInCache(avroSaver, Citations.SCHEMA$,
                         allCachedCitations.union(inputMatchedCitationsEligibleForCaching), sc.emptyRDD(), cacheRootDir,
-                        lockManager, cacheManager, hadoopConf, numberOfEmittedFiles);
+                        lockManager, cacheManager, hadoopConf, numberOfEmittedFilesInCache);
             }
             
             // removing citations from cache which were not presented at input of citation matching in this run (inner join with citation matching input)
@@ -120,7 +122,9 @@ public class CitationMatchingOutputTransformerJob {
                     .mapToPair(x -> new Tuple2<CharSequence, Citations>(x.getDocumentId(), x)).join(inputDocumentsIdtoYear)
                     .flatMap(x -> convertCitationsDropUnmatchedEntries(x._2._1));
             
-            avroSaver.saveJavaRDD(cachedCitationsToBeReturned.union(transformedMatchedCitations), eu.dnetlib.iis.common.citations.schemas.Citation.SCHEMA$, params.output);
+            avroSaver.saveJavaRDD(
+                    cachedCitationsToBeReturned.union(transformedMatchedCitations).repartition(numberOfEmittedFiles),
+                    eu.dnetlib.iis.common.citations.schemas.Citation.SCHEMA$, params.output);
         }
     }
     
@@ -147,6 +151,9 @@ public class CitationMatchingOutputTransformerJob {
         
         @Parameter(names = "-numberOfEmittedFiles", required = true)
         private int numberOfEmittedFiles;
+        
+        @Parameter(names = "-numberOfEmittedFilesInCache", required = true)
+        private int numberOfEmittedFilesInCache;
         
         @Parameter(names = "-lockManagerFactoryClassName", required = true)
         private String lockManagerFactoryClassName;

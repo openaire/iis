@@ -175,6 +175,7 @@ public class CitationMatchingOutputTransformerJobTest {
                 .addArg("-cacheOlderThanXYears", "2")
                 .addArg("-output", outputDirPath)
                 .addArg("-numberOfEmittedFiles", "1")
+                .addArg("-numberOfEmittedFilesInCache", "1")
                 .addArg("-lockManagerFactoryClassName", ZookeeperLockManagerFactory.class.getName())
                 .addJobProperty("spark.driver.host", "localhost")
                 .addJobProperty(ZKFailoverController.ZK_QUORUM_KEY, "localhost:" + zookeeperServer.getPort())
