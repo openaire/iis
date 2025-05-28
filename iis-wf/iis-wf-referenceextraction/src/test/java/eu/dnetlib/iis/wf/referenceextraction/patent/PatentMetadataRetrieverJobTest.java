@@ -4,8 +4,8 @@ import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
-import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils;
-import eu.dnetlib.iis.common.cache.DocumentTextCacheStorageUtils.CacheRecordType;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
 import eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory;
@@ -114,13 +114,13 @@ public class PatentMetadataRetrieverJobTest {
         assertNotNull(cacheId);
 
         // text cache contents
-        org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
-                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
+        org.apache.hadoop.fs.Path textCacheLocation = CacheStorageUtils
+                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.data);
         assertEquals(2, HdfsTestUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         // fault output contents
-        org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
+        org.apache.hadoop.fs.Path faultCacheLocation = CacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
         assertEquals(2, HdfsTestUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()));
@@ -168,13 +168,13 @@ public class PatentMetadataRetrieverJobTest {
         assertNotNull(cacheId);
 
         // text cache contents
-        org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
-                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
+        org.apache.hadoop.fs.Path textCacheLocation = CacheStorageUtils
+                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.data);
         assertEquals(2, HdfsTestUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         // fault output contents
-        org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
+        org.apache.hadoop.fs.Path faultCacheLocation = CacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
         assertEquals(2, HdfsTestUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         assertTrue(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()).isEmpty());
@@ -236,13 +236,13 @@ public class PatentMetadataRetrieverJobTest {
         assertNotNull(cacheId);
 
         // text cache contents
-        org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
-                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
+        org.apache.hadoop.fs.Path textCacheLocation = CacheStorageUtils
+                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.data);
         assertEquals(2, HdfsTestUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         // fault output contents
-        org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
+        org.apache.hadoop.fs.Path faultCacheLocation = CacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
         assertEquals(2, HdfsTestUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()));
@@ -298,13 +298,13 @@ public class PatentMetadataRetrieverJobTest {
         assertNotNull(cacheId);
 
         // text cache contents
-        org.apache.hadoop.fs.Path textCacheLocation = DocumentTextCacheStorageUtils
-                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.text);
+        org.apache.hadoop.fs.Path textCacheLocation = CacheStorageUtils
+                .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.data);
         assertEquals(2, HdfsTestUtils.countFiles(conf, textCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(textCacheLocation.toString(), cachePath, DocumentText.class);
 
         // fault cache contents
-        org.apache.hadoop.fs.Path faultCacheLocation = DocumentTextCacheStorageUtils
+        org.apache.hadoop.fs.Path faultCacheLocation = CacheStorageUtils
                 .getCacheLocation(new org.apache.hadoop.fs.Path(cacheRootDir.toString()), cacheId, CacheRecordType.fault);
         assertEquals(2, HdfsTestUtils.countFiles(conf, faultCacheLocation.toString(), DataStore.AVRO_FILE_EXT));
         validateFaults(AvroTestUtils.readLocalAvroDataStore(faultCacheLocation.toString()));

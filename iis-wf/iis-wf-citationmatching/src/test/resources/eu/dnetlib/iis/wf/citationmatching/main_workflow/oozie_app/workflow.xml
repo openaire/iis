@@ -60,6 +60,14 @@
                     <value>${workingDir}/data_producer/matched_citation</value>
                 </property>
                 <property>
+                    <name>cacheRootDir</name>
+                    <value>${workingDir}/cache</value>
+                </property>
+                <property>
+                    <name>citationmatchingCacheLockManagerFactoryClassName</name>
+                    <value>eu.dnetlib.iis.common.lock.LockManagerFactoryMock</value>
+                </property>
+                <property>
                     <name>output_citations</name>
                     <value>${workingDir}/citation/output</value>
                 </property>

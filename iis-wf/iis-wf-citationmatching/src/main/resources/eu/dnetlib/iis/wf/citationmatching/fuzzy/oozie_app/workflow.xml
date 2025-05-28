@@ -12,9 +12,7 @@
         </property>
         <property>
             <name>input_matched_citations</name>
-            <value>$UNDEFINED$</value>
-            <description>input directory holding already matched citations to be excluded from processing as eu.dnetlib.iis.common.citations.schemas.Citation avro datastore. Omitted when set to $UNDEFINED$ value.
-            </description>
+            <description>input directory holding already matched citations to be excluded from processing as eu.dnetlib.iis.common.citations.schemas.Citation avro datastore. </description>
         </property>
         <property>
             <name>output_citations</name>
@@ -32,7 +30,7 @@
 
         <property>
             <name>citationMatchingSparkNetworkTimeout</name>
-            <value>600s</value>
+            <value>1200s</value>
             <description>spark network timeout for citation matching jobs</description>
         </property>
         <property>
@@ -89,6 +87,25 @@
             <name>numberOfPartitions</name>
             <description>number of partitions used for rdds with citations and documents read from input files</description>
         </property>
+        <property>
+            <name>cacheRootDir</name>
+            <description>citationmatching cache root directory</description>
+        </property>
+        <property>
+            <name>cacheOlderThanXYears</name>
+            <value>2</value>
+            <description>Indicates the number of years, to be substracted from the current year, to indicate the threshold before which given publication is considered as eligible for caching matched output</description>
+        </property>
+        <property>
+            <name>citationmatchingCacheLockManagerFactoryClassName</name>
+            <value>eu.dnetlib.iis.common.lock.ZookeeperLockManagerFactory</value>
+            <description>lock manager factory class name, to be used for synchronizing access to cache directory</description>
+        </property>
+        <property>
+            <name>citationmatchingCacheNumberOfEmittedFiles</name>
+            <value>1000</value>
+            <description>number of files created by citation matching caching module</description>
+        </property>
     </parameters>
 
     <global>
@@ -137,6 +154,7 @@
 
             <arg>-inputMetadata = ${input_metadata}</arg>
             <arg>-inputMatchedCitations = ${input_matched_citations}</arg>
+            <arg>-cacheRootDir=${cacheRootDir}</arg>
             <arg>-output = ${workingDir}/documents_with_authors</arg>
         </spark>
         <ok to="citation-matching"/>
@@ -200,8 +218,13 @@
                 --conf spark.shuffle.registration.timeout=${citationMatchingSparkShuffleRegistrationTimeout}
             </spark-opts>
 
-            <arg>-input = ${workingDir}/matched_citations</arg>
-            <arg>-output = ${output_citations}</arg>
+            <arg>-inputMetadata=${input_metadata}</arg>
+            <arg>-inputMatchedCitations=${workingDir}/matched_citations</arg>
+            <arg>-cacheRootDir=${cacheRootDir}</arg>
+            <arg>-cacheOlderThanXYears=${cacheOlderThanXYears}</arg>
+            <arg>-lockManagerFactoryClassName=${citationmatchingCacheLockManagerFactoryClassName}</arg>
+            <arg>-numberOfEmittedFiles=${citationmatchingCacheNumberOfEmittedFiles}</arg>
+            <arg>-output=${output_citations}</arg>
         </spark>
         <ok to="end"/>
         <error to="fail"/>
