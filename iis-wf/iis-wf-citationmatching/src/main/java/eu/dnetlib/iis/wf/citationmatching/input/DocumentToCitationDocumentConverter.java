@@ -68,12 +68,12 @@ public class DocumentToCitationDocumentConverter {
         
         List<ReferenceMetadata> destReferences = Lists.newArrayList();
         
-        if (sourceReferences == null) {
+        if (sourceReferences == null || discardAllReferences) {
             return destReferences;
         }
         
         sourceReferences.stream()
-                .filter(sourceReference -> !discardAllReferences && !matchedReferencePositions.contains(sourceReference.getPosition()))
+                .filter(sourceReference -> !matchedReferencePositions.contains(sourceReference.getPosition()))
                 .forEach(sourceReference -> destReferences.add(convertReference(sourceReference)));
         
         return destReferences;

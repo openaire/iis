@@ -89,9 +89,17 @@ public class CitationMatchingInputTransformerJob {
                     .leftOuterJoin(groupedMatchedCitations).leftOuterJoin(groupedCachedCitations);
             
             JavaRDD<DocumentMetadata> documents = inputDocumentsJoinedWithMatchedCitations
-                    .map(x -> documentToCitationDocumentConverter.convert(x._2._1._1,
-                            x._2._1._2.isPresent() ? Sets.newHashSet(x._2._1._2.get()) : Collections.emptySet(),
-                            x._2._2.isPresent() ? x._2._2.get() : false));
+                    .map(x -> {
+                        ExtractedDocumentMetadataMergedWithOriginal inputDocumentMetadata = x._2._1._1;
+                        Optional<Iterable<Integer>> alreadyMatchedReferencePositions = x._2._1._2;
+                        Optional<Boolean> isDocumentAlreadyCached = x._2._2;
+
+                        return documentToCitationDocumentConverter.convert(inputDocumentMetadata,
+                                alreadyMatchedReferencePositions.isPresent()
+                                        ? Sets.newHashSet(alreadyMatchedReferencePositions.get())
+                                        : Collections.emptySet(),
+                                isDocumentAlreadyCached.isPresent() ? isDocumentAlreadyCached.get() : false);
+                    });
 
             avroSaver.saveJavaRDD(documents, DocumentMetadata.SCHEMA$, params.output);
         }
