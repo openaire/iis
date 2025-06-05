@@ -149,7 +149,7 @@ public class HttpServiceFacade extends FacadeContentRetriever<String, String> {
             StringBuilder pageContent = new StringBuilder();
             String inputLine;
             while ((inputLine = reader.readLine()) != null) {
-                if (inputLine.length() < maxPageContentLength && pageContent.length() < maxPageContentLength) {
+                if (inputLine.length() + pageContent.length() < maxPageContentLength) {
                     if (pageContent.length() > 0) {
                         pageContent.append('\n');    
                     }
