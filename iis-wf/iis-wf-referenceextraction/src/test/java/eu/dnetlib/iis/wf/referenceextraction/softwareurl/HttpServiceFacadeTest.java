@@ -1,7 +1,18 @@
 package eu.dnetlib.iis.wf.referenceextraction.softwareurl;
 
-import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetrieverResponse;
-import eu.dnetlib.iis.wf.referenceextraction.RetryLimitExceededException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Objects;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -17,15 +28,8 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Objects;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetrieverResponse;
+import eu.dnetlib.iis.wf.referenceextraction.RetryLimitExceededException;
 
 @ExtendWith(MockitoExtension.class)
 public class HttpServiceFacadeTest {
@@ -51,20 +55,13 @@ public class HttpServiceFacadeTest {
         public void testGetContentForHttp200() throws Exception {
             // given
             String expectedResult = "this is expected result";
+            String url = "someUrl";
             HttpServiceFacade service = prepareValidService();
-
             // content retrieval mock
-            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            HttpEntity getContentHttpEntity = mock(HttpEntity.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(200);
-            when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
-            when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(expectedResult.getBytes()));
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
+            setMockExcpectations(httpClient, url, 200, expectedResult);
 
             // execute
-            FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
+            FacadeContentRetrieverResponse<String> response = service.retrieveContent(url);
 
             // assert
             assertNotNull(response);
@@ -76,7 +73,8 @@ public class HttpServiceFacadeTest {
         @DisplayName("Http service facade retrieves truncated content successfully for HTTP 200 server reply and valid entity")
         public void testGetContentForHttp200WithTruncation() throws Exception {
             // given
-            String content = "this is the first content line\nthis is the second and the last content line";
+            String expectedResult = "this is the first content line\nthis is the second and the last content line";
+            String url = "someUrl";
             HttpServiceFacade service = new HttpServiceFacade(connectionTimeout, readTimeout, 35, throttleSleepTime,
                     maxRetriesCount) {
 
@@ -87,19 +85,11 @@ public class HttpServiceFacadeTest {
                     return httpClient;
                 }
             };
-
             // content retrieval mock
-            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            HttpEntity getContentHttpEntity = mock(HttpEntity.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(200);
-            when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
-            when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(content.getBytes()));
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
+            setMockExcpectations(httpClient, url, 200, expectedResult);
 
             // execute
-            FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
+            FacadeContentRetrieverResponse<String> response = service.retrieveContent(url);
 
             // assert
             assertNotNull(response);
@@ -112,6 +102,7 @@ public class HttpServiceFacadeTest {
         public void testGetContentForHttp200WithTruncationFirstLineAlreadyTooLong() throws Exception {
             // given
             String content = "this is the first content line\\nthis is the second and the last content line";
+            String url = "someUrl";
             HttpServiceFacade service = new HttpServiceFacade(connectionTimeout, readTimeout, 5, throttleSleepTime,
                     maxRetriesCount) {
 
@@ -122,19 +113,11 @@ public class HttpServiceFacadeTest {
                     return httpClient;
                 }
             };
-
             // content retrieval mock
-            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            HttpEntity getContentHttpEntity = mock(HttpEntity.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(200);
-            when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
-            when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(content.getBytes()));
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
-
+            setMockExcpectations(httpClient, url, 200, content);
+            
             // execute
-            FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
+            FacadeContentRetrieverResponse<String> response = service.retrieveContent(url);
 
             // assert
             assertNotNull(response);
@@ -147,17 +130,12 @@ public class HttpServiceFacadeTest {
         public void testGetContentForHttp200WithNullEntity() throws Exception {
             // given
             HttpServiceFacade service = prepareValidService();
-
+            String url = "someUrl";
             // content retrieval mock
-            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(200);
-            when(getContentHttpResponse.getEntity()).thenReturn(null);
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
+            setMockExcpectations(httpClient, url, 200, null);
 
             // execute
-            FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
+            FacadeContentRetrieverResponse<String> response = service.retrieveContent(url);
 
             // assert
             assertNotNull(response);
@@ -174,13 +152,8 @@ public class HttpServiceFacadeTest {
         public void testGetMovedContentForHttp301NoLocationHeader() throws Exception {
             // given
             HttpServiceFacade service = prepareValidService();
-
-            // initial response mock
-            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(301);
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
+            // content retrieval mock
+            setMockExcpectations(httpClient, "someUrl", 301, null);
 
             // execute
             FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
@@ -198,29 +171,14 @@ public class HttpServiceFacadeTest {
             String movedResult = "this is moved result";
             HttpServiceFacade service = prepareValidService();
             Header mockedHeader = mock(Header.class);
+            String initUrl = "someUrl";
+            String newUrl = "newUrl";
             when(mockedHeader.getName()).thenReturn("Location");
             when(mockedHeader.getValue()).thenReturn("newUrl");
-            Header[] headers = new Header[]{mockedHeader};
-
             // initial response mock
-            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(301);
-            when(getContentHttpResponse.getAllHeaders()).thenReturn(headers);
-
-            // moved response mock
-            CloseableHttpResponse getMovedContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getMovedContentStatusLine = mock(StatusLine.class);
-            HttpEntity getMovedContentHttpEntity = mock(HttpEntity.class);
-            when(getMovedContentHttpResponse.getStatusLine()).thenReturn(getMovedContentStatusLine);
-            when(getMovedContentStatusLine.getStatusCode()).thenReturn(200);
-            when(getMovedContentHttpResponse.getEntity()).thenReturn(getMovedContentHttpEntity);
-            when(getMovedContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(movedResult.getBytes()));
-
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("newUrl")))).thenReturn(getMovedContentHttpResponse);
-
+            setMockExcpectations(httpClient, initUrl, 301, null, new Header[]{mockedHeader});
+            setMockExcpectations(httpClient, newUrl, 200, movedResult);
+            
             // execute
             FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
 
@@ -239,13 +197,8 @@ public class HttpServiceFacadeTest {
         public void testGetNoContentForHttp404() throws Exception {
             // given
             HttpServiceFacade service = prepareValidService();
-
             // content retrieval mock
-            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(404);
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
+            setMockExcpectations(httpClient, "someUrl", 404, null);
 
             // execute
             FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
@@ -263,11 +216,7 @@ public class HttpServiceFacadeTest {
             HttpServiceFacade service = prepareValidService();
 
             // rate-limited response mock
-            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(429);
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
+            setMockExcpectations(httpClient, "someUrl", 429, null);
 
             // execute
             FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
@@ -323,12 +272,7 @@ public class HttpServiceFacadeTest {
             HttpServiceFacade service = prepareValidService();
 
             // content retrieval mock
-            CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
-            StatusLine getContentStatusLine = mock(StatusLine.class);
-            when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
-            when(getContentStatusLine.getStatusCode()).thenReturn(500);
-
-            when(httpClient.execute(argThat(isHttpGETAndMatchesURL("someUrl")))).thenReturn(getContentHttpResponse);
+            setMockExcpectations(httpClient, "someUrl", 500, null);
 
             // execute
             FacadeContentRetrieverResponse<String> response = service.retrieveContent("someUrl");
@@ -382,6 +326,42 @@ public class HttpServiceFacadeTest {
 
         // assert
         assertNotNull(deserService);
+    }
+    
+    /**
+     * Sets up mocks to work according to the requirements provided as parameters.
+     * @param httpClient http client to be mocked
+     * @param url url to be matched against
+     * @param statusCode HTTP status code to be returned by mock
+     * @param content content to be provided by HttpEntity object, null HttpEntity is returned if content is null 
+     * @param headers optional headers to be returned
+     * @throws UnsupportedOperationException
+     * @throws IOException
+     */
+    private static void setMockExcpectations(CloseableHttpClient httpClient,
+            String url, int statusCode, String content, Header[] headers) throws UnsupportedOperationException, IOException {
+        CloseableHttpResponse getContentHttpResponse = mock(CloseableHttpResponse.class);
+        if (headers != null) {
+            when(getContentHttpResponse.getAllHeaders()).thenReturn(headers);
+        }
+        StatusLine getContentStatusLine = mock(StatusLine.class);
+        when(getContentHttpResponse.getStatusLine()).thenReturn(getContentStatusLine);
+        when(getContentStatusLine.getStatusCode()).thenReturn(statusCode);
+        if (content != null) {
+            HttpEntity getContentHttpEntity = mock(HttpEntity.class);
+            when(getContentHttpResponse.getEntity()).thenReturn(getContentHttpEntity);
+            when(getContentHttpEntity.getContent()).thenReturn(new ByteArrayInputStream(content.getBytes()));
+        } else {
+            if (statusCode == 200) {
+                when(getContentHttpResponse.getEntity()).thenReturn(null);    
+            }
+        }
+        when(httpClient.execute(argThat(isHttpGETAndMatchesURL(url)))).thenReturn(getContentHttpResponse);
+    }
+    
+    private static void setMockExcpectations(CloseableHttpClient httpClient,
+            String url, int statusCode, String content) throws UnsupportedOperationException, IOException {
+        setMockExcpectations(httpClient, url, statusCode, content, null);
     }
 
     @SuppressWarnings("serial")
