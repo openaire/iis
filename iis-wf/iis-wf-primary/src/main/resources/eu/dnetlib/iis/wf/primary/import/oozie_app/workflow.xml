@@ -23,6 +23,11 @@
             <name>infospace_eligible_service_collectedfrom_datasourceid</name>
             <description>data source identifier eligible services can be collected from</description>
         </property>
+        <property>
+            <name>infospaceImportSparkExecutorMemory</name>
+            <value>${sparkExecutorMemory}</value>
+            <description>infospace importer module spark executor memory</description>
+        </property>
 		<property>
 			<name>inference_provenance_blacklist</name>
 			<value>iis::.*</value>
@@ -274,6 +279,10 @@
             <app-path>${wf:appPath()}/import_infospace</app-path>
             <propagate-configuration />
             <configuration>
+                <property>
+                    <name>sparkExecutorMemory</name>
+                    <value>${infospaceImportSparkExecutorMemory}</value>
+                </property>
                 <property>
                     <name>workingDir</name>
                     <value>${workingDir}/import_infospace/working_dir</value>
