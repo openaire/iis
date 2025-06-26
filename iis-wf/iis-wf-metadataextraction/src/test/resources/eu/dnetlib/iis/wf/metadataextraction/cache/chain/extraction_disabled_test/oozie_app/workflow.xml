@@ -1,4 +1,4 @@
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-metadataextraction_cache_identify_by_checksum">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-metadataextraction_cache_chain_extraction_disabled">
 	
     <global>
         <job-tracker>${jobTracker}</job-tracker>
@@ -14,7 +14,7 @@
             </property>
             <property>
                 <name>metadata_extractor_app_name</name>
-                <value>../../metadata_extractor_mock</value>
+                <value>../metadata_extractor_mock</value>
             </property>
             <property>
                 <name>lock_managing_process</name>
@@ -56,13 +56,13 @@
             <!-- Specification of the output ports -->
             <arg>-C{content_url_1,
                 eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/input/document_content_url_1.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/chain/data/input/document_content_url_1.json}</arg>
             <arg>-C{content_url_2,
                 eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/input/document_content_url_2.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/chain/data/input/document_content_url_2.json}</arg>
             <arg>-C{content_url_1_2,
                 eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/input/document_content_url_1_2.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/chain/data/input/document_content_url_1_2.json}</arg>
             <!-- All input and output ports have to be bound to paths in HDFS -->
             <arg>-Ocontent_url_1=${workingDir}/producer/content_url_1</arg>
             <arg>-Ocontent_url_2=${workingDir}/producer/content_url_2</arg>
@@ -74,7 +74,7 @@
     
     <action name="cache_chain_1st_run">
 		<sub-workflow>
-            <app-path>${wf:appPath()}/cache_identify_by_checksum</app-path>
+            <app-path>${wf:appPath()}/cache_chain</app-path>
             <propagate-configuration/>
             <configuration>
                 <property>
@@ -84,11 +84,11 @@
                 <!-- metadataextraction_mock related parameters -->
                 <property>
                     <name>input_fault_json_location</name>
-                    <value>eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/mock/fault_1.json</value>
+                    <value>eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/fault_1.json</value>
                 </property>
                 <property>
                     <name>input_meta_json_location</name>
-                    <value>eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/mock/meta_1.json</value>
+                    <value>eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/meta_1.json</value>
                 </property>
                 <property>
                     <name>input</name>
@@ -118,17 +118,12 @@
     
     <action name="cache_chain_2nd_run">
         <sub-workflow>
-            <app-path>${wf:appPath()}/cache_identify_by_checksum</app-path>
+            <app-path>${wf:appPath()}/cache_chain</app-path>
             <propagate-configuration/>
             <configuration>
                 <property>
                     <name>active_metadata_extraction</name>
-                    <value>true</value>
-                </property>
-                <!-- metadataextraction_mock related parameters -->
-                <property>
-                    <name>input_meta_json_location</name>
-                    <value>eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/mock/meta_2.json</value>
+                    <value>false</value>
                 </property>
                 <property>
                     <name>input</name>
@@ -158,12 +153,12 @@
     
     <action name="cache_chain_3rd_run">
         <sub-workflow>
-            <app-path>${wf:appPath()}/cache_identify_by_checksum</app-path>
+            <app-path>${wf:appPath()}/cache_chain</app-path>
             <propagate-configuration/>
             <configuration>
                 <property>
                     <name>active_metadata_extraction</name>
-                    <value>true</value>
+                    <value>false</value>
                 </property>
                 <property>
                     <name>input</name>
@@ -212,39 +207,39 @@
 			<!-- Specification of the input ports -->
             <arg>-C{meta_out_1st,
                 eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/output/meta_1.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/meta_1.json}</arg>
             <arg>-C{fault_out_1st,
             eu.dnetlib.iis.audit.schemas.Fault,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/output/fault_1.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/fault_1.json}</arg>
             <!-- no reports for 1st run since cache was initialized and metadataextractor module was mocked -->
 
             <arg>-C{meta_out_2nd,
                 eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/output/meta_2.json}</arg>
+                eu/dnetlib/iis/common/data/empty.json}</arg>
             <arg>-C{fault_out_2nd,
             eu.dnetlib.iis.audit.schemas.Fault,
                 eu/dnetlib/iis/common/data/empty.json}</arg>
             <arg>-C{report_2nd,
                 eu.dnetlib.iis.common.schemas.ReportEntry,
-                eu/dnetlib/iis/wf/metadataextraction/cache/data/output/report_2nd.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/data/output/report_empty.json}</arg>
             
             <arg>-C{meta_out_3rd,
                 eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/output/meta_2.json}</arg>
+                eu/dnetlib/iis/common/data/empty.json}</arg>
             <!-- notice: fault was persisted in previous run therefore it is not expected to be returned -->
             <arg>-C{fault_out_3rd,
             eu.dnetlib.iis.audit.schemas.Fault,
                 eu/dnetlib/iis/common/data/empty.json}</arg>
             <arg>-C{report_3rd,
                 eu.dnetlib.iis.common.schemas.ReportEntry,
-                eu/dnetlib/iis/wf/metadataextraction/cache/data/output/report_3rd.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/data/output/report_empty.json}</arg>
 
             <arg>-C{meta_cache,
                 eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/cache/meta_1_2.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/meta_1.json}</arg>
             <arg>-C{fault_cache,
             eu.dnetlib.iis.audit.schemas.Fault,
-                eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/data/cache/fault_1.json}</arg>
+                eu/dnetlib/iis/wf/metadataextraction/cache/data/mock/fault_1.json}</arg>
 
             <arg>-Imeta_out_1st=${workingDir}/cache_chain_1st/out/meta</arg>
             <arg>-Ifault_out_1st=${workingDir}/cache_chain_1st/out/fault</arg>

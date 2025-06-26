@@ -30,6 +30,12 @@ public class MetadataExtractionCacheWorkflowTest extends AbstractOozieWorkflowTe
     }
     
     @Test
+    public void testChainMetadataExtractionDisabled() throws Exception {
+        testWorkflow("eu/dnetlib/iis/wf/metadataextraction/cache/chain/extraction_disabled_test",
+                new OozieWorkflowTestConfiguration().setTimeoutInSeconds(2400));
+    }
+    
+    @Test
     public void testIdentifyByChecksum() throws Exception {
         testWorkflow("eu/dnetlib/iis/wf/metadataextraction/cache/identify_by_checksum/test",
                 new OozieWorkflowTestConfiguration().setTimeoutInSeconds(2400));

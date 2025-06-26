@@ -77,6 +77,10 @@
             <app-path>${wf:appPath()}/cache_chain</app-path>
             <propagate-configuration/>
             <configuration>
+                <property>
+                    <name>active_metadata_extraction</name>
+                    <value>true</value>
+                </property>
                 <!-- metadataextraction_mock related parameters -->
                 <property>
                     <name>input_fault_json_location</name>
@@ -117,6 +121,10 @@
             <app-path>${wf:appPath()}/cache_chain</app-path>
             <propagate-configuration/>
             <configuration>
+                <property>
+                    <name>active_metadata_extraction</name>
+                    <value>true</value>
+                </property>
                 <!-- metadataextraction_mock related parameters -->
                 <property>
                     <name>input_meta_json_location</name>
@@ -153,6 +161,10 @@
             <app-path>${wf:appPath()}/cache_chain</app-path>
             <propagate-configuration/>
             <configuration>
+                <property>
+                    <name>active_metadata_extraction</name>
+                    <value>true</value>
+                </property>
                 <property>
                     <name>input</name>
                     <value>${workingDir}/producer/content_url_1_2</value>

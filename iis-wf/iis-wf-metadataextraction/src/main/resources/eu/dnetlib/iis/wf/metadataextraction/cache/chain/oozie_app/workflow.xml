@@ -2,6 +2,11 @@
 
 	<parameters>
         <property>
+            <name>active_metadata_extraction</name>
+            <value>false</value>
+            <description>flag indicating metadata extraction from the newly introduced PDF files should be performed</description>
+        </property>
+        <property>
             <name>metadata_extractor_app_name</name>
             <description>metadata_extractor application name</description>
         </property>
@@ -178,9 +183,47 @@
                 </property>
 			</configuration>
 		</sub-workflow>
-		<ok to="cache_update" />
+		<ok to="decision-cache_update" />
 		<error to="fail" />
 	</action>
+	
+	<decision name="decision-cache_update">
+        <switch>
+            <case to="cache_update">${active_metadata_extraction eq "true"}</case>
+            <default to="init-output-and-generate-empty-fault" />
+        </switch>
+    </decision>
+    
+    <action name="init-output-and-generate-empty-fault">
+        <java>
+            <prepare>
+                <!-- notice: directory have to aligned with skipped action output -->
+                <delete path="${nameNode}${output_root}" />
+                <mkdir path="${nameNode}${output_root}" />
+            </prepare>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.java.jsonworkflownodes.Producer</arg>
+            <arg>-C{fault,
+                eu.dnetlib.iis.audit.schemas.Fault,
+                eu/dnetlib/iis/common/data/empty.json}
+            </arg>
+            <arg>-Ofault=${output_root}/${output_name_fault}</arg>
+        </java>
+        <ok to="copy-tobereturned-meta" />
+        <error to="fail" />
+    </action>
+
+    <action name="copy-tobereturned-meta">
+        <distcp xmlns="uri:oozie:distcp-action:0.2">
+            <prepare>
+                <delete path="${nameNode}${output_root}/${output_name_meta}" />
+            </prepare>
+            <arg>${nameNode}${workingDir}/transformers_metadataextraction_skip_extracted/tobereturned_meta</arg>
+            <arg>${nameNode}${output_root}/${output_name_meta}</arg>
+        </distcp>
+        <ok to="end" />
+        <error to="fail" />
+    </action>
 
 	<action name="cache_update">
 		<sub-workflow>
