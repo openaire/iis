@@ -75,7 +75,7 @@ public final class MainSectionHashBucketMatcherFactory {
                 createNameCountryStrictMatchVoter(0.981f, new GetOrgNameFunction()),
                 createNameStrictCountryLooseMatchVoter(0.966f, new GetOrgNameFunction()),
                 createSectionedNameStrictCountryLooseMatchVoter(0.978f, new GetOrgNameFunction()),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(0.964f, new GetOrgNameFunction()),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.969f, new GetOrgNameFunction()),
                 createSectionedNameStrictCountryLooseMatchVoter(0.937f, new GetOrgShortNameFunction())
                 );
     }

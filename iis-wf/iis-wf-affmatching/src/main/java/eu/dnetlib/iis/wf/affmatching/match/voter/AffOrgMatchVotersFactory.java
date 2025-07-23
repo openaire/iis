@@ -62,7 +62,7 @@ public final class AffOrgMatchVotersFactory {
     
     public static AffOrgMatchVoter createSectionedNameLevenshteinCountryLooseMatchVoter(float matchStrength, Function<AffMatchOrganization, List<String>> getOrgNamesFunction) {
         
-        SectionedNameLevenshteinMatchVoter orgNameVoter = new SectionedNameLevenshteinMatchVoter(0.9);
+        SectionedNameLevenshteinMatchVoter orgNameVoter = new SectionedNameLevenshteinMatchVoter(0.91);
         orgNameVoter.setGetOrgNamesFunction(getOrgNamesFunction);
         
         CompositeMatchVoter voter = new CompositeMatchVoter(ImmutableList.of(new CountryCodeLooseMatchVoter(), orgNameVoter));

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SectionedNameLevenshteinMatchVoterTest {
 
     @InjectMocks
-    private SectionedNameLevenshteinMatchVoter voter = new SectionedNameLevenshteinMatchVoter(0.9);
+    private SectionedNameLevenshteinMatchVoter voter = new SectionedNameLevenshteinMatchVoter(0.91);
     
     @Mock
     private Function<AffMatchOrganization, List<String>> getOrgNamesFunction;
@@ -70,6 +70,42 @@ public class SectionedNameLevenshteinMatchVoterTest {
         
         // execute & assert
         assertTrue(voter.voteMatch(affiliation, organization));
+        
+    }
+    
+    @Test
+    public void voteMatch_dont_match_similar_single_sectioned_italian_case() {
+
+        // given
+        affiliation.setOrganizationName("university of pavia");
+        resetOrgNames("university of pisa");
+        
+        // execute & assert
+        assertFalse(voter.voteMatch(affiliation, organization));
+        
+    }
+    
+    @Test
+    public void voteMatch_dont_match_similar_single_sectioned_italian_case_native_language_pisa() {
+
+        // given
+        affiliation.setOrganizationName("universita degli studi di pavia");
+        resetOrgNames("universita degli studi di pisa");
+        
+        // execute & assert
+        assertFalse(voter.voteMatch(affiliation, organization));
+        
+    }
+    
+    @Test
+    public void voteMatch_dont_match_similar_single_sectioned_italian_case_native_language_padova() {
+
+        // given
+        affiliation.setOrganizationName("universita degli studi di pavia");
+        resetOrgNames("universita degli studi di padova");
+        
+        // execute & assert
+        assertFalse(voter.voteMatch(affiliation, organization));
         
     }
     

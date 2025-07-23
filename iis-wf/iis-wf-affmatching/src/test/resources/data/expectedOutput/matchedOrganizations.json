@@ -16,7 +16,7 @@
 {
     "documentId":"DOC_3",
     "organizationId":"20|ICMUW",
-    "matchStrength":0.9999731
+    "matchStrength":0.99997675
 }
 {
     "documentId":"DOC_4",
@@ -26,10 +26,10 @@
 {
     "documentId":"DOC_6",
     "organizationId":"20|WSU",
-    "matchStrength":0.9999501
+    "matchStrength":0.999957
 }
 {
     "documentId":"DOC_6",
     "organizationId":"20|WSU_DUP",
-    "matchStrength":0.9999501
+    "matchStrength":0.999957
 }

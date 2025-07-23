@@ -1,5 +1,12 @@
 package eu.dnetlib.iis.wf.affmatching;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -11,18 +18,9 @@ import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject;
 import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 /**
 * @author mhorst
@@ -111,7 +109,48 @@ public class AffMatchingRealLifeExampleJobTest {
         executeJobAndAssert(jsonOutputPath, jsonOutputReportPath);
     }
     
-    
+    @Test
+    public void affiliationMatchingJobWithItalianOrganizationFalsePositives() throws IOException {
+        
+        
+        // given
+
+        String jsonInputOrgPath = ClassPathResourceProvider
+                .getResourcePath("data/reallife_example2/input/organizations.json");
+        String jsonInputAffPath = ClassPathResourceProvider
+                .getResourcePath("data/reallife_example2/input/affiliations.json");
+        String jsonInputInferredDocProjPath = ClassPathResourceProvider
+                .getResourcePath("data/reallife_example2/input/docProjInferred.json");
+        String jsonInputDocProjPath = ClassPathResourceProvider
+                .getResourcePath("data/reallife_example2/input/docProj.json");
+        String jsonInputProjOrgPath = ClassPathResourceProvider
+                .getResourcePath("data/reallife_example2/input/projOrg.json");
+
+        String jsonOutputPath = ClassPathResourceProvider
+                .getResourcePath("data/reallife_example2/expectedOutput/matchedOrganizations.json");
+        String jsonOutputReportPath = ClassPathResourceProvider
+                .getResourcePath("data/reallife_example2/expectedOutput/report.json");
+        
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputOrgPath, Organization.class), inputOrgDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputAffPath, ExtractedDocumentMetadata.class), inputAffDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputInferredDocProjPath, DocumentToProject.class), inputInferredDocProjDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputDocProjPath, eu.dnetlib.iis.importer.schemas.DocumentToProject.class), inputDocProjDirPath);
+        
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputProjOrgPath, ProjectToOrganization.class), inputProjOrgDirPath);
+        
+        // execute & assert
+        
+        executeJobAndAssert(jsonOutputPath, jsonOutputReportPath);
+    }
     
     
     //------------------------ PRIVATE --------------------------
@@ -144,9 +183,6 @@ public class AffMatchingRealLifeExampleJobTest {
         
         
         // assert
-        List<MatchedOrganization> matchedOrgs = AvroTestUtils.readLocalAvroDataStore(outputDirPath);
-        assertEquals(0, matchedOrgs.size());
-        
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputDirPath, jsonOutputPath, MatchedOrganization.class);
         AvroAssertTestUtil.assertEqualsWithJsonIgnoreOrder(outputReportPath, jsonOutputReportPath, ReportEntry.class);
 

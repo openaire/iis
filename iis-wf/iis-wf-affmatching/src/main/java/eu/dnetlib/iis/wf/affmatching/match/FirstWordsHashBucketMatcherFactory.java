@@ -80,7 +80,7 @@ public final class FirstWordsHashBucketMatcherFactory {
                 createNameCountryStrictMatchVoter(0.981f, new GetOrgNameFunction()),
                 createNameStrictCountryLooseMatchVoter(0.966f, new GetOrgNameFunction()),
                 createSectionedNameStrictCountryLooseMatchVoter(0.815f, new GetOrgNameFunction()),
-                createSectionedNameLevenshteinCountryLooseMatchVoter(0.798f, new GetOrgNameFunction()),
+                createSectionedNameLevenshteinCountryLooseMatchVoter(0.793f, new GetOrgNameFunction()),
                 createSectionedNameStrictCountryLooseMatchVoter(0.682f, new GetOrgShortNameFunction()),
                 commonAffOrgNameWordsVoter);
     }
