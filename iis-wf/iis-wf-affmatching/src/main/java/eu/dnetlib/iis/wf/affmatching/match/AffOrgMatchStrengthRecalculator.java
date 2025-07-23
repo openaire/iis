@@ -2,6 +2,9 @@ package eu.dnetlib.iis.wf.affmatching.match;
 
 import java.io.Serializable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.wf.affmatching.match.voter.AffOrgMatchVoter;
@@ -15,6 +18,7 @@ import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
 
 class AffOrgMatchStrengthRecalculator implements Serializable {
 
+    private static final Logger logger = LoggerFactory.getLogger(AffOrgMatchStrengthRecalculator.class);
     
     private static final long serialVersionUID = 1L;
 
@@ -35,9 +39,18 @@ class AffOrgMatchStrengthRecalculator implements Serializable {
         float matchStrength = affMatchResult.getMatchStrength();
         
         if (voter.voteMatch(affMatchResult.getAffiliation(), affMatchResult.getOrganization())) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("voter: '" + voter.toString() + "' voted for the match between \n"
+                        + affMatchResult.getAffiliation() + "\nand\n" + affMatchResult.getOrganization());
+            }
             
             matchStrength = (matchStrength + voter.getMatchStrength()) - matchStrength * voter.getMatchStrength(); // bear in mind: the strengths are less that one
             
+            if (logger.isTraceEnabled()) {
+                logger.trace("recalculating current match strength '" + affMatchResult.getMatchStrength()
+                        + "' to the new value: '" + matchStrength + "' after getting positive vote from voter '"
+                        + voter.toString() + "'");
+            }
         } 
         
         return new AffMatchResult(affMatchResult.getAffiliation(), affMatchResult.getOrganization(), matchStrength);
