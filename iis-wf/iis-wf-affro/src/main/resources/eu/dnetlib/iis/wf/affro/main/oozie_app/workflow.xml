@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!-- Note that documentation placed in comments in this file uses the
+"markdown" syntax (along with its way of dividing text into sections). -->
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="affro_main">
+    
+    <parameters>
+        <property>
+            <name>input_html_landing_pages_csv</name>
+            <description>input CSV with landing pages metadata</description>
+        </property>
+        <property>
+            <name>max_html_page_length</name>
+            <value>1000000</value>
+            <description>Maximum length of a single HTML page to be imported</description>
+        </property>
+        <property>
+            <name>objectstore_s3_keystore_location</name>
+            <value>$UNDEFINED$</value>
+            <description>keystore holding credentials giving read access to S3 bucket with contents</description>
+        </property>
+        <property>
+            <name>objectstore_s3_endpoint</name>
+            <value>$UNDEFINED$</value>
+            <description>S3 service providing contents endpoint</description>
+        </property>
+        <property>
+            <name>output</name>
+            <description>output datastore</description>
+        </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+    </parameters>
+
+    <start to="import_html_landing_pages" />
+
+    <action name="import_html_landing_pages">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/import_html_landing_pages</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/import_html_landing_pages/working_dir</value>
+                </property>
+                <property>
+                    <name>input_csv</name>
+                    <value>${input_html_landing_pages_csv}</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${workingDir}/import_html_landing_pages/out</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="affro_processing"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="affro_processing">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/affro_processing</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/affro_processing/working_dir</value>
+                </property>
+                <property>
+                    <name>input</name>
+                    <value>${workingDir}/import_html_landing_pages/out</value>
+                </property>
+                <property>
+                    <name>output</name>
+                    <value>${output}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+                    [${wf:errorMessage(wf:lastErrorNode())}]
+                </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
