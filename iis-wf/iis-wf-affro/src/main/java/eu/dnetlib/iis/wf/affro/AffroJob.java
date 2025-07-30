@@ -17,6 +17,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.ImmutableList;
 
+import eu.dnetlib.iis.affro.schemas.AffroResult;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -65,14 +66,13 @@ public class AffroJob {
             JavaRDD<String> stringDocumentClasses = repartRecords
                     .pipe("bash " + scriptsDirOnWorkerNode + "/run_affro.sh" + " " + scriptsDirOnWorkerNode);
 
-            //FIXME currently this is a simple pass-through. Replace expected output class with an appropriate one representing affro output.
-            JavaRDD<DocumentTextWithDOI> outputRecords = stringDocumentClasses
-                    .map(recordString -> AvroGsonFactory.create().fromJson(recordString, DocumentTextWithDOI.class)
+            JavaRDD<AffroResult> outputRecords = stringDocumentClasses
+                    .map(recordString -> AvroGsonFactory.create().fromJson(recordString, AffroResult.class)
             );
 
             outputRecords.cache();
             
-            avroSaver.saveJavaRDD(outputRecords, DocumentTextWithDOI.SCHEMA$, params.outputAvroPath);
+            avroSaver.saveJavaRDD(outputRecords, AffroResult.SCHEMA$, params.outputAvroPath);
 
             List<ReportEntry> reportEntries = createReportEntries(outputRecords.count());
             

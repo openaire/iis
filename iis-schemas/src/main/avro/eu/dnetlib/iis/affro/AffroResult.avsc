@@ -1,0 +1,81 @@
+{
+  "namespace": "eu.dnetlib.iis.affro.schemas",
+  "type": "record",
+  "name": "AffroResult",
+  "fields": [
+    { "name": "doi", "type": "string" },
+    { "name": "id", "type": "string" },
+    {
+      "name": "parsing_output",
+      "type": {
+        "type": "record",
+        "name": "ParsingOutput",
+        "fields": [
+          { "name": "doi", "type": "string" },
+          {
+            "name": "authors",
+            "type": {
+              "type": "array",
+              "items": {
+                "type": "record",
+                "name": "Author",
+                "fields": [
+                  {
+                    "name": "name",
+                    "type": {
+                      "type": "record",
+                      "name": "AuthorName",
+                      "fields": [
+                        { "name": "full", "type": "string" },
+                        { "name": "first", "type": "string" },
+                        { "name": "last", "type": "string" },
+                        { "name": "type", "type": "string" }
+                      ]
+                    }
+                  },
+                  { "name": "corresponding", "type": "boolean" },
+                  {
+                    "name": "contributor_roles",
+                    "type": {
+                      "type": "array",
+                      "items": {
+                        "type": "record",
+                        "name": "ContributorRole",
+                        "fields": [
+                          { "name": "schema", "type": "string" },
+                          { "name": "value", "type": "string" },
+                          { "name": "name", "type": "string" }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "name": "raw_affiliations",
+                    "type": { "type": "array", "items": "string" }
+                  },
+                  {
+                    "name": "pids",
+                    "type": {
+                      "type": "array",
+                      "items": {
+                        "type": "record",
+                        "name": "Pid",
+                        "fields": [
+                          { "name": "schema", "type": "string" },
+                          { "name": "value", "type": "string" }
+                        ]
+                      }
+                    }
+                  },
+                  { "name": "parser", "type": "string" }
+                ]
+              }
+            }
+          },
+          { "name": "success", "type": "boolean" },
+          { "name": "reason_of_failure", "type": "string" }
+        ]
+      }
+    }
+  ]
+}
