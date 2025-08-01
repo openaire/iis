@@ -1,0 +1,3 @@
+{"id": "1", "url": "url1", "mimeType": null, "contentChecksum": null, "contentSizeKB": 0}
+{"id": "2", "url": "url2", "mimeType": "mime2", "contentChecksum": null, "contentSizeKB": 0}
+{"id": "3", "url": "url3", "mimeType": "mime3", "contentChecksum": "checksum3", "contentSizeKB": 0}

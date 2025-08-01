@@ -1,0 +1,4 @@
+{"id": "0", "url": "url0", "mimeType": null, "contentChecksum": null, "contentSizeKB": 0}
+{"id": "4", "url": "url4", "mimeType": null, "contentChecksum": null, "contentSizeKB": 0}
+{"id": "5", "url": "url5", "mimeType": "mime5", "contentChecksum": null, "contentSizeKB": 0}
+{"id": "6", "url": "url6", "mimeType": "mime6", "contentChecksum": "checksum6", "contentSizeKB": 0}
