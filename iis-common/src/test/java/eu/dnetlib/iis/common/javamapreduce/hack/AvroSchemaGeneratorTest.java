@@ -1,11 +1,10 @@
 package eu.dnetlib.iis.common.javamapreduce.hack;
 
-import eu.dnetlib.iis.common.schemas.Identifier;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,8 +12,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import static eu.dnetlib.iis.common.WorkflowRuntimeParameters.OOZIE_ACTION_OUTPUT_FILENAME;
-import static org.junit.jupiter.api.Assertions.*;
+import org.apache.avro.Schema;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import eu.dnetlib.iis.common.schemas.Identifier;
 
 /**
  * @author mhorst
@@ -33,6 +38,38 @@ public class AvroSchemaGeneratorTest {
     }
     
     // -------------------------------------- TESTS --------------------------------------
+    
+    @Test
+    public void testGetSchemaForValidAvroClass() throws ClassNotFoundException {
+        // execute
+        Schema schema = AvroSchemaGenerator.getSchema("eu.dnetlib.iis.common.schemas.Identifier");
+        
+        // assert
+        assertNotNull(schema);
+        assertEquals(Identifier.SCHEMA$, schema);
+    }
+    
+    @Test
+    public void testGetSchemaForInvalidAvroClass() {
+        // execute
+        assertThrows(IllegalArgumentException.class, () -> AvroSchemaGenerator.getSchema("eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator"));
+    }
+    
+    @Test
+    public void testGetSchemaStringForValidAvroClass() throws ClassNotFoundException {
+        // execute
+        String schema = AvroSchemaGenerator.getSchemaString("eu.dnetlib.iis.common.schemas.Identifier");
+        
+        // assert
+        assertNotNull(schema);
+        assertEquals(Identifier.SCHEMA$.toString(), schema);
+    }
+    
+    @Test
+    public void testGetSchemaStringForInvalidAvroClass() {
+        // execute
+        assertThrows(IllegalArgumentException.class, () -> AvroSchemaGenerator.getSchemaString("eu.dnetlib.iis.common.javamapreduce.hack.AvroSchemaGenerator"));
+    }
     
     @Test
     public void testMainNoArgs() {

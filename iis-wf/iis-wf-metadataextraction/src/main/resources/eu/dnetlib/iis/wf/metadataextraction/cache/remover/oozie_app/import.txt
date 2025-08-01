@@ -1,0 +1,4 @@
+## This is a classpath-based import file (this header is required)
+genericexistencefilter classpath eu/dnetlib/iis/wf/transformers/common/genericexistencefilter/oozie_app
+report classpath eu/dnetlib/iis/wf/report/builder/oozie_app
+

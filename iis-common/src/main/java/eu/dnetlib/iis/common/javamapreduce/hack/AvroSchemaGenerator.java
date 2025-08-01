@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import org.apache.avro.Schema;
+import org.apache.avro.specific.SpecificData;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.cli.ParseException;
 
 import eu.dnetlib.iis.common.utils.AvroUtils;
@@ -26,6 +29,33 @@ public final class AvroSchemaGenerator {
     private AvroSchemaGenerator() {}
     
     //------------------------ LOGIC ---------------------------------
+    
+    /**
+     * Generate Avro schema JSON string from a class name
+     * 
+     * @param className Fully qualified class name of the Avro record
+     * @return Schema JSON string ready for Spark's option("avroSchema", schema)
+     * @throws ClassNotFoundException if the class cannot be found
+     */
+    public static String getSchemaString(String className) throws ClassNotFoundException {
+        return getSchema(className).toString();
+    }
+    
+    /**
+     * Provides Avro schema defined for a given class name being {@link SpecificRecordBase} subclass.
+     * 
+     * @param className Fully qualified class name of the Avro record
+     * @return schema class defined for {@link SpecificRecordBase}
+     * @throws ClassNotFoundException if the class cannot be found
+     */
+    public static Schema getSchema(String className) throws ClassNotFoundException {
+        Class<?> recordClass = Class.forName(className);
+        if (SpecificRecordBase.class.isAssignableFrom(recordClass)) {
+            return SpecificData.get().getSchema(recordClass);
+        } else {
+            throw new IllegalArgumentException("Provided class is not a SpecificRecord: " + className);
+        }
+    }
     
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {
         if (args.length==0) {
