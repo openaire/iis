@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- Note that documentation placed in comments in this file uses the
 "markdown" syntax (along with its way of dividing text into sections). -->
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="affro_main">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="affextraction_main">
     
     <parameters>
         <property>
@@ -54,18 +54,18 @@
                 </property>
             </configuration>
         </sub-workflow>
-        <ok to="affro_processing"/>
+        <ok to="affextraction_processing"/>
         <error to="fail"/>
     </action>
 
-    <action name="affro_processing">
+    <action name="affextraction_processing">
         <sub-workflow>
-            <app-path>${wf:appPath()}/affro_processing</app-path>
+            <app-path>${wf:appPath()}/affextraction_processing</app-path>
             <propagate-configuration />
             <configuration>
                 <property>
                     <name>workingDir</name>
-                    <value>${workingDir}/affro_processing/working_dir</value>
+                    <value>${workingDir}/affextraction_processing/working_dir</value>
                 </property>
                 <property>
                     <name>input</name>

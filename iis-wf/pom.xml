@@ -13,7 +13,7 @@
 
 	<modules>
        <module>iis-wf-affmatching</module>
-       <module>iis-wf-affro</module>
+       <module>iis-wf-affextraction</module>
        <module>iis-wf-documentssimilarity</module>
        <module>iis-wf-citationmatching</module>
        <module>iis-wf-citationmatching-direct</module>

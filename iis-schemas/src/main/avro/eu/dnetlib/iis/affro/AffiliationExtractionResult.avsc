@@ -1,7 +1,7 @@
 {
-  "namespace": "eu.dnetlib.iis.affro.schemas",
+  "namespace": "eu.dnetlib.iis.affextraction.schemas",
   "type": "record",
-  "name": "AffroResult",
+  "name": "AffiliationExtractionResult",
   "fields": [
     { "name": "doi", "type": "string" },
     { "name": "id", "type": "string" },

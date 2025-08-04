@@ -1,3 +1,3 @@
 ## This is a classpath-based import file (this header is required)
 import_html_landing_pages classpath eu/dnetlib/iis/wf/importer/html_landing_pages/oozie_app
-affro_processing classpath eu/dnetlib/iis/wf/affro/processing/oozie_app
+affextraction_processing classpath eu/dnetlib/iis/wf/affextraction/processing/oozie_app

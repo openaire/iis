@@ -3,7 +3,7 @@ set -o pipefail
 
 # this is just a simple pass-through logic to be replaced with the real code.
 
-# This script reads JSON records from stdin (with `id`, `doi` and `text` triples) and transforms them into an AffroResult format, printing the result to stdout.
+# This script reads JSON records from stdin (with `id`, `doi` and `text` triples) and transforms them into an AffiliationExtractionResult format, printing the result to stdout.
 #
 # Example usage:
 # cat records.json | ./run_affro.sh

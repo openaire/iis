@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<workflow-app xmlns="uri:oozie:workflow:0.4" name="affro_processing">
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="affextraction_processing">
 	
 	<parameters>
 		<property>
@@ -16,7 +16,7 @@
         </property>
         <property>
             <name>output_report_relative_path</name>
-            <value>affro_extraction</value>
+            <value>affextraction</value>
             <description>directory for storing report (relative to output_report_root_path)</description>
         </property>
         <property>
@@ -81,15 +81,15 @@
         </configuration>
     </global>
 
-    <start to="affro_job" />
+    <start to="affextraction_job" />
 
-	<action name="affro_job"> 
+	<action name="affextraction_job"> 
         <spark xmlns="uri:oozie:spark-action:0.2">
             <master>yarn-cluster</master>
             <mode>cluster</mode>
-            <name>affro_job</name>
-            <class>eu.dnetlib.iis.wf.affro.AffroJob</class>
-            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affro-${projectVersion}.jar</jar>
+            <name>affextraction_job</name>
+            <class>eu.dnetlib.iis.wf.affextraction.AffExtractionJob</class>
+            <jar>${oozieTopWfApplicationPath}/lib/iis-wf-affextraction-${projectVersion}.jar</jar>
             <spark-opts>
                 --executor-memory=${sparkExecutorMemory}
                 --executor-cores=${sparkExecutorCores}
