@@ -29,7 +29,7 @@ create table grants as select acronym,
           when fundingclass2="NC3Rs" then "NC3Rs"
           when fundingclass2="NERC" then "NERC|Natural Environment Research Council"
           when fundingclass2="STFC" then "STFC|Science and Technology Facilities Council"
-          else '' end as rcuk_subfunder,
+          else '_^' end as rcuk_subfunder,
      case when fundingclass1="TARA" then
                case when grantid="unidentified" then "" else jsplitv(c9) end
                else "" end as tarakeywords
