@@ -1,0 +1,50 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="primary_validate_output">
+
+    <parameters>
+        <property>
+            <name>output_remote_location</name>
+            <description>optional remote cluster output location where inference output dump should be distcped as sequence files. When not specified results will be exported straight to the ActionManager.</description>
+        </property>
+    </parameters>
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+            <property>
+                <name>oozie.launcher.mapred.job.queue.name</name>
+                <value>${oozieLauncherQueueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="validate-output" />
+
+    <action name="validate-output">
+        <fs>
+            <touchz path="${nameNode}${output_remote_location}/validate_output_timestamp"/>
+        </fs>
+        <ok to="validate-output-cleanup"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="validate-output-cleanup">
+        <fs>
+            <delete path="${nameNode}${output_remote_location}/validate_output_timestamp"/>
+        </fs>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end" />
+</workflow-app>

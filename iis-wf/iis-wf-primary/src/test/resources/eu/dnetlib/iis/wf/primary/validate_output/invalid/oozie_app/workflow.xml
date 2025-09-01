@@ -1,0 +1,55 @@
+<workflow-app xmlns="uri:oozie:workflow:0.4" name="test-primary_validate_output_invalid">
+
+    <global>
+        <job-tracker>${jobTracker}</job-tracker>
+        <name-node>${nameNode}</name-node>
+        <configuration>
+            <property>
+                <name>mapreduce.job.queuename</name>
+                <value>${queueName}</value>
+            </property>
+        </configuration>
+    </global>
+
+    <start to="init"/>
+
+    <action name="init">
+        <fs>
+            <mkdir path="/tmp/${wf:id()}"/>
+            <chmod path="/tmp/${wf:id()}" permissions="dr-xr-xr-x"/>
+        </fs>
+        <ok to="primary_validate_output"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="primary_validate_output">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/primary_validate_output</app-path>
+            <propagate-configuration />
+            <configuration>
+                <property>
+                    <name>output_remote_location</name>
+                    <value>/tmp/${wf:id()}</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="fail"/>
+        <error to="cleanup"/>
+    </action>
+
+    <action name="cleanup">
+        <fs>
+            <delete path="/tmp/${wf:id()}"/>
+        </fs>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Unfortunately, the process failed -- error message:
+            [${wf:errorMessage(wf:lastErrorNode())}]
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

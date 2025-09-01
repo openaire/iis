@@ -1,0 +1,2 @@
+## This is a classpath-based import file (this header is required)
+primary_validate_output classpath eu/dnetlib/iis/wf/primary/validate_output/oozie_app

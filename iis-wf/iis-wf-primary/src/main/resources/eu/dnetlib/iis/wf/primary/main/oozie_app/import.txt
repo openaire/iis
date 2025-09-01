@@ -1,5 +1,6 @@
 ## This is a classpath-based import file (this header is required)
 primary_import classpath eu/dnetlib/iis/wf/primary/import/oozie_app
+primary_validate_output classpath eu/dnetlib/iis/wf/primary/validate_output/oozie_app
 primary_processing classpath eu/dnetlib/iis/wf/primary/processing/oozie_app
 transformers_idextractor classpath eu/dnetlib/iis/wf/transformers/importer/documentmetadata/idextractor/oozie_app
 primary_export classpath eu/dnetlib/iis/wf/primary/export/oozie_app

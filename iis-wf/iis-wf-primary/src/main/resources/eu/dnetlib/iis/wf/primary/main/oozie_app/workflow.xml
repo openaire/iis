@@ -481,19 +481,12 @@
     </action>
 
     <action name="validate-output">
-        <fs>
-            <touchz path="${nameNode}${output_remote_location}/validate_output_timestamp"/>
-        </fs>
-        <ok to="validate-output-cleanup"/>
-        <error to="fail"/>
-    </action>
-
-    <action name="validate-output-cleanup">
-        <fs>
-            <delete path="${nameNode}${output_remote_location}/validate_output_timestamp"/>
-        </fs>
-        <ok to="copy-version"/>
-        <error to="fail"/>
+        <sub-workflow>
+            <app-path>${wf:appPath()}/primary_validate_output</app-path>
+            <propagate-configuration />
+        </sub-workflow>
+        <ok to="copy-version" />
+        <error to="fail" />
     </action>
 
     <action name="copy-version">
