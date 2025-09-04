@@ -27,6 +27,7 @@ outputDocumentMeta = foreach joined generate
 		sourceDocumentMeta::issue as issue,
 		sourceDocumentMeta::pages as pages,
 		sourceDocumentMeta::publicationTypeName as publicationTypeName,
-		sourceDocumentMeta::text as text;
+		sourceDocumentMeta::text as text,
+		sourceDocumentMeta::extractedBy as extractedBy;
 
 store outputDocumentMeta into '$output' using avro_store_extracted_document_metadata;

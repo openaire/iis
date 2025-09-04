@@ -38,7 +38,8 @@ documentMetaOutput = foreach joinedDocumentMeta generate
 	documentMetaFiltered::issue as issue,
 	documentMetaFiltered::pages as pages,
 	documentMetaFiltered::publicationTypeName as publicationTypeName,
-	documentMetaFiltered::text as text;
+	documentMetaFiltered::text as text,
+	documentMetaFiltered::extractedBy as extractedBy;
 
 store documentContentFiltered into '$output_document_content' using avro_store_document_content;
 store documentMetaOutput into '$output_document_meta' using avro_store_document_meta;

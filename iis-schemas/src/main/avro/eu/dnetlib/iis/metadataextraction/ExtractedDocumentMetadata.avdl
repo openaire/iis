@@ -56,6 +56,9 @@ protocol IIS{
 		
 //      document fulltext
         string text;
+        
+//      indicates the tool responsible for metadata extraction
+        union { null , string } extractedBy = null;
     }
 
 }

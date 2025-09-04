@@ -15,7 +15,8 @@
   "issue": null,
   "pages": null,
   "publicationTypeName": "$EMPTY$",
-  "text": ""
+  "text": "",
+  "extractedBy": "CERMINE"
 }
 {
   "id": "id2",
@@ -34,5 +35,6 @@
   "issue": null,
   "pages": null,
   "publicationTypeName": null,
-  "text": "This is full text of document"
+  "text": "This is full text of document",
+  "extractedBy": "CERMINE"
 }

@@ -38,6 +38,8 @@ import pl.edu.icm.cermine.exception.TransformationException;
  */
 public final class NlmToDocumentWithBasicMetadataConverter {
 
+    public static final String RECORD_ORIGIN = "CERMINE";
+    
 	public static final String EMPTY_META = "$EMPTY$";
     
     private static final Logger log = Logger.getLogger(NlmToDocumentWithBasicMetadataConverter.class);
@@ -100,6 +102,7 @@ public final class NlmToDocumentWithBasicMetadataConverter {
         if (!refs.isEmpty()) {
             builder.setReferences(refs);    
         }
+        builder.setExtractedBy(RECORD_ORIGIN);
         return builder.build();
     }
     
@@ -117,6 +120,7 @@ public final class NlmToDocumentWithBasicMetadataConverter {
         builder.setId(id);
         builder.setText("");
         builder.setPublicationTypeName(EMPTY_META);
+        builder.setExtractedBy(RECORD_ORIGIN);
         return builder.build();
         
     }
