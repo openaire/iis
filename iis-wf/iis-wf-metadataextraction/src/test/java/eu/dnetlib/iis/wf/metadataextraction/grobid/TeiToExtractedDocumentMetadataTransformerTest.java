@@ -51,12 +51,14 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
     public void testTransformWithMinimalContent() throws Exception {
         // Given
         String documentId = "minimal-doc";
+        String extractedBy = "GROBID";
         
         // When
-        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, minimalTeiXml);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, minimalTeiXml, extractedBy);
 
         // Then
         assertNotNull(metadata, "Extracted metadata should not be null");
+        assertEquals(extractedBy, metadata.getExtractedBy(), "extractedBy value should be properly propagated");
         assertEquals(documentId, metadata.getId(), "Document ID should match the provided ID");
         assertEquals("This is a minimal test document.\n\n", metadata.getText(), "Text content should match the provided content");
         assertEquals("This is a minimal test document.", metadata.getAbstract$(), "Abstract content should match the provided content");
@@ -80,12 +82,14 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
     public void testExtractionWithBasicTei() throws Exception {
         // Given
         String documentId = "basic-doc";
+        String extractedBy = "GROBID";
 
         // When
-        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, basicTeiXml);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, basicTeiXml, extractedBy);
 
         // Then
         assertNotNull(metadata, "Extracted metadata should not be null");
+        assertEquals(extractedBy, metadata.getExtractedBy(), "extractedBy value should be properly propagated");
         assertEquals(documentId, metadata.getId(), "Document ID should match the provided ID");
         assertEquals("Test Document Title", metadata.getTitle(), "Title should be correctly extracted");
         assertEquals(Integer.valueOf(2022), metadata.getYear(), "Year should be correctly extracted");
@@ -105,11 +109,12 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         // Given
         String documentId = "invalid-doc";
         String invalidXml = "This is not valid XML";
+        String extractedBy = "GROBID";
         
         // When & Then
         assertThrows(
             Exception.class,
-            () -> TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, invalidXml),
+            () -> TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, invalidXml, extractedBy),
             "Should throw an exception for invalid XML"
         );
     }
@@ -118,11 +123,12 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
     public void testExceptionHandlingForMissingId() {
         // Given
         String documentId = null;
+        String extractedBy = "GROBID";
         
         // When & Then
         assertThrows(
             Exception.class,
-            () -> TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml),
+            () -> TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml, extractedBy),
             "Should throw an exception for invalid XML"
         );
     }
@@ -131,13 +137,16 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
     public void testTransformSample1TeiXml() throws Exception {
         // Given
         String documentId = "test-doc-id-123";
+        String extractedBy = "GROBID";
 
         // When
-        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml, extractedBy);
 
         // Then
         assertNotNull(metadata, "Extracted metadata should not be null");
         assertEquals(documentId, metadata.getId(), "Document ID should match the provided ID");
+        
+        assertEquals(extractedBy, metadata.getExtractedBy(), "extractedBy value should be properly propagated");
         
         // Verify title
         assertEquals("Stressful life events are not associated with the development of dementia", metadata.getTitle(), 
@@ -272,11 +281,15 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
     public void testTransformSample1TeiXmlFocusingOnReferences() throws Exception {
         // Given
         String documentId = "ref-test";
+        String extractedBy = "GROBID";
         
         // When
-        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml);
+        ExtractedDocumentMetadata metadata = TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, sampleTeiXml, extractedBy);
         
-        // Then - verify references
+        // Then
+        assertEquals(extractedBy, metadata.getExtractedBy(), "extractedBy value should be properly propagated");
+        
+        // verify references
         List<ReferenceMetadata> references = metadata.getReferences();
         assertNotNull(references, "References should not be null");
         assertFalse(references.isEmpty(), "References should not be empty");

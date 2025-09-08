@@ -70,6 +70,13 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
 
     public static final String FAULT_SUPPLEMENTARY_DATA_PROCESSING_TIME = "processing_time";
 
+    public static final String EXTRACTED_METADATA_RECORD_ORIGIN_CERMINE = "CERMINE";
+    
+    public static final String EXTRACTED_METADATA_RECORD_ORIGIN_GROBID = "GROBID";
+    
+    public static final String EXTRACTED_METADATA_RECORD_ORIGIN_UNSPECIFIED = "UNSPECIFIED";
+    
+    
     protected static final Logger log = Logger.getLogger(MetadataExtractorMapper.class);
 
     /**
@@ -229,7 +236,8 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
                 }    
             } else {
                 log.info(invalidPdfHeaderMsg);
-                handleException(new InvalidPdfException(invalidPdfHeaderMsg), content.getId().toString());
+                handleException(new InvalidPdfException(invalidPdfHeaderMsg), content.getId().toString(),
+                        EXTRACTED_METADATA_RECORD_ORIGIN_UNSPECIFIED);
             }
         } else {
             log.warn("no byte data found for id: " + content.getId());
@@ -260,16 +268,17 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         
         log.info("starting processing for id: " + documentId);
         long startTime = System.currentTimeMillis();
+        String extractedBy = "";
         try {
             if (grobidClient != null) {
+                extractedBy = EXTRACTED_METADATA_RECORD_ORIGIN_GROBID;
                 processStreamWithGrobid(documentId, contentStream);
             } else {
+                extractedBy = EXTRACTED_METADATA_RECORD_ORIGIN_CERMINE;
                 processStreamWithCermine(documentId, contentStream); 
             }
         } catch (Exception e) {
-            log.error((e.getCause() instanceof InvalidPdfException) ? "Invalid PDF file" 
-                    : "got unexpected exception, just logging", e);
-            handleException(e, documentId);
+            handleException(e, documentId, extractedBy);
             return;
         }
         
@@ -287,7 +296,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     private void processStreamWithGrobid(String documentId, InputStream contentStream)  throws Exception {
         String teiXml = grobidClient.processPdfInputStream(contentStream);
         mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
-                TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, teiXml)));
+                TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, teiXml, EXTRACTED_METADATA_RECORD_ORIGIN_GROBID)));
     }
     
     /**
@@ -323,7 +332,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
             log.error("unable to extract plaintext, writing extracted metadata only", e);
         }
         mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
-                NlmToDocumentWithBasicMetadataConverter.convertFull(documentId, doc, text)));
+                NlmToDocumentWithBasicMetadataConverter.convertFull(documentId, doc, text, EXTRACTED_METADATA_RECORD_ORIGIN_CERMINE)));
     }
     
     /**
@@ -332,10 +341,11 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      * 
      * @param e Exception to be handled
      * @param documentId document identifier
+     * @param extractedBy module name responsible for metadata extraction
      */
-    private void handleException(Exception e, String documentId) throws IOException, InterruptedException {
+    private void handleException(Exception e, String documentId, String extractedBy) throws IOException, InterruptedException {
         // writing empty result
-        mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(NlmToDocumentWithBasicMetadataConverter.createEmpty(documentId)));
+        mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(NlmToDocumentWithBasicMetadataConverter.createEmpty(documentId, extractedBy)));
         // writing fault result
         mos.write(namedOutputFault, new AvroKey<Fault>(FaultUtils.exceptionToFault(documentId, e, null)));
     }
