@@ -120,7 +120,7 @@ public class MetadataExtractorMain {
             Element resultElem = extractor.getContentAsNLM();
             String rawText = extractor.getRawFullText();
             extractedMetadata = NlmToDocumentWithBasicMetadataConverter.convertFull(
-                    generateId(file), new Document(resultElem), rawText);
+                    generateId(file), new Document(resultElem), rawText, "CERMINE");
             validateContent(extractedMetadata, expectations);
             
         } catch (UnmetExpectationException e) {

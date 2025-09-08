@@ -38,8 +38,6 @@ import pl.edu.icm.cermine.exception.TransformationException;
  */
 public final class NlmToDocumentWithBasicMetadataConverter {
 
-    public static final String RECORD_ORIGIN = "CERMINE";
-    
 	public static final String EMPTY_META = "$EMPTY$";
     
     private static final Logger log = Logger.getLogger(NlmToDocumentWithBasicMetadataConverter.class);
@@ -67,11 +65,12 @@ public final class NlmToDocumentWithBasicMetadataConverter {
      * @return {@link DocumentWithBasicMetadata}, never returns null.
      * @throws TransformationException 
      */
-    public static ExtractedDocumentMetadata convertFull(String id, Document source, String text) throws TransformationException {
+    public static ExtractedDocumentMetadata convertFull(String id, Document source, String text, String extractedBy) throws TransformationException {
         if (id == null) {
             throw new RuntimeException("unable to set null id");
         }
         ExtractedDocumentMetadata.Builder builder = ExtractedDocumentMetadata.newBuilder();
+        builder.setExtractedBy(extractedBy);
         builder.setId(id);
         builder.setText(text != null ? text : "");
         if (source == null) {
@@ -102,7 +101,7 @@ public final class NlmToDocumentWithBasicMetadataConverter {
         if (!refs.isEmpty()) {
             builder.setReferences(refs);    
         }
-        builder.setExtractedBy(RECORD_ORIGIN);
+
         return builder.build();
     }
     
@@ -110,9 +109,10 @@ public final class NlmToDocumentWithBasicMetadataConverter {
      * Creates empty entry with identifier set and empty record indicator.
      * Never returns null.
      * @param id
+     * @param extractedBy
      * @return {@link DocumentWithBasicMetadata}
      */
-    public static ExtractedDocumentMetadata createEmpty(String id) {
+    public static ExtractedDocumentMetadata createEmpty(String id, String extractedBy) {
         if (id==null) {
             throw new RuntimeException("unable to set null id");
         }
@@ -120,7 +120,7 @@ public final class NlmToDocumentWithBasicMetadataConverter {
         builder.setId(id);
         builder.setText("");
         builder.setPublicationTypeName(EMPTY_META);
-        builder.setExtractedBy(RECORD_ORIGIN);
+        builder.setExtractedBy(extractedBy);
         return builder.build();
         
     }

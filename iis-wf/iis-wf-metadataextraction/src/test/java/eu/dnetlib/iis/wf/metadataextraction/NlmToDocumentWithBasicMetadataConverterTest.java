@@ -34,9 +34,10 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         SAXBuilder builder = new SAXBuilder();
         Document document = builder.build(ClassPathResourceProvider.getResourceInputStream(testXML));
         String id = "predefinedId";
+        String extractedBy = "CERMINE";
         
         // execute
-        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.convertFull(id, document, "text");
+        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.convertFull(id, document, "text", extractedBy);
 
         // assert
         assertNotNull(result);
@@ -73,6 +74,8 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         assertNotNull(result.getPages());
         assertEquals("50", result.getPages().getStart());
         assertEquals("60", result.getPages().getEnd());
+        
+        assertEquals(extractedBy, result.getExtractedBy());
     }
 
     @Test
@@ -83,42 +86,46 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         
         // execute
         assertThrows(RuntimeException.class, () ->
-                NlmToDocumentWithBasicMetadataConverter.convertFull(null, document, "text"));
+                NlmToDocumentWithBasicMetadataConverter.convertFull(null, document, "text", "irrelevant"));
     }
     
     @Test
     public void testConvertFullNoDocument() throws Exception {
         // given
         String id = "id";
+        String extractedBy = "CERMINE";
         
         // execute
-        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.convertFull(id, null, "text");
+        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.convertFull(id, null, "text", extractedBy);
         
         // assert
         assertNotNull(result);
         assertEquals(id, result.getId());
         assertEquals("text", result.getText());
+        assertEquals(extractedBy, result.getExtractedBy());
     }
     
     @Test
     public void testCreateEmptyNoId() {
         // execute
-        assertThrows(RuntimeException.class, () -> NlmToDocumentWithBasicMetadataConverter.createEmpty(null));
+        assertThrows(RuntimeException.class, () -> NlmToDocumentWithBasicMetadataConverter.createEmpty(null, "irrelevant"));
     }
     
     @Test
     public void testCreateEmpty() throws Exception {
         // given
         String id = "id";
+        String extractedBy = "CERMINE";
         
         // execute
-        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.createEmpty(id);
+        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.createEmpty(id, extractedBy);
         
         // assert
         assertNotNull(result);
         assertEquals(id, result.getId());
         assertEquals("", result.getText());
         assertEquals(EMPTY_META, result.getPublicationTypeName());
+        assertEquals(extractedBy, result.getExtractedBy());
     }
     
     // --------------------------------------- PRIVATE ---------------------------------------

@@ -46,10 +46,11 @@ public class TeiToExtractedDocumentMetadataTransformer {
      * 
      * @param id     document identifier
      * @param teiXml TEI XML content
+     * @param extractedBy module responsible for TEI XML record delivery
      * @return ExtractedDocumentMetadata record
      * @throws Exception if transformation fails
      */
-    public static ExtractedDocumentMetadata transformToExtractedDocumentMetadata(String id, String teiXml) throws Exception {
+    public static ExtractedDocumentMetadata transformToExtractedDocumentMetadata(String id, String teiXml, String extractedBy) throws Exception {
         if (id == null) {
             throw new RuntimeException("unable to set null id");
         }
@@ -64,7 +65,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
 
         // Create ExtractedDocumentMetadata with id and text
         ExtractedDocumentMetadata.Builder documentBuilder = ExtractedDocumentMetadata.newBuilder().setId(id)
-                .setText(fullText);
+                .setText(fullText).setExtractedBy(extractedBy);
 
         // Extract and set title, prioritizing main title
         String mainTitle = extractSingleValue(document, xPath, "//tei:teiHeader//tei:titleStmt/tei:title[@type='main']");
