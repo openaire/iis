@@ -44,6 +44,11 @@
             <description>Grobid server address, when undefined embedded CERMINE will be used instead</description>
         </property>
         <property>
+            <name>grobid_server_version</name>
+            <value>$UNDEFINED$</value>
+            <description>Grobid server version to be stored in the metadata record extractedBy field</description>
+        </property>
+        <property>
             <name>grobid_server_connection_timeout</name>
             <value>60000</value>
             <description>Grobid server connection timeout</description>
@@ -220,6 +225,10 @@
 				<property>
                     <name>grobid.server.url</name>
                    <value>${grobid_server_url}</value>
+                </property>
+                <property>
+                    <name>grobid.server.version</name>
+                   <value>${grobid_server_version}</value>
                 </property>
                 <property>
                     <name>grobid.server.connection.timeout</name>
