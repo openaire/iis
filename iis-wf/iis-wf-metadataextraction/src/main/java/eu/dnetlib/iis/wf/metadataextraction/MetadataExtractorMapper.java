@@ -58,6 +58,8 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     
     public static final String GROBID_SERVER_URL = "grobid.server.url";
     
+    public static final String GROBID_SERVER_VERSION = "grobid.server.version";
+    
     public static final String GROBID_SERVER_READ_TIMEOUT = "grobid.server.read.timeout";
     
     public static final String GROBID_SERVER_CONNECTION_TIMEOUT = "grobid.server.connection.timeout";
@@ -138,6 +140,11 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     private GrobidClient grobidClient;
     
     /**
+     * Grobid server version.
+     */
+    private String grobidServerVersion;
+    
+    /**
      * Hadoop counters enum of invalid records 
      */
     public static enum InvalidRecordCounters {
@@ -176,6 +183,15 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
                 readTimeout = Integer.parseInt(readTimeoutStr); 
             }
             this.grobidClient = new GrobidClient(grobidServerUrl, connectionTimeout, readTimeout);
+            
+            String grobidServerVersionStr = context.getConfiguration().get(GROBID_SERVER_VERSION);
+            if (grobidServerVersionStr != null && !grobidServerVersionStr.trim().isEmpty()
+                    && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(grobidServerVersionStr)) {
+                this.grobidServerVersion = grobidServerVersionStr.trim();
+            } else {
+                this.grobidServerVersion = EXTRACTED_METADATA_RECORD_ORIGIN_GROBID;
+            }
+            
         } else {
             log.info("enabling metadata extraction relying on CERMINE");
         }
@@ -271,7 +287,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         String extractedBy = "";
         try {
             if (grobidClient != null) {
-                extractedBy = EXTRACTED_METADATA_RECORD_ORIGIN_GROBID;
+                extractedBy = grobidServerVersion;
                 processStreamWithGrobid(documentId, contentStream);
             } else {
                 extractedBy = EXTRACTED_METADATA_RECORD_ORIGIN_CERMINE;
@@ -296,7 +312,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     private void processStreamWithGrobid(String documentId, InputStream contentStream)  throws Exception {
         String teiXml = grobidClient.processPdfInputStream(contentStream);
         mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
-                TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, teiXml, EXTRACTED_METADATA_RECORD_ORIGIN_GROBID)));
+                TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, teiXml, grobidServerVersion)));
     }
     
     /**
