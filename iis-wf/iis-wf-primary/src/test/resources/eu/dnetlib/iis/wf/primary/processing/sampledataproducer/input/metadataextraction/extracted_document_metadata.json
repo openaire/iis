@@ -17,7 +17,8 @@
 	"issue": "2",
 	"pages": {"start": "121", "end": "132"},
 	"publicationTypeName": null,
-	"text": ""
+	"text": "",
+    "extractedBy":null
 }
 {	
 	"id": "id-2", 
@@ -40,7 +41,8 @@
 	"issue": null,
 	"pages": {"start": "4428", "end": "4445"},
 	"publicationTypeName": null,
-	"text": ""
+	"text": "",
+    "extractedBy":null
 }
 {	
 	"id": "id-3", 
@@ -122,7 +124,8 @@
 	"issue": "0",
 	"pages": {"start": "69", "end": "110"},
 	"publicationTypeName": null,
-	"text": ""
+	"text": "",
+    "extractedBy":null
 }
 {	
 	"id": "id-4",
@@ -148,5 +151,6 @@
 	"issue": null,
 	"pages": null,
 	"publicationTypeName": null,
-	"text": ""
+	"text": "",
+    "extractedBy":null
 }

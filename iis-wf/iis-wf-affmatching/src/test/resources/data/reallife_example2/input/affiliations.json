@@ -32,5 +32,6 @@
     "issue":null,
     "pages":null,
     "publicationTypeName":null,
-    "text":""
+    "text":"",
+    "extractedBy":null
 }

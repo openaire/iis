@@ -72,7 +72,8 @@
     "end": "2"
   },
   "publicationTypeName": "article",
-  "text": "doc 1 text"
+  "text": "doc 1 text",
+  "extractedBy":null
 }
 {
   "id": "doc-id-2",
@@ -113,7 +114,8 @@
     "end": "20"
   },
   "publicationTypeName": "article",
-  "text": "doc 2 text"
+  "text": "doc 2 text",
+  "extractedBy":null
 }
 {
   "id": "doc-id-3",
@@ -135,7 +137,8 @@
     "end": "3"
   },
   "publicationTypeName": "article",
-  "text": "doc 3 text"
+  "text": "doc 3 text",
+  "extractedBy":null
 }
 {
   "id": "doc-id-4",
@@ -154,5 +157,6 @@
   "issue": null,
   "pages": null,
   "publicationTypeName": "article",
-  "text": "doc 4 text"
+  "text": "doc 4 text",
+  "extractedBy":null
 }
