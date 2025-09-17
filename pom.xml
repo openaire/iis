@@ -526,9 +526,15 @@
                 <groupId>com.jsuereth</groupId>
                 <artifactId>scala-arm_2.11</artifactId>
                 <version>1.4</version>
+                <exclusions>
+                    <exclusion>
+                        <!-- conflicting scala binary versions -->
+                        <groupId>org.scala-lang</groupId>
+                        <artifactId>scala-library</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- -->
-
             <dependency>
                 <groupId>pl.edu.icm.coansys</groupId>
                 <artifactId>document-similarity-oap-uberworkflow</artifactId>
