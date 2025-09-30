@@ -219,6 +219,10 @@
                     <name>output_report_relative_path</name>
                     <value>import_infospace</value>
                 </property>
+                <property>
+                    <name>sparkExecutorOverhead</name>
+                    <value>512</value>
+                </property>
             </configuration>
         </sub-workflow>
 
