@@ -384,6 +384,10 @@
                     <value>$UNDEFINED$</value>
                 </property>
                 <property>
+                    <name>citationmatchingDirectSparkExecutorOverhead</name>
+                    <value>512</value>
+                </property>
+                <property>
                     <name>citationmatchingFuzzySparkDriverOverhead</name>
                     <value>512</value>
                 </property>
@@ -405,6 +409,10 @@
                 </property>
                 <property>
                     <name>researchInitiativeReferenceExtractionSparkExecutorOverhead</name>
+                    <value>512</value>
+                </property>
+                <property>
+                    <name>affiliationmatchingSparkDriverOverhead</name>
                     <value>512</value>
                 </property>
                 <property>

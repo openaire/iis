@@ -30,7 +30,6 @@
         </property>
         <property>
             <name>infospaceImportSparkExecutorOverhead</name>
-            <value>2048</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the infospace importer executor</description>
         </property>
 		<property>
