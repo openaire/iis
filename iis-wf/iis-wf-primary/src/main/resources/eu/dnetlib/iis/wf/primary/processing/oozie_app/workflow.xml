@@ -219,7 +219,6 @@
         </property>
         <property>
             <name>researchInitiativeReferenceExtractionSparkExecutorOverhead</name>
-            <value>2048</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
         </property>
         <!-- spark related: documents classification -->
@@ -261,7 +260,6 @@
         </property>
         <property>
             <name>affiliationmatchingSparkDriverOverhead</name>
-            <value>513</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
         <property>
@@ -278,7 +276,6 @@
         </property>
         <property>
             <name>citationmatchingDirectSparkExecutorOverhead</name>
-            <value>2048</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
         </property>
         <property>
@@ -303,7 +300,6 @@
         </property>
         <property>
             <name>citationmatchingFuzzySparkDriverOverhead</name>
-            <value>513</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
         <property>
@@ -313,7 +309,6 @@
         </property>
         <property>
             <name>citationmatchingFuzzySparkExecutorOverhead</name>
-            <value>4096</value>
             <description>The amount of off heap memory (in megabytes) to be allocated for the executor</description>
         </property>        
         <property>
