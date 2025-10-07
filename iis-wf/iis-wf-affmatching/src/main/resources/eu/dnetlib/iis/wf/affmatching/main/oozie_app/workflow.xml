@@ -56,10 +56,6 @@
             <description>memory for driver process</description>
         </property>
         <property>
-            <name>sparkDriverOverhead</name>
-            <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
-        </property>
-        <property>
             <name>sparkNetworkTimeout</name>
             <value>1200s</value>
             <description>default timeout for all network interactions</description>
@@ -137,7 +133,6 @@
                 --executor-memory=${sparkExecutorMemory}
                 --executor-cores=${sparkExecutorCores}
                 --driver-memory=${sparkDriverMemory}
-                --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}
                 --conf spark.network.timeout=${sparkNetworkTimeout}
                 --conf spark.executor.heartbeatInterval=${sparkExecutorHeartbeatInterval}
                 --conf spark.driver.maxResultSize=${sparkDriverMaxResultSize}
