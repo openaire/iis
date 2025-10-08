@@ -1232,7 +1232,7 @@ def textwindow2s(*args):
     except IndexError:
         nextlen = 0
     resultlimit = None
-    if prev == 15 and middle == 3 and next == 15: 
+    if prev == 15 and middle == 3 and nextlen == 15: 
         resultlimit = 7
         
     if len(args) > 4:
@@ -1249,13 +1249,16 @@ def textwindow2s(*args):
         tokens = 0
         for i in xrange(len(g)-middle+1):
             im = i+middle
+            middle_str = ' '.join(g[i:im])
+            if len(middle_str) < 8:
+                continue
             if resultlimit is not None:
                     tokens+=1
                     if tokens >= resultlimit:
                         break
-                    yield (' '.join(g[max(i-prev,0):i]),' '.join(g[i:im]),' '.join(g[im:im+nextlen]))
+                    yield (' '.join(g[max(i-prev,0):i]),middle_str,' '.join(g[im:im+nextlen]))
             else:
-                yield (' '.join(g[max(i-prev,0):i]),' '.join(g[i:im]),' '.join(g[im:im+nextlen]))
+                yield (' '.join(g[max(i-prev,0):i]),middle_str,' '.join(g[im:im+nextlen]))
         
 textwindow2s.registered=True
 
