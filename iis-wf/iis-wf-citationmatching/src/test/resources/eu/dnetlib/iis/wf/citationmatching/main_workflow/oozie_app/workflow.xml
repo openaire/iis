@@ -84,10 +84,6 @@
                     <value>512</value>
                 </property>
                 <property>
-                    <name>sparkDriverOverhead</name>
-                    <value>512</value>
-                </property>
-                <property>
                     <name>numberOfPartitions</name>
                     <value>400</value>
                 </property>

@@ -259,10 +259,6 @@
             <description>memory for driver process</description>
         </property>
         <property>
-            <name>affiliationmatchingSparkDriverOverhead</name>
-            <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
-        </property>
-        <property>
             <name>affiliationmatchingProjectFundingclassWhitelistRegex</name>
             <value>a^</value>
             <description>regex accepting project references by funding class, limiting set of projects allowed to be used in matching publications with organizations. 
@@ -297,10 +293,6 @@
             <name>citationmatchingFuzzySparkDriverMemory</name>
             <value>${sparkDriverMemory}</value>
             <description>memory for driver process</description>
-        </property>
-        <property>
-            <name>citationmatchingFuzzySparkDriverOverhead</name>
-            <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
         </property>
         <property>
             <name>citationmatchingFuzzySparkExecutorMemory</name>
@@ -1564,10 +1556,6 @@
                     <value>${citationmatchingFuzzySparkDriverMemory}</value>
                 </property>
                 <property>
-                    <name>sparkDriverOverhead</name>
-                    <value>${citationmatchingFuzzySparkDriverOverhead}</value>
-                </property>
-                <property>
                     <name>sparkExecutorMemory</name>
                     <value>${citationmatchingFuzzySparkExecutorMemory}</value>
                 </property>
@@ -1876,11 +1864,6 @@
                     <name>sparkDriverMemory</name>
                     <value>${affiliationmatchingSparkDriverMemory}</value>
                 </property>
-                <property>
-                    <name>sparkDriverOverhead</name>
-                    <value>${affiliationmatchingSparkDriverOverhead}</value>
-                </property>
-                
             </configuration>
         </sub-workflow>
         <ok to="affiliation-matching-project-based" />

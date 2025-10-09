@@ -43,10 +43,6 @@
             <name>sparkDriverMemory</name>
             <description>memory for driver process</description>
         </property>
-        <property>
-            <name>sparkDriverOverhead</name>
-            <description>The amount of off heap memory (in megabytes) to be allocated for the driver</description>
-        </property>
 
         <property>
             <name>sparkExecutorMemory</name>
@@ -180,7 +176,6 @@
                 --executor-cores=${sparkExecutorCores}
                 --executor-memory=${sparkExecutorMemory}
                 --driver-memory=${sparkDriverMemory}
-                --conf spark.yarn.driver.memoryOverhead=${sparkDriverOverhead}
                 --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}
                 --conf spark.extraListeners=${spark2ExtraListeners}
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
