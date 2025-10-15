@@ -85,7 +85,7 @@
                 --executor-memory=${sparkExecutorMemory}
                 --executor-cores=${sparkExecutorCores}
                 --driver-memory=${sparkDriverMemory}
-                --conf spark.yarn.executor.memoryOverhead=${sparkExecutorOverhead}
+                --conf spark.executor.memoryOverhead=${sparkExecutorOverhead}
                 --conf spark.extraListeners=${spark2ExtraListeners}
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
