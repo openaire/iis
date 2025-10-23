@@ -325,10 +325,10 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         assertEquals("Baumeister, R. F., Bratslavsky, E., Finkenauer, C. and Vohs, K. D. (2001). Bad is stronger than good. Review of General Psychology, 5, 323-370. doi:10.1037// 1089-2680.5.4.323.", currentReference.getText());
         assertEquals("Bad is stronger than good", currentReference.getBasicMetadata().getTitle());
         assertNotNull(currentReference.getBasicMetadata().getAuthors());
-        assertEquals("R F Baumeister", currentReference.getBasicMetadata().getAuthors().get(0));
-        assertEquals("E Bratslavsky", currentReference.getBasicMetadata().getAuthors().get(1));
-        assertEquals("C Finkenauer", currentReference.getBasicMetadata().getAuthors().get(2));
-        assertEquals("K D Vohs", currentReference.getBasicMetadata().getAuthors().get(3));
+        assertEquals("Baumeister, R. F.", currentReference.getBasicMetadata().getAuthors().get(0));
+        assertEquals("Bratslavsky, E.", currentReference.getBasicMetadata().getAuthors().get(1));
+        assertEquals("Finkenauer, C.", currentReference.getBasicMetadata().getAuthors().get(2));
+        assertEquals("Vohs, K. D.", currentReference.getBasicMetadata().getAuthors().get(3));
 
         assertNotNull(currentReference.getBasicMetadata().getPages());
         assertEquals("323", currentReference.getBasicMetadata().getPages().getStart());
