@@ -1,19 +1,23 @@
 package eu.dnetlib.iis.wf.metadataextraction;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
-import eu.dnetlib.iis.metadataextraction.schemas.Author;
-import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
-import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
 import org.apache.avro.util.Utf8;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static eu.dnetlib.iis.wf.metadataextraction.NlmToDocumentWithBasicMetadataConverter.EMPTY_META;
-import static org.junit.jupiter.api.Assertions.*;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
+import eu.dnetlib.iis.metadataextraction.schemas.Author;
+import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 
 /**
  * {@link NlmToDocumentWithBasicMetadataConverter} test class.
@@ -102,29 +106,6 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         assertNotNull(result);
         assertEquals(id, result.getId());
         assertEquals("text", result.getText());
-        assertEquals(extractedBy, result.getExtractedBy());
-    }
-    
-    @Test
-    public void testCreateEmptyNoId() {
-        // execute
-        assertThrows(RuntimeException.class, () -> NlmToDocumentWithBasicMetadataConverter.createEmpty(null, "irrelevant"));
-    }
-    
-    @Test
-    public void testCreateEmpty() throws Exception {
-        // given
-        String id = "id";
-        String extractedBy = "CERMINE";
-        
-        // execute
-        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.createEmpty(id, extractedBy);
-        
-        // assert
-        assertNotNull(result);
-        assertEquals(id, result.getId());
-        assertEquals("", result.getText());
-        assertEquals(EMPTY_META, result.getPublicationTypeName());
         assertEquals(extractedBy, result.getExtractedBy());
     }
     

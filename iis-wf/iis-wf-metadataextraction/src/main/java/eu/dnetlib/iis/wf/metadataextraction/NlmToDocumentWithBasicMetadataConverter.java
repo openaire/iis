@@ -38,8 +38,6 @@ import pl.edu.icm.cermine.exception.TransformationException;
  */
 public final class NlmToDocumentWithBasicMetadataConverter {
 
-	public static final String EMPTY_META = "$EMPTY$";
-    
     private static final Logger log = Logger.getLogger(NlmToDocumentWithBasicMetadataConverter.class);
 	
 	private static CermineToMetadataAffConverter cermineToMetadataAffConverter = new CermineToMetadataAffConverter();
@@ -103,26 +101,6 @@ public final class NlmToDocumentWithBasicMetadataConverter {
         }
 
         return builder.build();
-    }
-    
-    /**
-     * Creates empty entry with identifier set and empty record indicator.
-     * Never returns null.
-     * @param id
-     * @param extractedBy
-     * @return {@link DocumentWithBasicMetadata}
-     */
-    public static ExtractedDocumentMetadata createEmpty(String id, String extractedBy) {
-        if (id==null) {
-            throw new RuntimeException("unable to set null id");
-        }
-        ExtractedDocumentMetadata.Builder builder = ExtractedDocumentMetadata.newBuilder();
-        builder.setId(id);
-        builder.setText("");
-        builder.setPublicationTypeName(EMPTY_META);
-        builder.setExtractedBy(extractedBy);
-        return builder.build();
-        
     }
     
     // ----------------------------- PRIVATE -----------------------------------------

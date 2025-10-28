@@ -77,7 +77,8 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     public static final String EXTRACTED_METADATA_RECORD_ORIGIN_GROBID = "GROBID";
     
     public static final String EXTRACTED_METADATA_RECORD_ORIGIN_UNSPECIFIED = "UNSPECIFIED";
-    
+
+    public static final String EMPTY_META = "$EMPTY$";
     
     protected static final Logger log = Logger.getLogger(MetadataExtractorMapper.class);
 
@@ -261,6 +262,25 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     }
     
     /**
+     * Creates empty entry with identifier set and empty record indicator.
+     * Never returns null.
+     * @param id
+     * @param extractedBy
+     * @return {@link DocumentWithBasicMetadata}
+     */
+    public static ExtractedDocumentMetadata createEmpty(String id, String extractedBy) {
+        if (id==null) {
+            throw new RuntimeException("unable to set null id");
+        }
+        ExtractedDocumentMetadata.Builder builder = ExtractedDocumentMetadata.newBuilder();
+        builder.setId(id);
+        builder.setText("");
+        builder.setPublicationTypeName(EMPTY_META);
+        builder.setExtractedBy(extractedBy);
+        return builder.build();
+    }
+    
+    /**
      * Instantiates {@link MultipleOutputs} instance.
      */
     protected MultipleOutputs instantiateMultipleOutputs(Context context) {
@@ -361,7 +381,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      */
     private void handleException(Exception e, String documentId, String extractedBy) throws IOException, InterruptedException {
         // writing empty result
-        mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(NlmToDocumentWithBasicMetadataConverter.createEmpty(documentId, extractedBy)));
+        mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(createEmpty(documentId, extractedBy)));
         // writing fault result
         mos.write(namedOutputFault, new AvroKey<Fault>(FaultUtils.exceptionToFault(documentId, e, null)));
     }
