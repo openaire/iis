@@ -148,6 +148,9 @@ public class TeiToExtractedDocumentMetadataTransformerTest {
         
         assertEquals(extractedBy, metadata.getExtractedBy(), "extractedBy value should be properly propagated");
         
+        // Verify language
+        assertEquals("en", metadata.getLanguage(), "Language should match the content in the TEI file");
+        
         // Verify title
         assertEquals("Stressful life events are not associated with the development of dementia", metadata.getTitle(), 
                 "Title should match the content in the TEI file");

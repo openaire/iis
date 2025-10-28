@@ -39,6 +39,8 @@ public class TeiToExtractedDocumentMetadataTransformer {
 
     private static final String TEI_NAMESPACE = "http://www.tei-c.org/ns/1.0";
     
+    private static final String XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace";
+    
     // ------------------------------------------ LOGIC ---------------------------------------------------
 
     /**
@@ -757,6 +759,14 @@ public class TeiToExtractedDocumentMetadataTransformer {
                     return langCode;
                 }
                 return langNode.getTextContent().trim();
+            } else {
+                // falling back to other source of language information
+                String langCode = extractSingleValue(document, xPath, "//tei:teiHeader/@xml:lang");
+                if (StringUtils.isNotEmpty(langCode)) {
+                    return langCode;
+                } else {
+                    return extractSingleValue(document, xPath, "//tei:text/@xml:lang");
+                }
             }
         } catch (XPathExpressionException e) {
             logger.warn("Error extracting language", e);
@@ -772,6 +782,8 @@ public class TeiToExtractedDocumentMetadataTransformer {
         public String getNamespaceURI(String prefix) {
             if ("tei".equals(prefix)) {
                 return TEI_NAMESPACE;
+            } else if ("xml".equals(prefix)) {
+                return XML_NAMESPACE;
             }
             return javax.xml.XMLConstants.NULL_NS_URI;
         }
@@ -780,6 +792,8 @@ public class TeiToExtractedDocumentMetadataTransformer {
         public String getPrefix(String namespaceURI) {
             if (TEI_NAMESPACE.equals(namespaceURI)) {
                 return "tei";
+            } else if (XML_NAMESPACE.equals(namespaceURI)) {
+                return "xml";
             }
             return null;
         }
@@ -788,7 +802,9 @@ public class TeiToExtractedDocumentMetadataTransformer {
         public Iterator<String> getPrefixes(String namespaceURI) {
             if (TEI_NAMESPACE.equals(namespaceURI)) {
                 return Collections.singletonList("tei").iterator();
-            }
+            } else if (XML_NAMESPACE.equals(namespaceURI)) {
+                return Collections.singletonList("xml").iterator();
+            } 
             return Collections.emptyIterator();
         }
     }
