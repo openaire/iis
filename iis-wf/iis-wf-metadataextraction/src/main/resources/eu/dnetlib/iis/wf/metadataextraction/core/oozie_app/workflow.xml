@@ -59,6 +59,11 @@
             <description>Grobid server read timeout</description>
         </property>
         <property>
+            <name>grobid_queue_name</name>
+            <value>default</value>
+            <description>queue name to restrict the number of mappers communicating with grobid server</description>
+        </property>
+        <property>
 			<name>log_fault_processing_time_threshold_secs</name>
 			<value>60</value>
 			<description>processing time threshold expressed in seconds. 
@@ -85,10 +90,6 @@
         <name-node>${nameNode}</name-node>
         <configuration>
             <property>
-                <name>mapreduce.job.queuename</name>
-                <value>${queueName}</value>
-            </property>
-            <property>
                 <name>oozie.launcher.mapred.job.queue.name</name>
                 <value>${oozieLauncherQueueName}</value>
             </property>
@@ -109,9 +110,22 @@
 	        <arg>eu.dnetlib.iis.audit.schemas.Fault</arg>
 	        <capture-output />
 	    </java>
-	    <ok to="metadata_extractor" />
-	    <error to="fail" />
+	    <ok to="" />
+	    <error to="queue-setter" />
 	</action>
+    
+    <action name='queue-setter'>
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
+            <arg>-Pcondition=${grobid_server_url eq "$UNDEFINED$"}</arg>
+            <arg>-PinCaseOfTrue=${queueName}</arg>
+            <arg>-PelseCase=${grobid_queue_name}</arg>
+            <capture-output />
+        </java>
+        <ok to="metadata_extractor" />
+        <error to="fail" />
+    </action>
     
     <action name="metadata_extractor">
         <map-reduce>
@@ -120,6 +134,10 @@
 				<delete path="${nameNode}${output_root}" />
 			</prepare>
             <configuration>
+                <property>
+                    <name>mapreduce.job.queuename</name>
+                    <value>${wf:actionData('queue-setter')['result']}</value>
+                </property>
                 <property>
                     <name>mapreduce.map.java.opts</name>
                     <value>${mapreduce_map_java_opts}</value>
