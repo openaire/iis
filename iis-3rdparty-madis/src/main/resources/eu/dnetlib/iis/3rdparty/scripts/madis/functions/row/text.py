@@ -1231,6 +1231,49 @@ def textwindow2s(*args):
             raise functions.OperatorError('textwindow2s','Third argument should be an integer')
     except IndexError:
         nextlen = 0
+    
+    if len(args) > 4:
+        try:
+            patt = re.compile(args[4])
+        except:
+            raise functions.OperatorError('textwindow2s','Fourth argument must be string or compiled pattern')
+        for i in xrange(len(g)-middle+1):
+            im = i+middle
+            mid = ' '.join(g[i:im])
+            if patt.search(mid) and len(mid) < 300:
+                    yield (' '.join(g[max(i-prev,0):i]),mid,' '.join(g[im:im+nextlen]))
+    else:
+        tokens = 0
+        for i in xrange(len(g)-middle+1):
+            im = i+middle
+            middle_str = ' '.join(g[i:im])
+            yield (' '.join(g[max(i-prev,0):i]),middle_str,' '.join(g[im:im+nextlen]))
+        
+textwindow2s.registered=True
+
+
+def datacite_window(*args):
+    g = args[0].split(' ')
+    yield tuple(('prev','middle','next'))
+
+    try:
+        prev = args[1]
+    except IndexError:
+        prev = 0
+
+    try:
+        middle = args[2]
+    except IndexError:
+        middle = 1
+
+    try:
+        nextlen = args[3]
+        try:
+            nextlen = int(nextlen)
+        except:
+            raise functions.OperatorError('textwindow2s','Third argument should be an integer')
+    except IndexError:
+        nextlen = 0
     resultlimit = None
     if prev == 15 and middle == 3 and nextlen == 15: 
         resultlimit = 7
@@ -1260,7 +1303,7 @@ def textwindow2s(*args):
             else:
                 yield (' '.join(g[max(i-prev,0):i]),middle_str,' '.join(g[im:im+nextlen]))
         
-textwindow2s.registered=True
+datacite_window.registered=True
 
 
 if not ('.' in __name__):
