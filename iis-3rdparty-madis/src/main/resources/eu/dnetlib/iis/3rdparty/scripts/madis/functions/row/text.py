@@ -1274,9 +1274,9 @@ def datacite_window(*args):
             raise functions.OperatorError('textwindow2s','Third argument should be an integer')
     except IndexError:
         nextlen = 0
-    resultlimit = None
-    if prev == 15 and middle == 3 and nextlen == 15: 
-        resultlimit = 7
+   
+   
+    resultlimit = 7
         
     if len(args) > 4:
         try:
