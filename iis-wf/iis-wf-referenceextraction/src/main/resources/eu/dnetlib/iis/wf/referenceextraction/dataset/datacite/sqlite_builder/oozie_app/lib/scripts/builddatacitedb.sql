@@ -29,7 +29,7 @@ on dois(normaldoi, dsetID);
 --as select doi,middle as words, comprspaces(j2s(prev,middle,next)) as title from (setschema 'doi, prev, middle, next' select doi,textwindow2s(c1,15,3,15) from datacite);
 -- triple creation
 create temp table triples 
-as select doi,middle as words, comprspaces(j2s(prev,middle,next)) as title from (setschema 'doi, prev, middle, next' select doi,textwindow2s(title,15,3,15) from datacite) group by doi, words, title;
+as select doi,middle as words, comprspaces(j2s(prev,middle,next)) as title from (setschema 'doi, prev, middle, next' select doi, datacite_window(title,15,3,15) from datacite) group by doi, words, title;
 
 
 -- singularly distinguished titles
