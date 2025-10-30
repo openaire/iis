@@ -110,8 +110,8 @@
 	        <arg>eu.dnetlib.iis.audit.schemas.Fault</arg>
 	        <capture-output />
 	    </java>
-	    <ok to="" />
-	    <error to="queue-setter" />
+	    <ok to="queue-setter" />
+	    <error to="fail" />
 	</action>
     
     <action name="queue-setter">
