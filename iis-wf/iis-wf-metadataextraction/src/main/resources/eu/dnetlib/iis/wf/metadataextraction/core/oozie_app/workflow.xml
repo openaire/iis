@@ -114,7 +114,7 @@
 	    <error to="queue-setter" />
 	</action>
     
-    <action name='queue-setter'>
+    <action name="queue-setter">
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.common.oozie.property.ConditionalPropertySetter</arg>
