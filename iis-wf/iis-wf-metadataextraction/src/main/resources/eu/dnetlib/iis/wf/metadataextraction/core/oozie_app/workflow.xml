@@ -59,6 +59,16 @@
             <description>Grobid server read timeout</description>
         </property>
         <property>
+            <name>grobid_server_throttle_sleep_time</name>
+            <value>60000</value>
+            <description>Grobid client sleep time for a single retry</description>
+        </property>
+        <property>
+            <name>grobid_server_max_retries_count</name>
+            <value>10</value>
+            <description>Grobid client maximum number of allowed retries before interruption</description>
+        </property>
+        <property>
             <name>grobid_queue_name</name>
             <value>default</value>
             <description>queue name to restrict the number of mappers communicating with grobid server</description>
@@ -257,6 +267,14 @@
                    <value>${grobid_server_read_timeout}</value>
                 </property>
                 <property>
+                    <name>grobid.server.throttle.sleep.time</name>
+                   <value>${grobid_server_throttle_sleep_time}</value>
+                </property>
+                <property>
+                    <name>grobid.server.max.retries.count</name>
+                   <value>${grobid_server_max_retries_count}</value>
+                </property>
+                <property>
                     <name>interrupt.processing.time.threshold.secs</name>
                    <value>${interrupt_processing_time_threshold_secs}</value>
                 </property>
@@ -293,6 +311,7 @@
             <arg>-Preport.import.metadataExtraction.processed.docMetadata=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
             <arg>-Preport.import.metadataExtraction.processed.fault.total=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
             <arg>-Preport.import.metadataExtraction.processed.fault.invalidPdf=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper$InvalidRecordCounters']['INVALID_PDF_HEADER']}</arg>
+            <arg>-Preport.import.metadataExtraction.processed.transientError=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper$InvalidRecordCounters']['TRANSIENT_ERROR']}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="report-execution-times" />

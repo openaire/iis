@@ -63,6 +63,10 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     public static final String GROBID_SERVER_READ_TIMEOUT = "grobid.server.read.timeout";
     
     public static final String GROBID_SERVER_CONNECTION_TIMEOUT = "grobid.server.connection.timeout";
+
+    public static final String GROBID_SERVER_THROTTLE_SLEEP_TIME = "grobid.server.throttle.sleep.time";
+
+    public static final String GROBID_SERVER_MAX_RETRIES_COUNT = "grobid.server.max.retries.count";
     
     public static final String LOG_FAULT_PROCESSING_TIME_THRESHOLD_SECS = "log.fault.processing.time.threshold.secs";
     
@@ -139,7 +143,12 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      * Grobid client responsible for communication with external grobid server.
      */
     private GrobidClient grobidClient;
-    
+
+    /**
+     * Counter indicating the number of temporary errors related to Grobid server communication.
+     */
+    private Counter transientErrorCounter;
+
     /**
      * Grobid server version.
      */
@@ -149,7 +158,8 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      * Hadoop counters enum of invalid records 
      */
     public static enum InvalidRecordCounters {
-        INVALID_PDF_HEADER
+        INVALID_PDF_HEADER,
+        TRANSIENT_ERROR
     }
     
     private static final String invalidPdfHeaderMsg = "content PDF header not approved!";
@@ -179,11 +189,25 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
             }
             int readTimeout = 60000;
             String readTimeoutStr = context.getConfiguration().get(GROBID_SERVER_READ_TIMEOUT);
-            if (readTimeoutStr != null && !readTimeoutStr.trim().isEmpty() && 
+            if (readTimeoutStr != null && !readTimeoutStr.trim().isEmpty() &&
                     !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readTimeoutStr)) {
-                readTimeout = Integer.parseInt(readTimeoutStr); 
+                readTimeout = Integer.parseInt(readTimeoutStr);
             }
-            this.grobidClient = new GrobidClient(grobidServerUrl, connectionTimeout, readTimeout);
+            long throttleSleepTime = 60000;
+            String readThrottleSleepTimeStr = context.getConfiguration().get(GROBID_SERVER_THROTTLE_SLEEP_TIME);
+            if (readThrottleSleepTimeStr != null && !readThrottleSleepTimeStr.trim().isEmpty() &&
+                    !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readThrottleSleepTimeStr)) {
+                throttleSleepTime = Long.parseLong(readTimeoutStr);
+            }
+            int maxRetriesCount = 10;
+            String maxRetriesCountStr = context.getConfiguration().get(GROBID_SERVER_MAX_RETRIES_COUNT);
+            if (maxRetriesCountStr != null && !maxRetriesCountStr.trim().isEmpty() &&
+                    !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(maxRetriesCountStr)) {
+                maxRetriesCount = Integer.parseInt(maxRetriesCountStr);
+            }
+
+            this.grobidClient = new GrobidClient(grobidServerUrl, connectionTimeout, readTimeout,
+                    throttleSleepTime, maxRetriesCount);
             
             String grobidServerVersionStr = context.getConfiguration().get(GROBID_SERVER_VERSION);
             if (grobidServerVersionStr != null && !grobidServerVersionStr.trim().isEmpty()
@@ -218,6 +242,9 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         invalidPdfCounter.setValue(0);
         this.contentApprover = new InvalidCountableContentApproverWrapper(new PDFHeaderBasedContentApprover(), invalidPdfCounter);
         
+        transientErrorCounter = context.getCounter(InvalidRecordCounters.TRANSIENT_ERROR);
+        transientErrorCounter.setValue(0);
+
         mos = instantiateMultipleOutputs(context);
         currentProgress = 0;
         intervalTime = System.currentTimeMillis();
@@ -248,9 +275,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         if (content.getPdf()!=null) {
             ByteBuffer byteBuffer = content.getPdf();
             if (byteBuffer.hasArray() && contentApprover.approve(byteBuffer.array())) {
-                try (InputStream inputStream = new ByteBufferInputStream(byteBuffer)) {
-                    processStream(documentId, inputStream);
-                }    
+                processByteBuffer(documentId, byteBuffer);
             } else {
                 log.info(invalidPdfHeaderMsg);
                 handleException(new InvalidPdfException(invalidPdfHeaderMsg), content.getId().toString(),
@@ -288,12 +313,12 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     }
     
     /**
-     * Processes content input stream. Does not close contentStream.
+     * Processes content byte buffer.
      * 
      * @param documentId document identifier
-     * @param contentStream stream to be processed
+     * @param byteBuffer byte buffer to be processed
      */
-    protected void processStream(String documentId, InputStream contentStream) throws IOException, InterruptedException {
+    protected void processByteBuffer(String documentId, ByteBuffer byteBuffer) throws IOException, InterruptedException {
         currentProgress++;
         if (currentProgress % PROGRESS_LOG_INTERVAL == 0) {
             log.info("metadata extaction progress: " + currentProgress + ", time taken to process "
@@ -308,11 +333,17 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         try {
             if (grobidClient != null) {
                 extractedBy = grobidServerVersion;
-                processStreamWithGrobid(documentId, contentStream);
+                processByteBufferWithGrobid(documentId, byteBuffer);
             } else {
                 extractedBy = EXTRACTED_METADATA_RECORD_ORIGIN_CERMINE;
-                processStreamWithCermine(documentId, contentStream); 
+                processByteBufferWithCermine(documentId, byteBuffer);
             }
+        } catch (ProvisionalException e) {
+            transientErrorCounter.increment(1);
+            log.error("Provisional exception occurred while handling document! "
+                    + "This means fault is not going to be written in output, error is logged only in order to allow further processing!",
+                    e);
+            return;
         } catch (Exception e) {
             handleException(e, documentId, extractedBy);
             return;
@@ -329,27 +360,29 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      * @param documentId source document identifier
      * @param contentStream PDF content stream to be processed
      */
-    private void processStreamWithGrobid(String documentId, InputStream contentStream)  throws Exception {
-        String teiXml = grobidClient.processPdfInputStream(contentStream);
+    private void processByteBufferWithGrobid(String documentId, ByteBuffer contentByteBuffer)  throws Exception {
+        String teiXml = grobidClient.processPdfByteBuffer(contentByteBuffer);
         mos.write(namedOutputMeta, new AvroKey<ExtractedDocumentMetadata>(
                 TeiToExtractedDocumentMetadataTransformer.transformToExtractedDocumentMetadata(documentId, teiXml, grobidServerVersion)));
     }
     
     /**
-     * Parses content stream by relying on embedded CERMINE library.
+     * Parses content byte buffer by relying on embedded CERMINE library.
      * @param documentId source document identifier
-     * @param contentStream PDF content stream to be processed
+     * @param contentByteBuffer PDF content byte buffer to be processed
      */
-    private void processStreamWithCermine(String documentId, InputStream contentStream)  throws Exception {
+    private void processByteBufferWithCermine(String documentId, ByteBuffer contentByteBuffer)  throws Exception {
      // disabling images extraction
         ExtractionConfigBuilder builder = new ExtractionConfigBuilder(); 
         builder.setProperty(ExtractionConfigProperty.IMAGES_EXTRACTION, false);
         ExtractionConfigRegister.set(builder.buildConfiguration());
-        
-        ContentExtractor extractor = interruptionTimeoutSecs != null ? new ContentExtractor(interruptionTimeoutSecs)
-                : new ContentExtractor();
-        extractor.setPDF(contentStream);
-        handleContentWithCermine(extractor, documentId);
+
+        try (InputStream contentStream = new ByteBufferInputStream(contentByteBuffer)) {
+            ContentExtractor extractor = interruptionTimeoutSecs != null ? new ContentExtractor(interruptionTimeoutSecs)
+                    : new ContentExtractor();
+            extractor.setPDF(contentStream);
+            handleContentWithCermine(extractor, documentId);
+        }
     }
     
     /**
