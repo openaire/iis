@@ -1,21 +1,21 @@
 package eu.dnetlib.iis.wf.metadataextraction;
 
 /**
- * Provisional exception indicating temprorary problems occuring during the metadata extraction process.
+ * Transient exception indicating temprorary problems occuring during the metadata extraction process.
  * 
  * @author mhorst
  */
-public class ProvisionalException extends Exception {
+public class TransientException extends Exception {
 
     private static final long serialVersionUID = -4853084993228697462L;
     
     //------------------------ CONSTRUCTORS -------------------
 
-    public ProvisionalException(String message) {
+    public TransientException(String message) {
         super(message);
     }
     
-    public ProvisionalException(String message, Throwable cause) {
+    public TransientException(String message, Throwable cause) {
         super(message, cause);
     }
     

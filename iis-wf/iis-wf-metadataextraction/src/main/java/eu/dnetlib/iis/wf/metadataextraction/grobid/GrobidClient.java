@@ -3,6 +3,7 @@ package eu.dnetlib.iis.wf.metadataextraction.grobid;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -18,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.dnetlib.iis.wf.importer.HttpClientUtils;
-import eu.dnetlib.iis.wf.metadataextraction.ProvisionalException;
+import eu.dnetlib.iis.wf.metadataextraction.TransientException;
 
 /**
  * HTTP client communicating with Grobid server.
@@ -72,10 +73,10 @@ public class GrobidClient implements Closeable {
      * @param pdfByteBuffer PDF byte buffer
      * @return The TEI XML result as a string
      * @throws IOException If an error occurs during processing
-     * @throws ProvisionalException if temporary error occurred
+     * @throws TransientException if temporary error occurred
      * @throws InterruptedException when interrupted while waiting during retry
      */
-    public String processPdfByteBuffer(ByteBuffer pdfByteBuffer) throws IOException, ProvisionalException, InterruptedException {
+    public String processPdfByteBuffer(ByteBuffer pdfByteBuffer) throws IOException, TransientException, InterruptedException {
         return processPdfByteBuffer(pdfByteBuffer, 0);
     }
     
@@ -88,7 +89,7 @@ public class GrobidClient implements Closeable {
 
     // -------------------------- PRIVATE --------------------------------------
 
-    private String processPdfByteBuffer(ByteBuffer pdfByteBuffer, int retryCount) throws IOException, ProvisionalException, InterruptedException {
+    private String processPdfByteBuffer(ByteBuffer pdfByteBuffer, int retryCount) throws IOException, TransientException, InterruptedException {
         // need to rewind whenever retrying
         if (retryCount > 0) {
             pdfByteBuffer.rewind();
@@ -113,20 +114,24 @@ public class GrobidClient implements Closeable {
 
                 int statusCode = response.getStatusLine().getStatusCode();
 
-                // FIXME currently retrying whenever return code is different that 200
-                // maybe we should be more specific and retry only for a specific set of codes
-                if (statusCode == 200) {
+                if (statusCode == HttpURLConnection.HTTP_OK) {
                     HttpEntity responseEntity = response.getEntity();
                     if (responseEntity != null) {
                         return EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
                     } else {
                         throw new IOException("No response entity received from Grobid");
                     }
+                } else if (statusCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+                    // throwing IOException to indicate permanent issue
+                    String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                    throw new IOException("Grobid request failed with status code " + statusCode + ": " + error);
                 } else {
+                    // throwing TransientException to indicate transient nature of the failre
+                    // those are usually 502, 503 and 504 HTTP error codes but it is possible other kind of failures may occur
                     String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
                     String message = "Grobid request failed with status code " + statusCode + ": " + error;
                     if (retryCount >= maxRetriesCount) {
-                        throw new ProvisionalException(message);
+                        throw new TransientException(message);
                     } else {
                         retryCount++;
                         logger.warn(message);

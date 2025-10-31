@@ -338,7 +338,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
                 extractedBy = EXTRACTED_METADATA_RECORD_ORIGIN_CERMINE;
                 processByteBufferWithCermine(documentId, byteBuffer);
             }
-        } catch (ProvisionalException e) {
+        } catch (TransientException e) {
             transientErrorCounter.increment(1);
             log.error("Provisional exception occurred while handling document! "
                     + "This means fault is not going to be written in output, error is logged only in order to allow further processing!",
