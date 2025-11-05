@@ -17,12 +17,10 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.ImmutableList;
 
-import eu.dnetlib.iis.affextraction.schemas.AffiliationExtractionResult;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
-import eu.dnetlib.iis.common.utils.AvroGsonFactory;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentTextWithDOI;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
@@ -63,18 +61,23 @@ public class AffExtractionJob {
 
             String scriptsDirOnWorkerNode = (sc.isLocal()) ? getScriptPath() : "scripts";
             
-            JavaRDD<String> stringDocumentClasses = repartRecords
+            JavaRDD<String> extractedMeta = repartRecords
                     .pipe("bash " + scriptsDirOnWorkerNode + "/run_affiliation_extraction.sh" + " " + scriptsDirOnWorkerNode);
 
-            JavaRDD<AffiliationExtractionResult> outputRecords = stringDocumentClasses
-                    .map(recordString -> AvroGsonFactory.create().fromJson(recordString, AffiliationExtractionResult.class)
-            );
-
-            outputRecords.cache();
+//            dropping support for JSON to Avro translation because plain JSON records are good enough
+//            apart from that - when JSON to Avro mapping is enabled the job fails - probably ther is some misalignment
+//            JavaRDD<AffiliationExtractionResult> outputRecords = extractedMeta
+//                    .map(recordString -> AvroGsonFactory.create().fromJson(recordString, AffiliationExtractionResult.class)
+//            );
+//
+//            outputRecords.cache();
             
-            avroSaver.saveJavaRDD(outputRecords, AffiliationExtractionResult.SCHEMA$, params.outputAvroPath);
-
-            List<ReportEntry> reportEntries = createReportEntries(outputRecords.count());
+//            avroSaver.saveJavaRDD(outputRecords, AffiliationExtractionResult.SCHEMA$, params.outputAvroPath);
+            
+            extractedMeta.cache();
+            extractedMeta.saveAsTextFile(params.outputAvroPath);
+            
+            List<ReportEntry> reportEntries = createReportEntries(extractedMeta.count());
             
             avroSaver.saveJavaRDD(sc.parallelize(reportEntries, 1), ReportEntry.SCHEMA$, params.outputReportPath);
         }
