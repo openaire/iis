@@ -54,6 +54,8 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     
     public static final String NAMED_OUTPUT_FAULT = "output.fault";
     
+    public static final String NAMED_OUTPUT_TRANSIENT_FAULT = "output.transient.fault";
+    
     public static final String EXCLUDED_IDS = "excluded.ids";
     
     public static final String GROBID_SERVER_URL = "grobid.server.url";
@@ -107,6 +109,11 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      * Fault named output.
      */
     private String namedOutputFault;
+    
+    /**
+     * Transient fault named output.
+     */
+    private String namedOutputTransientFault;
 
     /**
      * Current progress.
@@ -145,11 +152,6 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     private GrobidClient grobidClient;
 
     /**
-     * Counter indicating the number of temporary errors related to Grobid server communication.
-     */
-    private Counter transientErrorCounter;
-
-    /**
      * Grobid server version.
      */
     private String grobidServerVersion;
@@ -158,8 +160,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
      * Hadoop counters enum of invalid records 
      */
     public static enum InvalidRecordCounters {
-        INVALID_PDF_HEADER,
-        TRANSIENT_ERROR
+        INVALID_PDF_HEADER
     }
     
     private static final String invalidPdfHeaderMsg = "content PDF header not approved!";
@@ -176,18 +177,22 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         if (namedOutputFault == null || namedOutputFault.isEmpty()) {
             throw new RuntimeException("no named output provided for fault");
         }
+        namedOutputTransientFault = context.getConfiguration().get(NAMED_OUTPUT_TRANSIENT_FAULT);
+        if (namedOutputTransientFault == null || namedOutputTransientFault.isEmpty()) {
+            throw new RuntimeException("no named output provided for transient fault");
+        }
         
         String grobidServerUrl = context.getConfiguration().get(GROBID_SERVER_URL);
         if (grobidServerUrl != null && !grobidServerUrl.trim().isEmpty()
                 && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(grobidServerUrl)) {
             log.info("enabling metadata extraction relying on Grobid, url address: " + grobidServerUrl);
-            int connectionTimeout = 60000;
+            int connectionTimeout = 600000;
             String connectionTimeoutStr = context.getConfiguration().get(GROBID_SERVER_CONNECTION_TIMEOUT);
             if (connectionTimeoutStr != null && !connectionTimeoutStr.trim().isEmpty() && 
                     !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(connectionTimeoutStr)) {
                 connectionTimeout = Integer.parseInt(connectionTimeoutStr); 
             }
-            int readTimeout = 60000;
+            int readTimeout = 600000;
             String readTimeoutStr = context.getConfiguration().get(GROBID_SERVER_READ_TIMEOUT);
             if (readTimeoutStr != null && !readTimeoutStr.trim().isEmpty() &&
                     !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readTimeoutStr)) {
@@ -241,9 +246,6 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         Counter invalidPdfCounter = context.getCounter(InvalidRecordCounters.INVALID_PDF_HEADER);
         invalidPdfCounter.setValue(0);
         this.contentApprover = new InvalidCountableContentApproverWrapper(new PDFHeaderBasedContentApprover(), invalidPdfCounter);
-        
-        transientErrorCounter = context.getCounter(InvalidRecordCounters.TRANSIENT_ERROR);
-        transientErrorCounter.setValue(0);
 
         mos = instantiateMultipleOutputs(context);
         currentProgress = 0;
@@ -330,6 +332,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         log.info("starting processing for id: " + documentId);
         long startTime = System.currentTimeMillis();
         String extractedBy = "";
+        boolean storeProcessingTimeFaultWhenExceeded = true;
         try {
             if (grobidClient != null) {
                 extractedBy = grobidServerVersion;
@@ -339,17 +342,17 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
                 processByteBufferWithCermine(documentId, byteBuffer);
             }
         } catch (TransientException e) {
-            transientErrorCounter.increment(1);
             log.error("Provisional exception occurred while handling document! "
                     + "This means fault is not going to be written in output, error is logged only in order to allow further processing!",
                     e);
-            return;
+            handleTransientException(e, documentId);
+            storeProcessingTimeFaultWhenExceeded = false;
         } catch (Exception e) {
             handleException(e, documentId, extractedBy);
-            return;
+            storeProcessingTimeFaultWhenExceeded = false;
         }
         
-        handleProcessingTime(System.currentTimeMillis() - startTime, documentId);
+        handleProcessingTime(System.currentTimeMillis() - startTime, documentId, storeProcessingTimeFaultWhenExceeded);
     }
 
     
@@ -420,12 +423,26 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
     }
     
     /**
+     * Handles transient exception by converting it to {@link Fault} and writing it to the dedicate transient fault output.
+     * Transient fault is written for further analysis only and is not bound with writing empty meta record so it is not persisted in cache.
+     * 
+     * @param e Exception to be handled
+     * @param documentId document identifier
+     */
+    private void handleTransientException(Exception e, String documentId) throws IOException, InterruptedException {
+        // writing transient fault result
+        mos.write(namedOutputTransientFault, new AvroKey<Fault>(FaultUtils.exceptionToFault(documentId, e, null)));
+    }
+    
+    /**
      * Handles document processing time by writing fault when processing time exceeded predefined threshold.
      * @param processingTime processing time in milliseconds
      * @param documentId document identifier
+     * @param storeProcessingTimeFault flag indicating time related fault should be stored
      */
-    private void handleProcessingTime(long processingTime, String documentId) throws IOException, InterruptedException {
-        if (processingTime > processingTimeThreshold) {
+    private void handleProcessingTime(long processingTime, String documentId, boolean storeProcessingTimeFault)
+            throws IOException, InterruptedException {
+        if (storeProcessingTimeFault && processingTime > processingTimeThreshold) {
             Map<CharSequence, CharSequence> supplementaryData = new HashMap<CharSequence, CharSequence>();
             supplementaryData.put(FAULT_SUPPLEMENTARY_DATA_PROCESSING_TIME, String.valueOf(processingTime));
             // writing fault result

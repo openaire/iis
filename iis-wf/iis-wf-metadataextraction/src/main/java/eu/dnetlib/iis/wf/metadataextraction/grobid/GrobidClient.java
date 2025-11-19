@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -140,6 +141,8 @@ public class GrobidClient implements Closeable {
                         return processPdfByteBuffer(pdfByteBuffer, retryCount);
                     }
                 }
+            } catch (SocketTimeoutException e) {
+                throw new TransientException("Socket timeout exceeded when communicating with the grobid server!", e);
             }
         }
     }

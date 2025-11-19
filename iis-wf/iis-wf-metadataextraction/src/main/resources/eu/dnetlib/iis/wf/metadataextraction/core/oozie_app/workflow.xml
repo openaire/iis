@@ -25,6 +25,11 @@
 			</description>
 		</property>
         <property>
+            <name>output_name_transient_fault</name>
+            <value>transientfault</value>
+            <description>Transient fault output subdirectory name. This kind of faults is not preserved in cache, it is intended for analysis only</description>
+        </property>
+        <property>
             <name>output_report_root_path</name>
             <description>base directory for storing reports</description>
         </property>
@@ -207,7 +212,7 @@
                 <!-- Standard stuff for our framework -->
                 <property>
 					<name>avro.mapreduce.multipleoutputs</name>
-					<value>${output_name_meta} ${output_name_fault}</value>
+					<value>${output_name_meta} ${output_name_fault} ${output_name_transient_fault}</value>
 				</property>
                 <!-- ## Output classes for all output ports -->
 				<property>
@@ -220,6 +225,11 @@
 					</name>
 					<value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
 				</property>
+				<property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_transient_fault}.format
+                    </name>
+                    <value>org.apache.avro.mapreduce.AvroKeyOutputFormat</value>
+                </property>
                 <!-- ### Schema of multiple output ports. -->
 				<property>
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_meta}.keyschema</name>
@@ -229,6 +239,10 @@
 					<name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_fault}.keyschema</name>
 					<value>${wf:actionData('generate-schema')['eu.dnetlib.iis.audit.schemas.Fault']}</value>
 				</property>
+				<property>
+                    <name>avro.mapreduce.multipleoutputs.namedOutput.${output_name_transient_fault}.keyschema</name>
+                    <value>${wf:actionData('generate-schema')['eu.dnetlib.iis.audit.schemas.Fault']}</value>
+                </property>
 
 				<property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
@@ -246,6 +260,10 @@
 				    <name>output.fault</name>
 				   <value>${output_name_fault}</value>
 				</property>
+				<property>
+                    <name>output.transient.fault</name>
+                   <value>${output_name_transient_fault}</value>
+                </property>
 				<property>
 				    <name>excluded.ids</name>
 				   <value>${excluded_ids}</value>
@@ -310,8 +328,8 @@
             <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
             <arg>-Preport.import.metadataExtraction.processed.docMetadata=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_meta,'/part')]}</arg>
             <arg>-Preport.import.metadataExtraction.processed.fault.total=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_fault,'/part')]}</arg>
+            <arg>-Preport.import.metadataExtraction.processed.transientError=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.common.javamapreduce.hack.AvroMultipleOutputs'][concat(output_name_transient_fault,'/part')]}</arg>
             <arg>-Preport.import.metadataExtraction.processed.fault.invalidPdf=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper$InvalidRecordCounters']['INVALID_PDF_HEADER']}</arg>
-            <arg>-Preport.import.metadataExtraction.processed.transientError=${hadoop:counters('metadata_extractor')['eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper$InvalidRecordCounters']['TRANSIENT_ERROR']}</arg>
             <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
         </java>
         <ok to="report-execution-times" />
