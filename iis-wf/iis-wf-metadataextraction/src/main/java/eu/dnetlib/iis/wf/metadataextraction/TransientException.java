@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.metadataextraction;
 
 /**
- * Transient exception indicating temprorary problems occuring during the metadata extraction process.
+ * Transient exception indicating temporary problems occuring during the metadata extraction process.
  * 
  * @author mhorst
  */

@@ -181,9 +181,6 @@ public class TeiToExtractedDocumentMetadataTransformer {
 
     /**
      * Returns plaintext representation of the document.
-     * This method was taken from:
-     * https://git.icm.edu.pl/mhorst/grobid-integration-experiments/-/blob/master/src/main/java/com/example/GrobidProcessor.java?ref_type=heads
-     * Align no the way of extracting fields (XPath used in other methods)
      * @param id identifier to be included in logged messages
      * @param teiXml TEI record in XML format
      * @param xPath xpath to evaluate query

@@ -189,25 +189,25 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
             int connectionTimeout = 600000;
             String connectionTimeoutStr = context.getConfiguration().get(GROBID_SERVER_CONNECTION_TIMEOUT);
             if (connectionTimeoutStr != null && !connectionTimeoutStr.trim().isEmpty() && 
-                    !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(connectionTimeoutStr)) {
+                    !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(connectionTimeoutStr)) {
                 connectionTimeout = Integer.parseInt(connectionTimeoutStr); 
             }
             int readTimeout = 600000;
             String readTimeoutStr = context.getConfiguration().get(GROBID_SERVER_READ_TIMEOUT);
             if (readTimeoutStr != null && !readTimeoutStr.trim().isEmpty() &&
-                    !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readTimeoutStr)) {
+                    !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readTimeoutStr)) {
                 readTimeout = Integer.parseInt(readTimeoutStr);
             }
             long throttleSleepTime = 60000;
             String readThrottleSleepTimeStr = context.getConfiguration().get(GROBID_SERVER_THROTTLE_SLEEP_TIME);
             if (readThrottleSleepTimeStr != null && !readThrottleSleepTimeStr.trim().isEmpty() &&
-                    !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readThrottleSleepTimeStr)) {
-                throttleSleepTime = Long.parseLong(readTimeoutStr);
+                    !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readThrottleSleepTimeStr)) {
+                throttleSleepTime = Long.parseLong(readThrottleSleepTimeStr);
             }
             int maxRetriesCount = 10;
             String maxRetriesCountStr = context.getConfiguration().get(GROBID_SERVER_MAX_RETRIES_COUNT);
             if (maxRetriesCountStr != null && !maxRetriesCountStr.trim().isEmpty() &&
-                    !!WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(maxRetriesCountStr)) {
+                    !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(maxRetriesCountStr)) {
                 maxRetriesCount = Integer.parseInt(maxRetriesCountStr);
             }
 

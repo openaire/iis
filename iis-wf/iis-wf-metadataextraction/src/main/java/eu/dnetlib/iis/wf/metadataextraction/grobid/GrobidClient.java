@@ -127,7 +127,7 @@ public class GrobidClient implements Closeable {
                     String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
                     throw new IOException("Grobid request failed with status code " + statusCode + ": " + error);
                 } else {
-                    // throwing TransientException to indicate transient nature of the failre
+                    // throwing TransientException to indicate transient nature of the failure
                     // those are usually 502, 503 and 504 HTTP error codes but it is possible other kind of failures may occur
                     String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
                     String message = "Grobid request failed with status code " + statusCode + ": " + error;
