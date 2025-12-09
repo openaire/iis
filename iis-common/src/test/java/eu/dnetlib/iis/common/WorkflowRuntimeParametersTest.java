@@ -108,6 +108,32 @@ public class WorkflowRuntimeParametersTest {
     }
     
     @Test
+    public void testGetLongParamValue() throws Exception {
+        // given
+        String paramName = "paramName1";
+        long paramValue = 60000;
+        configuration.set(paramName, String.valueOf(paramValue));
+        
+        // execute
+        Long result = WorkflowRuntimeParameters.getLongParamValue(paramName, configuration);
+        
+        // assert
+        assertEquals(paramValue, result.intValue());
+    }
+    
+    @Test
+    public void testGetLongParamValueMissing() throws Exception {
+        // given
+        String paramName = "paramName1";
+        
+        // execute
+        Long result = WorkflowRuntimeParameters.getLongParamValue(paramName, configuration);
+        
+        // assert
+        assertNull(result);
+    }
+    
+    @Test
     public void testGetParamValueWithoutFallback() throws Exception {
         // given
         String paramName = "paramName1";

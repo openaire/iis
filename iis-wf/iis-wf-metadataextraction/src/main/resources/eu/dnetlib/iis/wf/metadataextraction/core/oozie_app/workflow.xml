@@ -55,12 +55,12 @@
         </property>
         <property>
             <name>grobid_server_connection_timeout</name>
-            <value>60000</value>
+            <value>600000</value>
             <description>Grobid server connection timeout</description>
         </property>
         <property>
             <name>grobid_server_read_timeout</name>
-            <value>60000</value>
+            <value>600000</value>
             <description>Grobid server read timeout</description>
         </property>
         <property>

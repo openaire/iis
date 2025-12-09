@@ -186,30 +186,15 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
         if (grobidServerUrl != null && !grobidServerUrl.trim().isEmpty()
                 && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(grobidServerUrl)) {
             log.info("enabling metadata extraction relying on Grobid, url address: " + grobidServerUrl);
-            int connectionTimeout = 600000;
-            String connectionTimeoutStr = context.getConfiguration().get(GROBID_SERVER_CONNECTION_TIMEOUT);
-            if (connectionTimeoutStr != null && !connectionTimeoutStr.trim().isEmpty() && 
-                    !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(connectionTimeoutStr)) {
-                connectionTimeout = Integer.parseInt(connectionTimeoutStr); 
-            }
-            int readTimeout = 600000;
-            String readTimeoutStr = context.getConfiguration().get(GROBID_SERVER_READ_TIMEOUT);
-            if (readTimeoutStr != null && !readTimeoutStr.trim().isEmpty() &&
-                    !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readTimeoutStr)) {
-                readTimeout = Integer.parseInt(readTimeoutStr);
-            }
-            long throttleSleepTime = 60000;
-            String readThrottleSleepTimeStr = context.getConfiguration().get(GROBID_SERVER_THROTTLE_SLEEP_TIME);
-            if (readThrottleSleepTimeStr != null && !readThrottleSleepTimeStr.trim().isEmpty() &&
-                    !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(readThrottleSleepTimeStr)) {
-                throttleSleepTime = Long.parseLong(readThrottleSleepTimeStr);
-            }
-            int maxRetriesCount = 10;
-            String maxRetriesCountStr = context.getConfiguration().get(GROBID_SERVER_MAX_RETRIES_COUNT);
-            if (maxRetriesCountStr != null && !maxRetriesCountStr.trim().isEmpty() &&
-                    !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(maxRetriesCountStr)) {
-                maxRetriesCount = Integer.parseInt(maxRetriesCountStr);
-            }
+
+            int connectionTimeout = WorkflowRuntimeParameters.getIntegerParamValue(GROBID_SERVER_CONNECTION_TIMEOUT,
+                    context.getConfiguration());
+            int readTimeout = WorkflowRuntimeParameters.getIntegerParamValue(GROBID_SERVER_READ_TIMEOUT,
+                    context.getConfiguration());
+            long throttleSleepTime = WorkflowRuntimeParameters.getLongParamValue(GROBID_SERVER_THROTTLE_SLEEP_TIME,
+                    context.getConfiguration());
+            int maxRetriesCount = WorkflowRuntimeParameters.getIntegerParamValue(GROBID_SERVER_MAX_RETRIES_COUNT,
+                    context.getConfiguration());
 
             this.grobidClient = new GrobidClient(grobidServerUrl, connectionTimeout, readTimeout,
                     throttleSleepTime, maxRetriesCount);
@@ -357,7 +342,7 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
 
     
     //------------------------ PRIVATE --------------------------
-
+    
     /**
      * Parses content stream by relying on external Grobid server.
      * @param documentId source document identifier

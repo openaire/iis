@@ -91,11 +91,6 @@ public class GrobidClient implements Closeable {
     // -------------------------- PRIVATE --------------------------------------
 
     private String processPdfByteBuffer(ByteBuffer pdfByteBuffer, int retryCount) throws IOException, TransientException, InterruptedException {
-        // need to rewind whenever retrying
-        if (retryCount > 0) {
-            pdfByteBuffer.rewind();
-        }
-
         try (InputStream pdfInputStream = new ByteBufferInputStream(pdfByteBuffer)) {
 
             HttpPost httpPost = new HttpPost(grobidUrl + "/api/processFulltextDocument");
@@ -138,6 +133,7 @@ public class GrobidClient implements Closeable {
                         logger.warn(message);
                         logger.warn("retrying for the " + retryCount + " time after waiting " + throttleSleepTime + " ms...");
                         Thread.sleep(throttleSleepTime);
+                        pdfByteBuffer.rewind();
                         return processPdfByteBuffer(pdfByteBuffer, retryCount);
                     }
                 }

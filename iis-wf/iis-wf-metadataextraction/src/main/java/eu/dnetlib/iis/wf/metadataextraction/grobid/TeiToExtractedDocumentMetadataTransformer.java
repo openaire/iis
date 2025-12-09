@@ -63,7 +63,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         xPath.setNamespaceContext(new TeiNamespaceContext());
 
         // Extracting the full text content
-        String fullText = extractTextContent(id, teiXml, xPath);
+        String fullText = extractTextContent(id, document, xPath);
 
         // Create ExtractedDocumentMetadata with id and text
         ExtractedDocumentMetadata.Builder documentBuilder = ExtractedDocumentMetadata.newBuilder().setId(id)
@@ -185,52 +185,42 @@ public class TeiToExtractedDocumentMetadataTransformer {
      * @param teiXml TEI record in XML format
      * @param xPath xpath to evaluate query
      */
-    private static String extractTextContent(String id, String teiXml, XPath xPath) throws Exception {
+    private static String extractTextContent(String id, Document document, XPath xPath) throws Exception {
         StringBuilder plainText = new StringBuilder();
 
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(teiXml)));
+        // Extract title
+        NodeList titleNodes = document.getElementsByTagName("title");
+        if (titleNodes.getLength() > 0) {
+            plainText.append(titleNodes.item(0).getTextContent().trim()).append("\n\n");
+        }
 
-            // Extract title
-            NodeList titleNodes = document.getElementsByTagName("title");
-            if (titleNodes.getLength() > 0) {
-                plainText.append(titleNodes.item(0).getTextContent().trim()).append("\n\n");
-            }
+        // Extract abstract
+        NodeList abstractNodes = document.getElementsByTagName("abstract");
+        if (abstractNodes.getLength() > 0) {
+            plainText.append("ABSTRACT\n").append(abstractNodes.item(0).getTextContent().trim()).append("\n\n");
+        }
 
-            // Extract abstract
-            NodeList abstractNodes = document.getElementsByTagName("abstract");
-            if (abstractNodes.getLength() > 0) {
-                plainText.append("ABSTRACT\n").append(abstractNodes.item(0).getTextContent().trim()).append("\n\n");
+        // Extract body text
+        Node bodyNode = document.getElementsByTagName("body").item(0);
+        if (bodyNode != null) {
+            processNodeContent(bodyNode, plainText);
+        }
+        
+        // Extract back text
+        Node backNode = document.getElementsByTagName("back").item(0);
+        if (backNode != null) {
+            processNodeContent(backNode, plainText);
+        }
+        
+        // Extract references/bibliography
+        NodeList bibNodes = document.getElementsByTagName("listBibl");
+        if (bibNodes.getLength() > 0) {
+            plainText.append("REFERENCES\n");
+            NodeList bibEntries = ((Element) bibNodes.item(0)).getElementsByTagName("biblStruct");
+            for (int i = 0; i < bibEntries.getLength(); i++) {
+                String rawText = extractSingleValue(bibEntries.item(i), xPath, ".//tei:note[@type='raw_reference']");
+                plainText.append(i + 1).append(". ").append(rawText).append("\n");
             }
-
-            // Extract body text
-            Node bodyNode = document.getElementsByTagName("body").item(0);
-            if (bodyNode != null) {
-                processNodeContent(bodyNode, plainText);
-            }
-            
-            // Extract back text
-            Node backNode = document.getElementsByTagName("back").item(0);
-            if (backNode != null) {
-                processNodeContent(backNode, plainText);
-            }
-            
-            // Extract references/bibliography
-            NodeList bibNodes = document.getElementsByTagName("listBibl");
-            if (bibNodes.getLength() > 0) {
-                plainText.append("REFERENCES\n");
-                NodeList bibEntries = ((Element) bibNodes.item(0)).getElementsByTagName("biblStruct");
-                for (int i = 0; i < bibEntries.getLength(); i++) {
-                    String rawText = extractSingleValue(bibEntries.item(i), xPath, ".//note[@type='raw_reference']");
-                    plainText.append(i + 1).append(". ").append(rawText).append("\n");
-                }
-            }
-
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            logger.error("Error extracting plaintext from TEI XML: {}", e.getMessage());
-            throw new Exception("Error extracting text from the document: " + id, e);
         }
 
         return plainText.toString();
@@ -408,7 +398,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         } catch (XPathExpressionException e) {
             logger.warn("Error extracting keywords", e);
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private static Map<CharSequence, CharSequence> extractExternalIdentifiers(Node node, XPath xPath, String expression) {
@@ -429,7 +419,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
         } catch (XPathExpressionException e) {
             logger.warn("Error extracting external identifiers", e);
         }
-        return null;
+        return Collections.emptyMap();
     }
 
     private static String buildAuthorName(Element authorNode) {
