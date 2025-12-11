@@ -127,13 +127,13 @@ public class TeiToExtractedDocumentMetadataTransformer {
 
         // Extract keywords
         List<CharSequence> keywords = extractKeywords(document, xPath);
-        if (keywords != null && !keywords.isEmpty()) {
+        if (!keywords.isEmpty()) {
             documentBuilder.setKeywords(keywords);
         }
         
         Map<CharSequence, CharSequence> externalIdentifiers = extractExternalIdentifiers(
                 document, xPath, "//tei:teiHeader//tei:biblStruct/tei:idno");
-        if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+        if (!externalIdentifiers.isEmpty()) {
             documentBuilder.setExternalIdentifiers(externalIdentifiers);
         }
         
@@ -682,7 +682,7 @@ public class TeiToExtractedDocumentMetadataTransformer {
                 // extract external identifiers
                 Map<CharSequence, CharSequence> externalIdentifiers = extractExternalIdentifiers(
                         biblNode, xPath, ".//tei:idno");
-                if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+                if (!externalIdentifiers.isEmpty()) {
                     basicMetadataBuilder.setExternalIds(externalIdentifiers);
                 }
                 

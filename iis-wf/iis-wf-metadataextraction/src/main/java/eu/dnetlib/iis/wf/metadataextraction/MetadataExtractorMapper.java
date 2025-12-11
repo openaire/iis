@@ -182,9 +182,8 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
             throw new RuntimeException("no named output provided for transient fault");
         }
         
-        String grobidServerUrl = context.getConfiguration().get(GROBID_SERVER_URL);
-        if (grobidServerUrl != null && !grobidServerUrl.trim().isEmpty()
-                && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(grobidServerUrl)) {
+        String grobidServerUrl = WorkflowRuntimeParameters.getParamValue(GROBID_SERVER_URL, context.getConfiguration()); 
+        if (grobidServerUrl != null) {
             log.info("enabling metadata extraction relying on Grobid, url address: " + grobidServerUrl);
 
             int connectionTimeout = WorkflowRuntimeParameters.getIntegerParamValue(GROBID_SERVER_CONNECTION_TIMEOUT,
@@ -199,9 +198,9 @@ public class MetadataExtractorMapper extends Mapper<AvroKey<DocumentContent>, Nu
             this.grobidClient = new GrobidClient(grobidServerUrl, connectionTimeout, readTimeout,
                     throttleSleepTime, maxRetriesCount);
             
-            String grobidServerVersionStr = context.getConfiguration().get(GROBID_SERVER_VERSION);
-            if (grobidServerVersionStr != null && !grobidServerVersionStr.trim().isEmpty()
-                    && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(grobidServerVersionStr)) {
+            String grobidServerVersionStr = WorkflowRuntimeParameters.getParamValue(GROBID_SERVER_VERSION, context.getConfiguration()); 
+                    context.getConfiguration().get(GROBID_SERVER_VERSION);
+            if (grobidServerVersionStr != null) {
                 this.grobidServerVersion = grobidServerVersionStr.trim();
             } else {
                 this.grobidServerVersion = EXTRACTED_METADATA_RECORD_ORIGIN_GROBID;
