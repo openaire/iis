@@ -1,0 +1,791 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd">
+    <teiHeader xml:lang="en">
+        <fileDesc>
+            <titleStmt>
+                <title level="a" type="main">Stressful life events are not associated with the development of dementia</title>
+                <funder ref="#_2tHZX67">
+                    <orgName type="full">Swedish Science Council</orgName>
+                </funder>
+                <funder>
+                    <orgName type="full">Riksbankens Jubileumsfond</orgName>
+                </funder>
+            </titleStmt>
+            <publicationStmt>
+                <publisher>Elsevier BV</publisher>
+                <availability status="unknown">
+                    <licence/>
+                </availability>
+                <date type="published" when="2014-01">2014-01</date>
+            </publicationStmt>
+            <sourceDesc>
+                <biblStruct>
+                    <analytic>
+                        <author>
+                            <persName><forename type="first">Anna</forename><surname>Sundström</surname></persName>
+                            <affiliation key="aff0">
+                                <note type="raw_affiliation"><label>1</label> Centre for Population Studies/ Ageing and Living Conditions , and Department of Psychology , Umeå University , Umeå , Sweden</note>
+                                <orgName type="department" key="dep1">Centre for Population Studies</orgName>
+                                <orgName type="department" key="dep2">Department of Psychology</orgName>
+                                <orgName type="laboratory">Ageing and Living Conditions</orgName>
+                                <orgName type="institution">Umeå University</orgName>
+                                <address>
+                                    <settlement>Umeå</settlement>
+                                    <country key="SE">Sweden</country>
+                                </address>
+                            </affiliation>
+                        </author>
+                        <author>
+                            <persName><forename type="first">Michael</forename><surname>Rönnlund</surname></persName>
+                            <affiliation key="aff1">
+                                <note type="raw_affiliation"><label>2</label> Department of Psychology , Umeå University , Umeå , Sweden</note>
+                                <orgName type="department">Department of Psychology</orgName>
+                                <orgName type="institution">Umeå University</orgName>
+                                <address>
+                                    <settlement>Umeå</settlement>
+                                    <country key="SE">Sweden</country>
+                                </address>
+                            </affiliation>
+                        </author>
+                        <author>
+                            <persName><forename type="first">Rolf</forename><surname>Adolfsson</surname></persName>
+                            <affiliation key="aff2">
+                                <note type="raw_affiliation"><label>3</label> Department of Clinical Sciences , Division of Psychiatry , Umeå University , Umeå , Sweden</note>
+                                <orgName type="department" key="dep1">Department of Clinical Sciences</orgName>
+                                <orgName type="department" key="dep2">Division of Psychiatry</orgName>
+                                <orgName type="institution">Umeå University</orgName>
+                                <address>
+                                    <settlement>Umeå</settlement>
+                                    <country key="SE">Sweden</country>
+                                </address>
+                            </affiliation>
+                        </author>
+                        <author>
+                            <persName><forename type="first">Lars-Göran</forename><surname>Nilsson</surname></persName>
+                            <affiliation key="aff3">
+                                <note type="raw_affiliation"><label>4</label> Department of Psychology , Stockholm University , and Stockholm Brain Institute , Stockholm , Sweden</note>
+                                <orgName type="department">Department of Psychology</orgName>
+                                <orgName type="institution" key="instit1">Stockholm University</orgName>
+                                <orgName type="institution" key="instit2">Stockholm Brain Institute</orgName>
+                                <address>
+                                    <settlement>Stockholm</settlement>
+                                    <country key="SE">Sweden</country>
+                                </address>
+                            </affiliation>
+                        </author>
+                        <title level="a" type="main">Stressful life events are not associated with the development of dementia</title>
+                    </analytic>
+                    <monogr>
+                        <title level="j" type="main">International Psychogeriatrics</title>
+                        <title level="j" type="abbrev">International Psychogeriatrics</title>
+                        <idno type="ISSN">1041-6102</idno>
+                        <imprint>
+                            <publisher>Elsevier BV</publisher>
+                            <biblScope unit="volume">26</biblScope>
+                            <biblScope unit="issue">1</biblScope>
+                            <biblScope unit="page" from="147" to="154"/>
+                            <date type="published" when="2014-01"/>
+                        </imprint>
+                    </monogr>
+                    <idno type="MD5">A3E9BE5498C69FF0308825B2B002878D</idno>
+                    <idno type="DOI">10.1017/s1041610213001804</idno>
+                </biblStruct>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <appInfo>
+                <application version="0.8.1" ident="GROBID" when="2025-03-18T16:45+0000">
+                    <desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+                    <ref target="https://github.com/kermitt2/grobid"/>
+                </application>
+            </appInfo>
+        </encodingDesc>
+        <profileDesc>
+            <textClass>
+                <keywords>
+                    <term>dementia</term>
+                    <term>Alzheimer's disease</term>
+                    <term>life events</term>
+                    <term>stress</term>
+                    <term>risk factor</term>
+                    <term>longitudinal</term>
+                </keywords>
+            </textClass>
+            <abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background:</head><p>The impact of stressful life events as a risk factor of dementia diseases is inconclusive. We sought to determine whether stressful negative life events are associated with incidental dementia in a populationbased study with long-term follow-up. We also tested the hypothesis that the occurrence of positive life events could mitigate or overcome the possible adverse effects of negative life events on dementia conversion.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods:</head><p>The study involved 2,462 dementia-free participants aged 55 years and older. Information on life events was ascertained at baseline from a comprehensive Life Event Inventory, which included 56 questions about specific life events. For each life event, the emotional impact (both positive and negative) and emotional adjustment were asked for.</p><p>Results: During follow-up, 423 participants developed dementia; of these, 240 developed Alzheimer's disease (AD). Cox regression analysis showed no association between the total number of negative life events and the incidence of dementia when adjusted solely for age and gender (hazard ratio = 0.97, 95% CI = 0.92-1.02), or with multiple adjustments for a range of covariates (hazard ratio = 0.96, 95% CI = 0.91-1.01). Similarly, neither emotional impact nor emotional adjustment to these life events was associated with incident dementia. A separate analysis of AD did not alter the results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions:</head><p>The result of this population-based study finds no association between negative or positive life events and dementia. Accordingly, our results reject the hypothesis that stressful life events trigger the onset of dementia diseases.</p></div>
+            </abstract>
+        </profileDesc>
+    </teiHeader>
+    <text xml:lang="en">
+        <body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p>Dementia diseases are among the diseases most feared by the elderly, with an estimated 36 million people suffering from dementia in 2010, and the number is expected to almost double every 20 years to hit 115 million by 2050. Such a rapid increase in dementia among the elderly in the next 30 years will have far-reaching economic implications for societies worldwide and will undoubtedly be one of the greatest challenges facing public health personnel in the 21st century <ref type="bibr">(Alzheimer's Disease International, 2009)</ref>. Identifying factors that serve to delay the onset of dementia and approaches that promote continued independent living are of great interest to both researchers and the general public. Current efforts focus on lifestyle factors, which are increasingly being examined as potentially modifiable factors (for a review, see <ref type="bibr" target="#b7">Fratiglioni et al., 2004)</ref>.</p><p>Research has demonstrated that stress and stressful life events have a deteriorating effect on health (e.g. cardiovascular diseases; <ref type="bibr" target="#b4">Cohen et al., 2007)</ref>. More recently, researchers have also suggested that stress might negatively impact cognitive impairment, including dementia, possibly through the activation of the hypothalamicpituitary-adrenal axis, which, as a consequence, releases glucocorticoids from the adrenal cortex. The prolonged release of glucocorticoids due to long-term stress can cause structural damage in the hippocampus, amygdala, and prefrontal regions -structures critical for memory function <ref type="bibr" target="#b11">(Lupien et al., 2007;</ref><ref type="bibr" target="#b18">Peavy et al., 2009)</ref>. Furthermore, in animal models increased cortisol levels have been associated with increases in amyloid β-peptide and tau accumulation in the brain, which can cause neuropathological changes that have characteristics of Alzheimer's Disease (AD) <ref type="bibr" target="#b8">(Green et al., 2006)</ref>.</p><p>However, studies exploring the relationship between stressful events and the risk of dementia are relatively scarce. One recent population-based study found that people who had lost a parent during childhood were at increased risk of dementia later in life <ref type="bibr" target="#b15">(Norton et al., 2009)</ref>. Another study indicated that having a spouse or adult child who suffered from a serious illness was associated with an increased risk of dementia <ref type="bibr" target="#b20">(Persson and Skoog, 1996)</ref>. <ref type="bibr" target="#b9">Johansson et al. (2010)</ref> found that stressful periods (related to work, health, or family situations) during middle age more than doubled the risk of incident dementia, particularly in terms of AD. The same research group noted in a subsequent study that midlife stress was related to an increased risk of cerebral atrophy and white matter lesions <ref type="bibr" target="#b10">(Johansson et al., 2012)</ref>. Yet, the detrimental effects of stress on dementia have not been observed across the board <ref type="bibr" target="#b12">(Motomura et al., 1998;</ref><ref type="bibr" target="#b6">Fountoulakis et al., 2011)</ref>. For example, <ref type="bibr" target="#b6">Fountoulakis et al. (2011)</ref>, found no evidence of an increased risk of dementia compared with controls as a result of previous stressful events. In fact, the results indicated a contrary tendency -namely a lower number of life events before the clinical onset of dementia. <ref type="bibr" target="#b6">Fountoulakis et al. (2011)</ref> concluded that fewer events before dementia diagnosis are probably due to limitations in activities and social contacts, which are likely related to preclinical dementia symptoms. However, the results from the study should be regarded with caution, as the study's time span was relatively short, only one year before the onset of symptoms of dementia.</p><p>The contradictory findings in the literature might, to a certain degree, be due to differences in the study methodologies used. Some major drawbacks in previous research should be noted. These include the use of retrospective designs, small sample sizes, poor measurement of life events, and a lack of control groups. To address these limitations, the current study collected prospective data from a reasonably large sample. The use of prospective data reduces the risk of recall bias, which is otherwise a common confounder in retrospective studies. Because of cognitive impairment resulting from dementia, retrospective studies have to rely on surrogate informants -a method that has severe inherent weaknesses. One serious concern with regard to the use of surrogate informants is that there may be a bias toward remembering and reporting stressful life events. Specifically, the identification of a possible cause of disabling diseases might give relatives an explanation for its onset, thereby resulting in a considerable risk of adverse events being overestimated <ref type="bibr" target="#b17">(Paykel, 1997)</ref>.</p><p>Another methodological issue of vital importance is that prior studies have often neglected the fact that there is heterogeneity between individuals regarding the experience or perceived influence of a given life event. Obviously, one individual might judge a certain event as extremely stressful whereas another might perceive it as rather trivial. It seems reasonable to expect that events experienced as more negative also have a more adverse influence on a person's life. Therefore, considering the individually experienced emotional impact of an event is of great value and may be an important moderator. Moreover, it is not only how stressfully a person experiences an event that has been shown to be important; rather the control that an individual perceives they have over the event has also proven vital for how the individual will cope both with the event and their long-term adjustment to it <ref type="bibr" target="#b23">(Updegraff and Taylor, 2000)</ref>. Finally, whereas a set of studies investigated the association between the occurrence of life events assumed to be stressful and the risk of dementia, there is the remaining unresolved issue concerning the impact of positive life events; in particular, whether positive life events might act as a buffer against possible adverse effects of negative life events <ref type="bibr" target="#b1">(Baumeister et al., 2001)</ref>.</p><p>Given the methodological limitations of previous research, the aim of the present study is to examine the hypothesis that exposure to negative life events is associated with increased risk of incident dementia in a population-based prospective study by using a comprehensive measure of life events. Furthermore, we test the hypothesis that the occurrence of positive life events can mitigate or overcome possible adverse effects of negative life events on dementia. To our knowledge, this is the first study to examine the impact of both positive and negative life events in relation to incidental dementia.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Study population</head><p>The study population comprised participants from the Betula prospective cohort study <ref type="bibr" target="#b13">(Nilsson et al., 1997;</ref><ref type="bibr">2004)</ref>, a longitudinal population-based study on aging, cognition, and health. A detailed description of the study design has been published elsewhere <ref type="bibr" target="#b13">(Nilsson et al., 1997)</ref>; therefore, only the aspects of specific importance for the present study are presented here.</p><p>The Betula study is an on-going project that started in 1988 and currently includes six samples (S1 through S6) and five test waves (T1 through T5) five years apart (see Table <ref type="table">1</ref>). Participants Table <ref type="table">1</ref>. Baseline characteristics of participants who remained or did not remain dementia-free at follow-up  were randomly sampled (stratified by age and gender) from the population register in a city of approximately 110,000 inhabitants located in Sweden. Exclusion criteria included (a) severe visual or auditory disabilities, (b) intellectual disability, (c) dementia diseases, or (d) a native language other than Swedish.</p><formula xml:id="formula_0">P A R T I C I P A N T S W H O R E M A I N E D D E M E N T I A -F R E E P A R T I C I P A N T S W H O D E V E L O P E D D E M E</formula><p>At each test wave, assessment of health and tests of cognitive performance were collected in two separate sessions (one week apart), each session lasting approximately 1.5 to 2 hours. The first test session consisted primarily of an extensive health examination. During this session, a number of questionnaires, including a questionnaire about life events, were handed out. The second session consisted mainly of testing cognitive functions, and the previously distributed questionnaires were also collected.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Participants</head><p>Participants in this study included participants from samples 1-5 (S1-S5) and were from test waves 1-4 (T1-T4), aged 55 years and older. The distribution of the participants across the samples and the test waves was as follows: 600 participants (S1) had their baseline test occasion at T1; 1,263 participants (597 and 666 in S2 and S3 respectively) had their baseline tested at T2; 364 participants (S4) had baseline testing at T3; and 362 participants (S5) had baseline testing at T4. Of the 2,589 participants initially included, 79 had missing life events data, 19 were improperly classified and had dementia at inclusion, 17 had deceased shortly after baseline assessment (&lt;1 year) and before the first occurrence of dementia, ten were diagnosed with dementia after the last follow-up examination (after 2010), and two participants were lost to follow-up (e.g. had moved from the catchment area). This left a total of 2,462 participants for the present analyses; see Figure <ref type="figure" target="#fig_1">1</ref>.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Diagnosis of dementia</head><p>The diagnosis of dementia was made according to the Diagnostic and Statistical Manual of Mental Disorders, Fourth Edition, Revised (American Psychiatric <ref type="bibr">Association, 2000)</ref>. The diagnoses were determined based on the prospective longitudinal measurements at each test occasion, including a comprehensive analysis of cognitive health measures, results from neuropsychological testing, and clinical course. The analyses were performed by a clinical and geriatric research psychiatrist and covered the time period from 1989 to 2010. Dementia statuses were available on a yearly basis. During the study period, repeated prospective and retrospective analyses were performed. To increase the validity of the analysis of cognitive status, data were blindly assessed. Moreover, in 2010, to further ensure the accuracy of dementia status, a comparison of each participant's cognitive status (for those who had clinical data available) with their own baseline cognitive status (which is assumed to be without dementia due to the initial cognitive screening conducted at the baseline) was completed. Considering all samples and all test occasions, there were only 19 (0.4%) improperly classified participants, indicating a high validity of the present method of diagnosis.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Life event inventory</head><p>To measure the influence of life events, we used the Life Event Inventory <ref type="bibr" target="#b19">(Perris, 1984)</ref>. This inventory consists of 56 questions about specific life events, including areas such as private life, working life, health, relatives and friends, the deaths of relatives or close friends, and social relationships. For each life event, participants were asked to indicate (i) whether or not the event had occurred (response: yes or no), (ii) if the event was expected or not (expected or not expected), (iii) the emotionality or valence of the event (ranked 1-5, 1 = very positive, 2 = positive, 3 = neutral, 4 = negative, 5 = very negative), (iv) if they could influence the occurrence of the event or not (able to influence or not able to influence), (v) whether it was easy or hard to adjust to the event (with ease or with difficulty). At the first test wave (T1), the participants were asked whether or not life events had occurred in the past year. In the following test waves (T2-T4), the participants were asked whether or not events had occurred in the past five years (i.e. between test sessions).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Potential confounders</head><p>We considered a range of potential confounders collected at the baseline examination, including age, gender, length of education (years), smoking (smokers, non-smokers), and alcohol (yes, no, never drank, or had quit). Moreover, selfreported health status and medical conditions were considered. Participants were asked to respond (yes or no) if they had ever seen a doctor or had been hospitalized for cerebrovascular diseases/disorders, including cardiovascular diseases (attack, cardiopathy, cardiovascular), stroke, high blood pressure, or diabetes mellitus. Furthermore, a sum of the following depressive symptoms (yes or no) was included: feeling dispirited, fatigue, problems sleeping, feeling lonely, or feeling anxious. Global cognitive function was assessed using the Mini-Mental State Examination (MMSE; <ref type="bibr" target="#b5">Folstein et al., 1975)</ref>.</p><p>The Apolipoprotein E (APOE) genotype data were also entered as a covariate. The APOE data were available for 1,800 participants and were coded as the presence or absence of the APOE ɛ4 allele. Participants with the ɛ2 allele (ɛ2/ɛ2, ɛ2/ɛ3, ɛ2/ɛ4; n = 275) were excluded due to conflicting findings regarding the effects of this allele on cognitive functioning <ref type="bibr" target="#b24">(Wilson et al., 2002)</ref>. This resulted in 1,065 non-ɛ4 carriers and 460 ɛ4 carriers.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistical analysis</head><p>Continuous measures were compared using Student´s t-test, and categorical variables were analyzed using χ 2 tests. To study the association between life event scores and the risk of dementia and AD, Cox proportional hazards regression analyses were used to estimate hazard ratios (HR) with a 95% Confidence Interval (CI). The proportional hazards assumption was examined using graphical methods, and was met for all models. Time to event was defined as the date of entering the study to the date of dementia, death, or date of final follow-up (2010), depending on which came first. The results were presented as HRs with a 95% CI.</p><p>The Cox analyses were first adjusted for age and gender (Model 1), then further adjusted for education, MMSE, smoking, alcohol use, vascular diseases/disorders, and depressive symptoms (Model 2). Finally, we investigated whether the presence or absence of the APOE ɛ4 allele modified a possible association between life events and dementia (Model 3).</p><p>To account for the possibility that pre-clinical dementia had influenced the results, we re-analyzed all data and excluded participants who received a dementia diagnosis up to five years from the baseline.</p><p>In order to control that there was no difference in the results depending on whether the participants were asked about life events in the past year (as asked in T1) or in the previous five years (as asked in T2-T4), separate analyses were performed. However, as these gave similar results regardless of the length of time, the presentation of the results was not categorized according to this.</p><p>All statistical analyses were two-sided and were performed using the Statistical Package for Social Science (SPSS) 20 (Chicago, Illinois, USA). The results are considered significant for p &lt; 0.05.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p>The study population was composed of 2,462 participants without dementia with a mean age of 68.7 years (SD = 9.5) at the baseline. In comparison with participants included in the study, excluded participants (n = 127) were older (p &lt; 0.01), had lower MMSE scores (p &lt; 0.01), and more often reported having had cardiovascular diseases/disorders (p &lt; 0.05).</p><p>During follow-up, 423 participants developed dementia, of whom 240 (57%) were classified with AD. Mean follow-up time for all participants was 70.8 years (SD = 5.6). For those who developed dementia, the mean follow-up time was 7.8 years (SD = 4.6), and for those who remained dementiafree, the mean follow-up time was 11.4 years (SD = 5.6). The shorter follow-up time for the dementia group is due to the fact that they were censored from the study when they received their diagnosis. The characteristics of the participants by dementia status are described in Table <ref type="table">1</ref>. Compared with those who did not develop dementia, those who did were older (p &lt; 0.001), were more often women (p &lt; 0.001), had lower education (p &lt; 0.001), had a lower baseline MMSE score, drank less alcohol (p &lt; 0.001), and were more often APOE ε4 allele carriers (p &lt; 0.001).</p><p>The five most commonly reported life events among all participants regardless of whether or not they developed dementia were somatic illness or operation, death of a close relative, serious illness of a close relative, and death of a close friend. Participants who developed dementia reported a mean of 3.0 (SD = 2.6, range 0-18) life events, and participants without dementia reported a mean of 3.7 (SD = 3.3, range 0-30) life events (p &lt; 0.001). A total of 16.1% of the dementia group reported no life events, compared with 12.7% in the without dementia group. Counting only the events that the participants rated as negative or very negative (rating 4 or 5), 64% of the participants with dementia and 69% of the participants without dementia reported that they had experienced at least one event that they judged as negative or very negative (p &lt; 0.05). The mean number of experienced negative or very negative life events reported by participants with dementia was 1.6 (SD = 1.8, range 0-10), compared with 1.9 (SD = 2.1, range 0-16) among the participants without dementia (p &lt; 0.001).</p><p>To examine the effect of life events on the risk of dementia and AD, data were analyzed using Cox proportional hazards models. As shown in Table <ref type="table">2</ref>, no significant association was observed between Table <ref type="table">2</ref>. Cox regression analyses of the risk of dementia with respect to the number and emotional impact of life events the total number of life events, the total number of negative or very negative events, or the total number of positive or very positive life events, either when adjusted for age and gender or with multiple adjustments for a range of potential confounders.</p><formula xml:id="formula_1">A L L D E M E N T I A A L Z H E I M E R ´S DISEASE M O D E L 1 a M O D E L 2 b M O D E L 1 a M O D E L 2 b H R (95% C I ) H R (95% C I ) H R (95% C I ) H R (</formula><p>In addition, no significant association was found between the risk of dementia and whether the life events were expected or not expected, whether they could influence or not influence the occurrence of the event, or whether it was easy or hard to adjust to the event.</p><p>To explore if there was a potential association between any individual life events and dementia, separate analyses for each life event were done. However, none of these were found to be significantly associated with the risk of either dementia or AD (data not shown). Furthermore, inclusion of the APOE genotype as a confounder did not change the results.</p><p>Finally, to reduce the possibility of pre-clinical dementia symptoms affecting the results, we repeated the above analysis and excluded all incident dementia diseases within five years (n = 147), in a step-by-step way, one year at time. This had no bearing on the results.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p>In this population-based prospective study, we found no evidence that occurrences of life events were associated with the risk of developing dementia or AD. This lack of association was observed for the total number of life events, for individual life events, and for measurements that take the emotional impact of the event into account. Separate analyses of positive versus negative life events did not change the observed results.</p><p>Our findings contradict earlier findings that suggested an association between life events and dementia <ref type="bibr" target="#b20">(Persson and Skoog, 1996;</ref><ref type="bibr" target="#b3">Charles et al., 2006;</ref><ref type="bibr" target="#b15">Norton et al., 2009;</ref><ref type="bibr" target="#b16">2011;</ref><ref type="bibr" target="#b9">Johansson et al., 2010;</ref><ref type="bibr" target="#b21">Tsolaki et al., 2010</ref>), yet they are in line with the results from two other studies <ref type="bibr" target="#b12">(Motomura et al., 1998;</ref><ref type="bibr" target="#b6">Fountoulakis et al., 2011)</ref>. A major strength of this study compared with the existing studies is the extensive life events inventory covering areas of work and private life, social relationships, health of both the index person and his or her relatives and friends, and deaths among friends and relatives. The life events inventory also measured the emotional impact (both positive and negative) and emotional adjustment to each life event. To our knowledge, this is the first study that evaluates association between life events and dementia, and not only analyzes the occurrence of life events, but also considers the subjective interpretation of each life event, both positive and negative. Other strengths of our study include the random sampling of participants (by age and gender) from the population registry, the lengthy follow-up period, and the inclusion of a wide range of potential confounders.</p><p>However, despite our longitudinal design, the association between life events and dementia could possibly be obscured by (a) lower participation in activities due to pre-clinical dementia, and (b) failure to remember/report the occurrence of life events that actually occurred near onset of dementia. To minimize the risk that these factors might have affected the results, adjustments were made for global cognitive status and, in separate analyses, the exclusion of participants who developed dementia within five years of the baseline measurement (presumably a period during which the two factors would have an impact). The fact that using these methods to control these potential influences did not alter the results suggests that a true association between the occurrence of life events and incidental dementia was not obscured by social withdrawal or memory deficit, factors that may be expected to exert an influence near dementia onset. However, self-reporting might have been affected by other factors, such as current mood or unwillingness to share or report an adverse life event. Inclusion of a collateral informant might, besides confirming the accuracy of the report, also provide supplemental information and the future work could be benefited from the use of both selfreporting and reporting from informants.</p><p>A possible bias in prior research concerning life events is the inclusion of events that might have an obscure relationship to dementia or that might occur as a direct consequence of the disease and thereby give the false impression of a connection <ref type="bibr" target="#b17">(Paykel, 1997)</ref>. The importance of these dependent events was recently highlighted by <ref type="bibr">Fountoulakis and colleagues (2011)</ref>, who re-analyzed previously published data <ref type="bibr" target="#b21">(Tsolaki et al., 2010)</ref> and discovered that most life events reported in that study could be considered to be either causally related to dementia or secondarily related to the disease. Hence, the inclusion of dependent events could be a major bias in previous research into the association between life events and dementia <ref type="bibr" target="#b6">(Fountoulakis et al., 2011)</ref>. In our study, participants were asked, for example, if they had been physically ill or undergone any surgery. However, as we did not specify a type of illness or surgery, we were not able to determine dependent events (e.g. stroke). The possible inclusion of a dependent variable could impact the results and suggest a false association. Nevertheless, as we did not observe any relationship with any life events, it does not seem reasonable that this would affect the results of our study.</p><p>Moreover, it is essential to differentiate between major life events and minor everyday stressors and daily hassles. Daily hassles can cause long-term constant stress, which may lead to more negative health outcomes, such as poor cardiovascular health, than major life events do <ref type="bibr" target="#b22">(Twisk et al., 1999)</ref>. This might also explain why our results are not in line with the negative effect reported on animals subjected to chronic distress <ref type="bibr" target="#b2">(Budas et al., 1999)</ref>. Hence, studies that include measurements targeting the impact of daily hassles might have yielded different findings. In addition, although the present findings do not support an association between life events and dementia, it cannot be ruled out that major life events that occurred earlier in life, in childhood or adolescence, could be related to the later development of dementia. Thus, to examine this possibility, future studies involving the measurement of life events over extended life periods are desirable.</p><p>In conclusion, we find no association between life events, either positive or negative, and the risk of developing dementia and AD. Accordingly, our results reject previous support for the hypothesis that stressful life events trigger the onset of dementia diseases.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head/><label/><figDesc>...................................................................................................................................................................................................................................................................................................................</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc>Figure 1. Flow chart detailing the derivation of the study sample.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head/><label/><figDesc>95% C I ) ...........................................................................................................................................................................................................................................................................................................................Number of life events 0.99 (0.96-1.03) 0.99 (0.95-1.02) 0.98 (0.93-1.03) 0.97 (0.93-1.02) Number of negative and very negative events 0.97 (0.92-1.02) 0.96 (0.91-1.01) 0.96 (0.89-1.03) 0.95 (0.88-1.02) Number of positive and very positive events 0.99 (0.96-1.03) 0.99 (0.95-1.02) 0.98 (0.93-1.03) 0.97 (0.93-1.02) Note: a Adjusted for age and gender; b adjusted for age, gender, education, MMSE, smoking, alcohol use, vascular diseases/disorders, and depressive symptoms. Participants without data on all covariates were excluded from these analyses.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head/><label/><figDesc>Correspondence should be addressed to: Anna Sundström, Centre for Population Studies/Ageing and Living Conditions, and Department of Psychology, Umeå University, S-90187 Umeå, Sweden. Phone: +46 90 786 61 39; Fax: +46 90 786 66 95. Email: anna.sundstrom@psy.umu.se. Received 9 May 2013; revision requested 18 Jun 2013; revised version received 16 Sep 2013; accepted 18 Sep 2013.</figDesc><table/></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head/><label/><figDesc>..... Note: Missing values in the sample: education (29), MMSE scores (2), smoking (2), alcohol use (5). a Information of APOE genotype was available for a total of 1,525 participants (1,220 without dementia vs. 305 with dementia).</figDesc><table><row><cell>Age: mean, SD</cell><cell>67.7, SD = 9.6</cell><cell>72.8, SD = 7.4</cell><cell>&lt;0.001</cell></row><row><cell>Gender (females) (%)</cell><cell>53.1</cell><cell>64.1</cell><cell>&lt;0.001</cell></row><row><cell>Education: mean, SD</cell><cell>8.7, SD = 3.5</cell><cell>7.9, SD = 3.0</cell><cell>&lt;0.001</cell></row><row><cell>MMSE score: mean, SD</cell><cell>27.4, SD = 1.9</cell><cell>26.7, SD = 2.2</cell><cell>&lt;0.001</cell></row><row><cell>Current smoking (%)</cell><cell>47.0</cell><cell>41.8</cell><cell>0.05</cell></row><row><cell>Alcohol use</cell><cell/><cell/><cell>&lt;0.001</cell></row><row><cell>Yes (%)</cell><cell>75.2</cell><cell>63.0</cell><cell/></row><row><cell>No, never drank or have quit (%)</cell><cell>24.8</cell><cell>37.0</cell><cell/></row><row><cell>Number of cardiovascular diseases/disorders: mean, SD</cell><cell>0.8, SD = 0.9</cell><cell>0.9, SD = 0.9</cell><cell>0.1</cell></row><row><cell>Number of depressive symptoms: mean, SD</cell><cell>1.0, SD = 1.2</cell><cell>1.0, SD = 1.2</cell><cell>0.24</cell></row><row><cell>Presence of APOE-ε4 (%) a</cell><cell>25.8</cell><cell>47.5</cell><cell>&lt;0.001</cell></row></table></figure>
+        </body>
+        <back>
+
+            <div type="acknowledgement">
+<div><head>Acknowledgments</head><p>The <rs type="projectName">Betula</rs> project is supported by a grant from the <rs type="funder">Swedish Science Council</rs>. <rs type="person">A. Sundström</rs> is supported by a grant from <rs type="funder">Riksbankens Jubileumsfond</rs>. The founders had no role in study design, data collection or analysis, the preparation of the manuscript, or the decision to publish.</p></div>
+            </div>
+            <listOrg type="funding">
+                <org type="funded-project" xml:id="_2tHZX67">
+                    <orgName type="project" subtype="full">Betula</orgName>
+                </org>
+            </listOrg>
+            <div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conflict of interest</head><p>None.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Description of authors´roles</head><p>Anna Sundström initiated and designed the study, preformed the statistical analysis, and wrote the first draft. Michael Rönnlund and Lars-Göran Nilsson were involved in data interpretation and performed critical revisions of the manuscript. Rolf Adolfsson was responsible for diagnosing dementia and drafting the manuscript. All authors read and approved the final paper.</p></div>          </div>
+            <div type="references">
+
+                <listBibl>
+
+<biblStruct xml:id="b0">
+    <monogr>
+        <title level="m" type="main">Diagnostic and Statistical Manual of Mental Disorders</title>
+        <imprint>
+            <date type="published" when="2000">2000</date>
+            <publisher>American Psychiatric Association</publisher>
+            <pubPlace>Washington, DC</pubPlace>
+        </imprint>
+    </monogr>
+    <note>4th ed., text rev</note>
+    <note type="raw_reference">American Psychiatric Association. (2000). Diagnostic and Statistical Manual of Mental Disorders, 4th ed., text rev. Washington, DC: American Psychiatric Association.</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+    <analytic>
+        <title level="a" type="main">Bad is stronger than good</title>
+        <author>
+            <persName><forename type="first">R</forename><forename type="middle">F</forename><surname>Baumeister</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">E</forename><surname>Bratslavsky</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">C</forename><surname>Finkenauer</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">K</forename><forename type="middle">D</forename><surname>Vohs</surname></persName>
+        </author>
+        <idno type="DOI">10.1037//1089-2680.5.4.323</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Review of General Psychology</title>
+        <imprint>
+            <biblScope unit="volume">5</biblScope>
+            <biblScope unit="page" from="323" to="370"/>
+            <date type="published" when="2001">2001</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Baumeister, R. F., Bratslavsky, E., Finkenauer, C. and Vohs, K. D. (2001). Bad is stronger than good. Review of General Psychology, 5, 323-370. doi:10.1037// 1089-2680.5.4.323.</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+    <analytic>
+        <title level="a" type="main">The effect of corticosteroids on amyloid beta precursor protein/amyloid precursor-like protein expression and processing in vivo</title>
+        <author>
+            <persName><forename type="first">G</forename><surname>Budas</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Coughlan</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Seckl</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">K</forename><forename type="middle">C</forename><surname>Breen</surname></persName>
+        </author>
+        <idno type="DOI">10.1016/S0304-3940(99)00790-9</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Neuroscience Letter</title>
+        <imprint>
+            <biblScope unit="volume">276</biblScope>
+            <biblScope unit="page" from="61" to="64"/>
+            <date type="published" when="1999">1999</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Budas, G., Coughlan, C. M., Seckl, J. R. and Breen, K. C. (1999). The effect of corticosteroids on amyloid beta precursor protein/amyloid precursor-like protein expression and processing in vivo. Neuroscience Letter, 276, 61-64. doi:10.1016/S0304-3940(99)00790-9.</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+    <analytic>
+        <title level="a" type="main">Links between life events, traumatism and dementia; an open study including 565 patients with dementia</title>
+        <author>
+            <persName><forename type="first">E</forename><surname>Charles</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">V</forename><surname>Bouby-Serieys</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">P</forename><surname>Thomas</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Clément</surname></persName>
+        </author>
+    </analytic>
+    <monogr>
+        <title level="j">Encephale</title>
+        <imprint>
+            <biblScope unit="volume">32</biblScope>
+            <biblScope unit="page" from="746" to="752"/>
+            <date type="published" when="2006">2006</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Charles, E., Bouby-Serieys, V., Thomas, P. and Clément, J. P. (2006). Links between life events, traumatism and dementia; an open study including 565 patients with dementia. Encephale, 32, 746- 752.</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+    <analytic>
+        <title level="a" type="main">Psychological stress and disease</title>
+        <author>
+            <persName><forename type="first">S</forename><surname>Cohen</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">D</forename><surname>Janicki-Deverts</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">G</forename><forename type="middle">E</forename><surname>Miller</surname></persName>
+        </author>
+        <idno type="DOI">10.1001/jama.298.14.1685</idno>
+    </analytic>
+    <monogr>
+        <title level="j">JAMA</title>
+        <imprint>
+            <biblScope unit="volume">298</biblScope>
+            <biblScope unit="page" from="1685" to="1687"/>
+            <date type="published" when="2007">2007</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Cohen, S., Janicki-Deverts, D. and Miller, G. E. (2007). Psychological stress and disease. JAMA, 298, 1685-1687. doi:10.1001/jama.298.14.1685.</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+    <analytic>
+        <title level="a" type="main">Mini-mental state: a practical method for grading the cognitive state of patients for the clinician</title>
+        <author>
+            <persName><forename type="first">M</forename><forename type="middle">F</forename><surname>Folstein</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Folstein</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Mchugh</surname></persName>
+        </author>
+        <idno type="DOI">10.1016/0022-3956(75)90026-6</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Journal of Psychiatric Research</title>
+        <imprint>
+            <biblScope unit="volume">12</biblScope>
+            <biblScope unit="page" from="189" to="198"/>
+            <date type="published" when="1975">1975</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Folstein, M. F., Folstein, S. E. and McHugh, P. R. (1975). Mini-mental state: a practical method for grading the cognitive state of patients for the clinician. Journal of Psychiatric Research, 12, 189-198. doi:10.1016/0022-3956 (75)90026-6.</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+    <analytic>
+        <title level="a" type="main">Life events and dementia: what is the nature of their relationship</title>
+        <author>
+            <persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Fountoulakis</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">I</forename><surname>Pavlidis</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">M</forename><surname>Tsolaki</surname></persName>
+        </author>
+        <idno type="DOI">10.1016/j.psychres.2011.05.011</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Psychiatry Research</title>
+        <imprint>
+            <biblScope unit="volume">30</biblScope>
+            <biblScope unit="page" from="156" to="158"/>
+            <date type="published" when="2011">2011</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Fountoulakis, K. N., Pavlidis, I. and Tsolaki, M. (2011). Life events and dementia: what is the nature of their relationship? Psychiatry Research, 30, 190, 156-158. doi:10.1016/j.psychres.2011.05.011.</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+    <analytic>
+        <title level="a" type="main">An active and socially integrated lifestyle in late life might protect against dementia</title>
+        <author>
+            <persName><forename type="first">L</forename><surname>Fratiglioni</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">S</forename><surname>Paillard-Borg</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">B</forename><surname>Winblad</surname></persName>
+        </author>
+        <idno type="DOI">10.1016/S1474-4422(04)00767-7</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Lancet Neurology</title>
+        <imprint>
+            <biblScope unit="volume">3</biblScope>
+            <biblScope unit="page" from="343" to="353"/>
+            <date type="published" when="2004">2004</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Fratiglioni, L., Paillard-Borg, S. and Winblad, B. (2004). An active and socially integrated lifestyle in late life might protect against dementia. Lancet Neurology, 3, 343-353. doi:10.1016/S1474-4422(04)00767-7.</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+    <analytic>
+        <title level="a" type="main">Glucocorticoids increase amyloid-beta and TAU pathology in a mouse model of Alzheimer's disease</title>
+        <author>
+            <persName><forename type="first">K</forename><forename type="middle">N</forename><surname>Green</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">L</forename><forename type="middle">M</forename><surname>Billings</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">B</forename><surname>Roozendaal</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Mcgaugh</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">F</forename><forename type="middle">M</forename><surname>Laferla</surname></persName>
+        </author>
+        <idno type="DOI">10.1523/JNEUROSCI.2797-06.2006</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Journal of Neuroscience</title>
+        <imprint>
+            <biblScope unit="volume">26</biblScope>
+            <biblScope unit="page" from="9047" to="9056"/>
+            <date type="published" when="2006">2006</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Green, K. N., Billings, L. M., Roozendaal, B., McGaugh, J. L. and LaFerla, F. M. (2006). Glucocorticoids increase amyloid-beta and TAU pathology in a mouse model of Alzheimer's disease. Journal of Neuroscience, 26, 9047-9056. doi:10.1523/JNEUROSCI.2797-06.2006.</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+    <analytic>
+        <title level="a" type="main">Midlife psychological stress and risk of dementia: a 35-year longitudinal population study</title>
+        <author>
+            <persName><forename type="first">L</forename><surname>Johansson</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">X</forename><surname>Guo</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">M</forename><surname>Waern</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">S</forename><surname>Östling</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">D</forename><surname>Gustafson</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">C</forename><surname>Bengtsson</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">I</forename><surname>Skoog</surname></persName>
+        </author>
+        <idno type="DOI">10.1093/brain/awq116</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Brain</title>
+        <imprint>
+            <biblScope unit="volume">133</biblScope>
+            <biblScope unit="page" from="2217" to="2224"/>
+            <date type="published" when="2010">2010</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Johansson, L., Guo, X., Waern, M., Östling, S., Gustafson, D., Bengtsson, C. and Skoog, I. (2010). Midlife psychological stress and risk of dementia: a 35-year longitudinal population study. Brain, 133, 2217-2224. doi:10.1093/brain/awq116.</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+    <analytic>
+        <title level="a" type="main">Midlife psychological distress associated with late-life brain atrophy and white matter lesions: a 32-year population study of women</title>
+        <author>
+            <persName><forename type="first">L</forename><surname>Johansson</surname></persName>
+        </author>
+        <idno type="DOI">org/10.1097/PSY.0b013e318246eb10</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Psychosomatic medicine</title>
+        <imprint>
+            <biblScope unit="volume">74</biblScope>
+            <biblScope unit="page" from="120" to="125"/>
+            <date type="published" when="2012">2012</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Johansson, L. et al. (2012). Midlife psychological distress associated with late-life brain atrophy and white matter lesions: a 32-year population study of women. Psychosomatic medicine, 74, 120-125. doi:org/10.1097/PSY.0b013e318246eb10.</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+    <analytic>
+        <title level="a" type="main">The effects of stress and stress hormones on human cognition: implications for the field of brain and cognition</title>
+        <author>
+            <persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Lupien</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">F</forename><surname>Maheu</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">M</forename><surname>Tu</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">T</forename><forename type="middle">E</forename><surname>Schramek</surname></persName>
+        </author>
+        <idno type="DOI">10.1016/j.bandc.2007.02.007</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Brain and Cognition</title>
+        <imprint>
+            <biblScope unit="volume">65</biblScope>
+            <biblScope unit="page" from="209" to="237"/>
+            <date type="published" when="2007">2007</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Lupien, S. J., Maheu, F, Tu, M. and Schramek, T. E. (2007). The effects of stress and stress hormones on human cognition: implications for the field of brain and cognition. Brain and Cognition, 65, 209-237. doi:10.1016/j.bandc. 2007.02.007.</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+    <analytic>
+        <title level="a" type="main">Premorbid psychosocial behavior in demented patients</title>
+        <author>
+            <persName><forename type="first">N</forename><surname>Motomura</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">F</forename><surname>Ohkubo</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">Y</forename><surname>Tomota</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">H</forename><surname>Akagi</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">A</forename><surname>Asano</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">T</forename><surname>Seo</surname></persName>
+        </author>
+        <idno type="DOI">10.3109/00207459809003338</idno>
+    </analytic>
+    <monogr>
+        <title level="j">International Journal of Neuroscience</title>
+        <imprint>
+            <biblScope unit="volume">95</biblScope>
+            <biblScope unit="page" from="167" to="172"/>
+            <date type="published" when="1998">1998</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Motomura, N., Ohkubo, F., Tomota, Y., Akagi, H., Asano, A. and Seo, T. (1998). Premorbid psychosocial behavior in demented patients. International Journal of Neuroscience, 95, 167-172. doi:10.3109/ 00207459809003338.</note>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+    <analytic>
+        <title level="a" type="main">The Betula prospective cohort study: memory, health and aging</title>
+        <author>
+            <persName><forename type="first">L-G</forename><surname>Nilsson</surname></persName>
+        </author>
+        <idno type="DOI">10.1080/13825589708256633</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Aging, Neuropsychology, and Cognition</title>
+        <imprint>
+            <biblScope unit="volume">4</biblScope>
+            <biblScope unit="page" from="1" to="32"/>
+            <date type="published" when="1997">1997</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Nilsson, L-G. et al. (1997). The Betula prospective cohort study: memory, health and aging. Aging, Neuropsychology, and Cognition, 4, 1-32. doi:10.1080/13825589708256633.</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+    <analytic>
+        <title level="a" type="main">Betula: a prospective cohort study on memory, health and aging</title>
+        <author>
+            <persName><forename type="first">L-G</forename><surname>Nilsson</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">R</forename><surname>Adolfsson</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">L</forename><surname>Bäckman</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">C</forename><forename type="middle">M</forename><surname>De Frias</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">B</forename><surname>Molander</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">L</forename><surname>Nyberg</surname></persName>
+        </author>
+        <idno type="DOI">10.1080/13825580490511026</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Aging, Neuropsychology, and Cognition</title>
+        <imprint>
+            <biblScope unit="volume">11</biblScope>
+            <biblScope unit="page" from="134" to="148"/>
+            <date type="published" when="2004">2004</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Nilsson, L-G., Adolfsson, R., Bäckman, L., de Frias, C. M., Molander, B. and Nyberg, L. (2004). Betula: a prospective cohort study on memory, health and aging. Aging, Neuropsychology, and Cognition, 11, 134-148. doi:10.1080/13825580490511026.</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+    <analytic>
+        <title level="a" type="main">Early parental death and late-life dementia risk: findings from the Cache County study</title>
+        <author>
+            <persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Norton</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">T</forename><surname>Østbye</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">K</forename><forename type="middle">R</forename><surname>Smith</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">R</forename><forename type="middle">G</forename><surname>Munger</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Tschanz</surname></persName>
+        </author>
+        <idno type="DOI">10.1093/ageing/afp023</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Age and Ageing</title>
+        <imprint>
+            <biblScope unit="volume">38</biblScope>
+            <biblScope unit="page" from="340" to="343"/>
+            <date type="published" when="2009">2009</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Norton, M. C., Østbye, T., Smith, K. R., Munger, R. G. and Tschanz, J. T. (2009). Early parental death and late-life dementia risk: findings from the Cache County study. Age and Ageing, 38, 340-343. doi:10.1093/ageing/ afp023.</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+    <analytic>
+        <title level="a" type="main">Early parental death and remarriage of widowed parents as risk factors for Alzheimer disease: the Cache County study</title>
+        <author>
+            <persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Norton</surname></persName>
+        </author>
+        <idno type="DOI">10.1097/JGP.0b013e3182011b38</idno>
+    </analytic>
+    <monogr>
+        <title level="j">American Association for Geriatric Psychiatry</title>
+        <imprint>
+            <biblScope unit="volume">19</biblScope>
+            <biblScope unit="page" from="814" to="824"/>
+            <date type="published" when="2011">2011</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Norton, M. C. et al. (2011). Early parental death and remarriage of widowed parents as risk factors for Alzheimer disease: the Cache County study. American Association for Geriatric Psychiatry, 19, 814-824. doi:10.1097/JGP. 0b013e3182011b38.</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+    <analytic>
+        <title level="a" type="main">The interview for recent life events</title>
+        <author>
+            <persName><forename type="first">E</forename><surname>Paykel</surname></persName>
+        </author>
+        <idno type="DOI">10.1017/S0033291796004424</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Psychological Medicine</title>
+        <imprint>
+            <biblScope unit="volume">27</biblScope>
+            <biblScope unit="page" from="301" to="310"/>
+            <date type="published" when="1997">1997</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Paykel, E. (1997). The interview for recent life events. Psychological Medicine, 27, 301-310. doi:10.1017/ S0033291796004424.</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+    <analytic>
+        <title level="a" type="main">Effects of chronic stress on memory decline in cognitively normal mildly impaired older adults</title>
+        <author>
+            <persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Peavy</surname></persName>
+        </author>
+        <idno type="DOI">10.1176/appi.ajp.2009.09040461</idno>
+    </analytic>
+    <monogr>
+        <title level="j">American Journal of Psychiatry</title>
+        <imprint>
+            <biblScope unit="volume">166</biblScope>
+            <biblScope unit="page" from="1384" to="1391"/>
+            <date type="published" when="2009">2009</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Peavy, G. M. et al. (2009). Effects of chronic stress on memory decline in cognitively normal mildly impaired older adults. American Journal of Psychiatry, 166, 1384-1391. doi:10.1176/appi.ajp.2009.09040461.</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+    <analytic>
+        <title level="a" type="main">Life events and depression. Part 1. Effect of sex, age and civil status</title>
+        <author>
+            <persName><forename type="first">H</forename><surname>Perris</surname></persName>
+        </author>
+        <idno type="DOI">10.1016/0165-0327(84)90060-0</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Journal of Affective Disorders</title>
+        <imprint>
+            <biblScope unit="volume">7</biblScope>
+            <biblScope unit="page" from="11" to="24"/>
+            <date type="published" when="1984">1984</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Perris, H. (1984). Life events and depression. Part 1. Effect of sex, age and civil status. Journal of Affective Disorders, 7, 11-24. doi:10.1016/0165-0327(84)90060-0.</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+    <analytic>
+        <title level="a" type="main">A prospective population study of psychosocial risk factors for late onset dementia</title>
+        <author>
+            <persName><forename type="first">G</forename><surname>Persson</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">I</forename><surname>Skoog</surname></persName>
+        </author>
+        <idno>SICI)1099-1166(199601)11:1&lt;15::AID- GPS262&gt;3.0.CO;2-5</idno>
+    </analytic>
+    <monogr>
+        <title level="j">International Journal of Geriatric Psychiatry</title>
+        <imprint>
+            <biblScope unit="volume">11</biblScope>
+            <biblScope unit="page" from="15" to="22"/>
+            <date type="published" when="1996">1996</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Persson, G. and Skoog, I. (1996). A prospective population study of psychosocial risk factors for late onset dementia. International Journal of Geriatric Psychiatry, 11, 15-22. doi:10.1002/(SICI)1099-1166(199601)11:1&lt;15::AID- GPS262&gt;3.0.CO;2-5.</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+    <analytic>
+        <title level="a" type="main">Severely stressful events and dementia: a study of an elderly Greek demented population</title>
+        <author>
+            <persName><forename type="first">M</forename><surname>Tsolaki</surname></persName>
+        </author>
+        <idno type="DOI">10.1016/j.psychres.2009.06.001</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Psychiatry Research</title>
+        <imprint>
+            <biblScope unit="volume">176</biblScope>
+            <biblScope unit="page" from="51" to="54"/>
+            <date type="published" when="2010">2010</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Tsolaki, M. et al. (2010). Severely stressful events and dementia: a study of an elderly Greek demented population. Psychiatry Research, 176, 51-54. doi:10.1016/j. psychres.2009.06.001.</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+    <analytic>
+        <title level="a" type="main">Changes in daily hassles and life events and the relationship with coronary heart disease risk factors: a 2-year longitudinal study in 27-29-year-old males and females</title>
+        <author>
+            <persName><forename type="first">J</forename><forename type="middle">W R</forename><surname>Twisk</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">J</forename><surname>Snel</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">H</forename><forename type="middle">C G</forename><surname>Kemper</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">W</forename><surname>Van Mechelen</surname></persName>
+        </author>
+        <idno type="DOI">10.1016/S0022-3999(98)00088-9</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Journal of Psychosomatic Research</title>
+        <imprint>
+            <biblScope unit="volume">46</biblScope>
+            <biblScope unit="page" from="229" to="240"/>
+            <date type="published" when="1999">1999</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Twisk, J. W. R., Snel, J., Kemper, H. C. G. and Van Mechelen, W. (1999). Changes in daily hassles and life events and the relationship with coronary heart disease risk factors: a 2-year longitudinal study in 27-29-year-old males and females. Journal of Psychosomatic Research, 46, 229-240. doi:10.1016/S0022-3999(98)00088-9.</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+    <analytic>
+        <title level="a" type="main">From vulnerability to growth: positive and negative effects of stressful life events</title>
+        <author>
+            <persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Updegraff</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Taylor</surname></persName>
+        </author>
+    </analytic>
+    <monogr>
+        <title level="m">Loss and Trauma: General and Close Relationship Perspectives</title>
+        <editor>
+            <persName><forename type="first">J</forename><surname>Harvey</surname></persName>
+        </editor>
+        <editor>
+            <persName><forename type="first">E</forename><surname>Miller</surname></persName>
+        </editor>
+        <meeting><address><addrLine>Philadelphia, PA</addrLine></address></meeting>
+        <imprint>
+            <publisher>Brunner-Routledge</publisher>
+            <date type="published" when="2000">2000</date>
+            <biblScope unit="page" from="3" to="28"/>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Updegraff, J. A. and Taylor, S. E. (2000). From vulnerability to growth: positive and negative effects of stressful life events. In J. Harvey and E. Miller (eds.), Loss and Trauma: General and Close Relationship Perspectives (pp. 3-28). Philadelphia, PA: Brunner-Routledge.</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+    <analytic>
+        <title level="a" type="main">The apolipoprotein E ɛ2 allele and decline in episodic memory</title>
+        <author>
+            <persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Wilson</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Bienias</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">E</forename><surname>Berry-Kravis</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Evans</surname></persName>
+        </author>
+        <author>
+            <persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Bennett</surname></persName>
+        </author>
+        <idno type="DOI">10.1136/jnnp.73.6.672</idno>
+    </analytic>
+    <monogr>
+        <title level="j">Journal of Neurology, Neurosurgery and Psychiatry</title>
+        <imprint>
+            <biblScope unit="volume">73</biblScope>
+            <biblScope unit="page" from="672" to="677"/>
+            <date type="published" when="2002">2002</date>
+        </imprint>
+    </monogr>
+    <note type="raw_reference">Wilson, R. S., Bienias, J. L., Berry-Kravis, E., Evans, D. A. and Bennett, D. A. (2002). The apolipoprotein E ɛ2 allele and decline in episodic memory. Journal of Neurology, Neurosurgery and Psychiatry, 73, 672-677. doi:10.1136/jnnp.73.6.672.</note>
+</biblStruct>
+
+                </listBibl>
+            </div>
+        </back>
+    </text>
+</TEI>

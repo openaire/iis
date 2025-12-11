@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import static eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper.*;
-import static eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper.InvalidRecordCounters.INVALID_PDF_HEADER;
-import static eu.dnetlib.iis.wf.metadataextraction.NlmToDocumentWithBasicMetadataConverter.EMPTY_META;
+import static eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper.InvalidRecordCounters.*;
+import static eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorMapper.EMPTY_META;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -58,6 +58,8 @@ public class MetadataExtractorMapperTest {
     @Mock
     private Counter invalidPdfCounter;
     
+    @Mock
+    private Counter transientErrorCounter;
     
     private MetadataExtractorMapper mapper;
 
@@ -80,6 +82,8 @@ public class MetadataExtractorMapperTest {
     public void testSetupWithoutNamedOutputMeta() {
         // given
         Configuration conf = new Configuration();
+        conf.set(NAMED_OUTPUT_FAULT, "fault");
+        conf.set(NAMED_OUTPUT_TRANSIENT_FAULT, "transient-fault");
         doReturn(conf).when(context).getConfiguration();
         
         // execute
@@ -91,11 +95,25 @@ public class MetadataExtractorMapperTest {
         // given
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
+        conf.set(NAMED_OUTPUT_TRANSIENT_FAULT, "transient-fault");
         doReturn(conf).when(context).getConfiguration();
         
         // execute
         assertThrows(RuntimeException.class, () -> mapper.setup(context));
     }
+
+    @Test
+    public void testSetupWithoutNamedOutputTransientFault() {
+        // given
+        Configuration conf = new Configuration();
+        conf.set(NAMED_OUTPUT_META, "meta");
+        conf.set(NAMED_OUTPUT_FAULT, "fault");
+        doReturn(conf).when(context).getConfiguration();
+        
+        // execute
+        assertThrows(RuntimeException.class, () -> mapper.setup(context));
+    }
+
     
     @Test
     public void testMap() throws Exception {
@@ -103,6 +121,7 @@ public class MetadataExtractorMapperTest {
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
         conf.set(NAMED_OUTPUT_FAULT, "fault");
+        conf.set(NAMED_OUTPUT_TRANSIENT_FAULT, "transient-fault");
         doReturn(conf).when(context).getConfiguration();
         doReturn(invalidPdfCounter).when(context).getCounter(INVALID_PDF_HEADER);
         mapper.setup(context);
@@ -138,6 +157,7 @@ public class MetadataExtractorMapperTest {
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
         conf.set(NAMED_OUTPUT_FAULT, "fault");
+        conf.set(NAMED_OUTPUT_TRANSIENT_FAULT, "transient-fault");
         conf.set(EXCLUDED_IDS, id);
         doReturn(conf).when(context).getConfiguration();
         doReturn(invalidPdfCounter).when(context).getCounter(INVALID_PDF_HEADER);
@@ -162,6 +182,7 @@ public class MetadataExtractorMapperTest {
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
         conf.set(NAMED_OUTPUT_FAULT, "fault");
+        conf.set(NAMED_OUTPUT_TRANSIENT_FAULT, "transient-fault");
         doReturn(conf).when(context).getConfiguration();
         doReturn(invalidPdfCounter).when(context).getCounter(INVALID_PDF_HEADER);
         mapper.setup(context);
@@ -181,6 +202,7 @@ public class MetadataExtractorMapperTest {
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
         conf.set(NAMED_OUTPUT_FAULT, "fault");
+        conf.set(NAMED_OUTPUT_TRANSIENT_FAULT, "transient-fault");
         doReturn(conf).when(context).getConfiguration();
         doReturn(invalidPdfCounter).when(context).getCounter(INVALID_PDF_HEADER);
         mapper.setup(context);
@@ -220,6 +242,7 @@ public class MetadataExtractorMapperTest {
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
         conf.set(NAMED_OUTPUT_FAULT, "fault");
+        conf.set(NAMED_OUTPUT_TRANSIENT_FAULT, "transient-fault");
         conf.set(INTERRUPT_PROCESSING_TIME_THRESHOLD_SECS, String.valueOf(1));
         
         doReturn(conf).when(context).getConfiguration();
@@ -259,6 +282,7 @@ public class MetadataExtractorMapperTest {
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
         conf.set(NAMED_OUTPUT_FAULT, "fault");
+        conf.set(NAMED_OUTPUT_TRANSIENT_FAULT, "transient-fault");
         conf.set(LOG_FAULT_PROCESSING_TIME_THRESHOLD_SECS, String.valueOf(1));
         
         doReturn(conf).when(context).getConfiguration();
@@ -300,7 +324,7 @@ public class MetadataExtractorMapperTest {
         Configuration conf = new Configuration();
         conf.set(NAMED_OUTPUT_META, "meta");
         conf.set(NAMED_OUTPUT_FAULT, "fault");
-        conf.set(NAMED_OUTPUT_FAULT, "fault");
+        conf.set(NAMED_OUTPUT_TRANSIENT_FAULT, "transient-fault");
         
         doReturn(conf).when(context).getConfiguration();
         doReturn(invalidPdfCounter).when(context).getCounter(INVALID_PDF_HEADER);
@@ -312,6 +336,31 @@ public class MetadataExtractorMapperTest {
         // assert
         verify(multipleOutputs, times(1)).close();
     }
+    
+
+    @Test
+    public void testCreateEmptyNoId() {
+        // execute
+        assertThrows(RuntimeException.class, () -> MetadataExtractorMapper.createEmpty(null, "irrelevant"));
+    }
+    
+    @Test
+    public void testCreateEmpty() throws Exception {
+        // given
+        String id = "id";
+        String extractedBy = "CERMINE";
+        
+        // execute
+        ExtractedDocumentMetadata result = MetadataExtractorMapper.createEmpty(id, extractedBy);
+        
+        // assert
+        assertNotNull(result);
+        assertEquals(id, result.getId());
+        assertEquals("", result.getText());
+        assertEquals(EMPTY_META, result.getPublicationTypeName());
+        assertEquals(extractedBy, result.getExtractedBy());
+    }
+    
     
     // --------------------------------------- PRIVATE ----------------------------------------
     

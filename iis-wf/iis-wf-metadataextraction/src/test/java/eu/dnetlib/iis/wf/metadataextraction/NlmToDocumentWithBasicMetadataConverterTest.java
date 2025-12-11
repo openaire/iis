@@ -1,19 +1,23 @@
 package eu.dnetlib.iis.wf.metadataextraction;
 
-import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
-import eu.dnetlib.iis.metadataextraction.schemas.Author;
-import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
-import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
 import org.apache.avro.util.Utf8;
 import org.jdom.Document;
 import org.jdom.input.SAXBuilder;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static eu.dnetlib.iis.wf.metadataextraction.NlmToDocumentWithBasicMetadataConverter.EMPTY_META;
-import static org.junit.jupiter.api.Assertions.*;
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
+import eu.dnetlib.iis.metadataextraction.schemas.Affiliation;
+import eu.dnetlib.iis.metadataextraction.schemas.Author;
+import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 
 /**
  * {@link NlmToDocumentWithBasicMetadataConverter} test class.
@@ -34,9 +38,10 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         SAXBuilder builder = new SAXBuilder();
         Document document = builder.build(ClassPathResourceProvider.getResourceInputStream(testXML));
         String id = "predefinedId";
+        String extractedBy = "CERMINE";
         
         // execute
-        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.convertFull(id, document, "text");
+        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.convertFull(id, document, "text", extractedBy);
 
         // assert
         assertNotNull(result);
@@ -73,6 +78,8 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         assertNotNull(result.getPages());
         assertEquals("50", result.getPages().getStart());
         assertEquals("60", result.getPages().getEnd());
+        
+        assertEquals(extractedBy, result.getExtractedBy());
     }
 
     @Test
@@ -83,42 +90,23 @@ public class NlmToDocumentWithBasicMetadataConverterTest {
         
         // execute
         assertThrows(RuntimeException.class, () ->
-                NlmToDocumentWithBasicMetadataConverter.convertFull(null, document, "text"));
+                NlmToDocumentWithBasicMetadataConverter.convertFull(null, document, "text", "irrelevant"));
     }
     
     @Test
     public void testConvertFullNoDocument() throws Exception {
         // given
         String id = "id";
+        String extractedBy = "CERMINE";
         
         // execute
-        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.convertFull(id, null, "text");
+        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.convertFull(id, null, "text", extractedBy);
         
         // assert
         assertNotNull(result);
         assertEquals(id, result.getId());
         assertEquals("text", result.getText());
-    }
-    
-    @Test
-    public void testCreateEmptyNoId() {
-        // execute
-        assertThrows(RuntimeException.class, () -> NlmToDocumentWithBasicMetadataConverter.createEmpty(null));
-    }
-    
-    @Test
-    public void testCreateEmpty() throws Exception {
-        // given
-        String id = "id";
-        
-        // execute
-        ExtractedDocumentMetadata result = NlmToDocumentWithBasicMetadataConverter.createEmpty(id);
-        
-        // assert
-        assertNotNull(result);
-        assertEquals(id, result.getId());
-        assertEquals("", result.getText());
-        assertEquals(EMPTY_META, result.getPublicationTypeName());
+        assertEquals(extractedBy, result.getExtractedBy());
     }
     
     // --------------------------------------- PRIVATE ---------------------------------------
