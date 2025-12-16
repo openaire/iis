@@ -15,6 +15,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>mkalipo.parsers</groupId>
+            <artifactId>html-parsers</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
