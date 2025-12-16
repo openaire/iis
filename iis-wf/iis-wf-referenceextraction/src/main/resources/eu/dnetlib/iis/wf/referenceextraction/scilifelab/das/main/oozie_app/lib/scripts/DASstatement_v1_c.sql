@@ -1,4 +1,3 @@
-
 create temp table ukrn as select * from (setschema 'doi,text' select jsonpath(c1,'$.id', '$.text') from stdinput());
 
 hidden var 'UKRN4prefixes1' from '\bdata\b|\bcode\b|\bmaterial\b|\bsoftware\b|\bstatement\b|\bartifact\b';
@@ -22,15 +21,14 @@ where (regexprmatches("%{full_and_good}",middle||next) = 1 or
        and length(middle)-length(regexpr("("||var('UKRN4prefixes1')||")",middle)) < 3;
 
 
-
  select jdict('documentId', doi, 'prev', prev, 'middlenext', middlenext, 'DAS_statements', statement) as C1
  from (
           select doi, prev, middlenext, statement
           from (
-                    select doi, prev, middlenext, regexpr("((?ims)(?<!\w)data availability.+?(?=key points|^\s*\d+\.?\s*\n\s*\d+\.?\s*$|\(?\d+ of \d+\)?|ethics this|^\s*statistics\s*$|ethics approval|ethical animal research|^appendix\s?\w?.?$|^\s*references\s*$|^\s*results\s*$|authors?'? contribution|credit authorship contribution statement|declarations|declaration of competing interest|^\s*supporting information\s*$|funding|received:|acknowledge?ments?|keywords|\s*\xA9\s*202\d|(?<=\.)\s*\n(?=^[a-z]{3,}(?:\s+[a-z]{3,}){0,2}\s*$)|(?:\n[a-z]{3,}\n)?\nreferences\s*\n?.*))",middlenext) as statement
+                    select doi, prev, middlenext, regexpr("((?ims)(?<!\w)(?:(?:data|code|material|software|artifact)\s*(?:and|or)?\s*){1,3}avail[a-z]*\s*[:\.\-]?\s*.+?(?=key points|^\s*\d+\.?\s*\n\s*\d+\.?\s*$|\(?\d+ of \d+\)?|ethics this|^\s*statistics\s*$|ethics approval|ethical animal research|^appendix\s?\w?.?$|^\s*references\s*$|^\s*results\s*$|authors?'? contribution|credit authorship contribution statement|declarations|declaration of competing interest|^\s*supporting information\s*$|funding|received:|acknowledge?ments?|keywords|\s*\xA9\s*202\d|(?<=\.)\s*\n(?=^[a-z]{3,}(?:\s+[a-z]{3,}){0,2}\s*$)|(?:\n[a-z]{3,}\n)?\nreferences\s*\n?.*))",middlenext) as statement
                     from (  select doi, prev, middle, next, middle||' '||next as middlenext
                               from (setschema 'doi,prev,middle,next'
-                                    select doi, textwindow2s(lower(text), 10, 2, 200, "data avail.bility")
+                                    select doi, textwindow2s(lower(text), 10, 2, 200, "(data|code|material|software|artifact)\s+(and|or)\s+(data|code|material|software|artifact)|(data|code|material|software|artifact)\s+avail[a-z]*|avail[a-z]*\s+of\s+(data|code|material|software|artifact)")
                                     from (select * from ukrn where doi in (select distinct doi from myDAStexts))
                                     ))
                     where  length(statement) > 5 --delete null
