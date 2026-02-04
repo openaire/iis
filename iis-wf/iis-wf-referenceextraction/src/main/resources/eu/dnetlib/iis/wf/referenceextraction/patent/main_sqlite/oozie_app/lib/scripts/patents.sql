@@ -8,15 +8,15 @@ stdinput() );
 
 
 --create temp table results as select * from (
-select jdict('documentId', docid, 'appln_nr', id, 'confidenceLevel', 0.8,'textsnippet',context) from (
-select  docid, appln_nr as id, prev||" "||middle||" "||next as context, appln_nr from 
-(setschema 'docid,prev,middle,next' select c1 as docid, textwindow2s(keywords(c2),25,1,10, "(?:\D|\b)\d{6,12}\b") from (setschema 'c1,c2' select * from pubs)), patents
-where regexpr("(?:\D|\b)(\d{6,12})\b",middle) = appln_nr 
-and (regexprmatches("european patent|patent application|patent office|ep patent|eu patent|patent",lower(context)) or 
-    regexprmatches("\bEPO(?:\d|\b)",context) or regexprmatches ("\bEP\s*"||appln_nr,context)
+select jdict('documentId', docid, 'appln_nr', id, 'patentcode',patentcode, 'confidenceLevel', 0.8,'textsnippet',context) from (
+select  docid, patents.c1 as id, patents.c2 as patentcode, prev||" "||middle||" "||next as context from 
+(setschema 'docid,prev,middle,next' select c1 as docid, textwindow2s(keywords(c2),7,1,3, "(?:\D|\b)[A-Z]?\d{6,}(\b|D)") from (setschema 'c1,c2' select * from pubs)), patents
+where regexpr("(\d{6,})", middle) = normal  
+and (
+    regexprmatches("patent",lower(context)) and (regexprmatches("\b"||c4||"\b",context) or regexprmatches("\b"||c4,middle)) and regexprmatches(c2, middle)
     ) 
 and (not regexprmatches("holotype|journal pone|journal pntd|paratype|scientometrics|specimen|dissection|\bnih\b|hepth|barcode|\bstrain|accession|\bbacter\b|patent ductus|patent foramen|arxiv|cern|biol|clin|letters|report",lower(context)))
-and (not regexprmatches("[0-9]\."||appln_nr,middle) )
+and (not regexprmatches("[0-9]\."||normal,middle) )
 
 );
 
