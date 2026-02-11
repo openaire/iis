@@ -97,7 +97,11 @@
             <value>-Xmx4g</value>
             <description>java-opts, e.g. maximum heap size for a single JVM running mapper</description>
         </property>
-	</parameters>
+        <property>
+            <name>metadataextraction_core_appmaster_memory_mb</name>
+            <value>2048</value>
+        </property>
+    </parameters>
     
     
     <global>
@@ -156,6 +160,10 @@
                 <property>
                     <name>mapreduce.map.java.opts</name>
                     <value>${mapreduce_map_java_opts}</value>
+                </property>
+                <property>
+                    <name>yarn.app.mapreduce.am.resource.mb</name>
+                    <value>${metadataextraction_core_appmaster_memory_mb}</value>
                 </property>
             	<property>
 					<name>mapreduce.task.timeout</name>
