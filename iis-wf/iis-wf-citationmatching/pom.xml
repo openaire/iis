@@ -105,7 +105,6 @@ _${scala.binary.version}           </exclusion>
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro-mapred</artifactId>
-            <classifier>hadoop2</classifier>
         </dependency>
 
         <!-- It seems that this dependency is needed, if it is not here,
