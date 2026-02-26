@@ -595,14 +595,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- -->
-            <dependency>
-                <groupId>pl.edu.icm.coansys</groupId>
-                <artifactId>document-similarity-oap-uberworkflow</artifactId>
-                <version>${iis.coansys.version}</version>
-                <type>tar.gz</type>
-                <classifier>oozie-job</classifier>
-            </dependency>
 
             <!-- dnet dependencies -->
             <dependency>
@@ -751,12 +743,6 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.21.0</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>de.sven-jacobs</groupId>
-                <artifactId>loremipsum</artifactId>
-                <version>1.0</version>
             </dependency>
 
             <dependency>
@@ -964,12 +950,6 @@
                     <groupId>org.apache.avro</groupId>
                     <artifactId>avro-maven-plugin</artifactId>
                     <version>1.7.7</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>com.github.os72</groupId>
-                    <artifactId>protoc-jar-maven-plugin</artifactId>
-                    <version>3.11.4</version>
                 </plugin>
 
                 <plugin>
