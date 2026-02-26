@@ -141,7 +141,7 @@
             <scope>provided</scope>
         </dependency>
         
-        <!-- this dep is required to align on slf4j-api version used by spark-core-2.12 -->
+        <!-- this dep is required to align on slf4j-api version used by spark-core_2.13 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -371,43 +371,35 @@
 
             <dependency>
                 <groupId>org.apache.spark</groupId>
-                <artifactId>spark-core_2.12</artifactId>
+                <artifactId>spark-core_${scala.binary.version}</artifactId>
                 <version>${iis.spark.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.spark</groupId>
-                <artifactId>spark-sql_2.12</artifactId>
+                <artifactId>spark-sql_${scala.binary.version}</artifactId>
                 <version>${iis.spark.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.spark</groupId>
-                <artifactId>spark-avro_2.12</artifactId>
+                <artifactId>spark-avro_${scala.binary.version}</artifactId>
                 <version>${iis.spark.version}</version>
-                <!-- FIXME not available in spark3 sharelib folder yet, commenting out until finishing the testing phase -->
-                <!--
-                <scope>provided</scope>
-                -->
             </dependency>
             
             <dependency>
                 <groupId>org.apache.spark</groupId>
-                <artifactId>spark-hive_2.12</artifactId>
+                <artifactId>spark-hive_${scala.binary.version}</artifactId>
                 <version>${iis.spark.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>pl.edu.icm.spark-utils</groupId>
-                <artifactId>spark-utils_2.12</artifactId>
+                <artifactId>spark-utils_${scala.binary.version}</artifactId>
                 <version>1.0.2</version>
-                <!-- FIXME not available in spark3 sharelib folder yet, commenting out until finishing the testing phase -->
-                <!--
-                <scope>provided</scope>
-                -->
             </dependency>
             
             <!-- Avro dependencies -->
@@ -596,7 +588,7 @@
             </dependency>
             <dependency>
                 <groupId>com.jsuereth</groupId>
-                <artifactId>scala-arm_2.12</artifactId>
+                <artifactId>scala-arm_${scala.binary.version}</artifactId>
                 <version>2.0</version>
                 <exclusions>
                     <exclusion>
@@ -885,8 +877,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.6.0</version>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <source>17</source>
+                        <target>17</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
@@ -1100,7 +1092,8 @@
         <iis.pig.version>0.12.0-${iis.cdh.version}</iis.pig.version>
         <iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
         <iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
-        <iis.spark.version>3.4.2</iis.spark.version>
+        <iis.spark.version>4.1.1</iis.spark.version>
+        <scala.binary.version>2.13</scala.binary.version>
         <iis.coansys.version>1.10</iis.coansys.version>
 
         <junit.version>5.8.2</junit.version>
