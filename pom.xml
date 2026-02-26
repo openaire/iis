@@ -101,29 +101,34 @@
     </repositories>
 
     <dependencies>
-		<!-- aligning log4j with sharelib342 -->
+<!-- log4j2 aligned with Spark 4 environment (was 2.19.0 / sharelib342) -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
-            <version>2.19.0</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.19.0</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.19.0</version>
+            <version>2.24.3</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.19.0</version>
+            <artifactId>log4j-api</artifactId>
+            <version>2.24.3</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.24.3</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- log4j-slf4j2-impl bridges SLF4J 2.x to log4j2; replaces log4j-slf4j-impl (SLF4J 1.x) -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>2.24.3</version>
+            <scope>provided</scope>
         </dependency>
         
         <!-- just to make sure all transitive dependencies of an old log4j are excluded -->
@@ -141,11 +146,12 @@
             <scope>provided</scope>
         </dependency>
         
-        <!-- this dep is required to align on slf4j-api version used by spark-core_2.13 -->
+        <!-- slf4j-api version aligned with Spark 4 environment -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.6</version>
+            <version>2.0.17</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- old log4j deps -->
@@ -169,11 +175,12 @@
         </dependency>
         -->
 		<!-- end of old log4j deps -->
+        <!-- javax.servlet-api aligned with Spark 4 environment (was 3.1.0 runtime) -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>runtime</scope>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -402,17 +409,17 @@
                 <version>1.0.2</version>
             </dependency>
             
-            <!-- Avro dependencies -->
+            <!-- Avro dependencies - aligned with Spark 4 environment -->
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
-                <version>1.11.1</version>
+                <version>1.12.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>2.14.2</version>
+                <version>2.20.0</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -425,22 +432,12 @@
             </dependency>
             
 
+            <!-- avro-mapred 1.9+ dropped the hadoop2 classifier -->
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-mapred</artifactId>
                 <version>${iis.avro.version}</version>
-                <classifier>hadoop2</classifier>
-                <exclusions>
-                    <!-- conflicts -->
-                    <exclusion>
-                        <artifactId>servlet-api</artifactId>
-                        <groupId>org.mortbay.jetty</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>netty</artifactId>
-                        <groupId>io.netty</groupId>
-                    </exclusion>
-                </exclusions>
+                <scope>provided</scope>
             </dependency>
 
             <!-- Pig dependencies -->
@@ -647,7 +644,8 @@
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.8.0</version>
+                <version>2.11.0</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -665,25 +663,29 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.5</version>
+                <version>3.19.0</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
-                <version>4.1</version>
+                <version>4.5.0</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.12</version>
+                <version>4.5.14</version>
+                <scope>provided</scope>
             </dependency>
             
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
-                <version>4.5.12</version>
+                <version>4.5.14</version>
+                <scope>provided</scope>
             </dependency>
             
             <dependency>
@@ -714,6 +716,7 @@
                 <groupId>net.sf.opencsv</groupId>
                 <artifactId>opencsv</artifactId>
                 <version>2.3</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -728,23 +731,26 @@
                 <version>2.5.0</version>
             </dependency>
 
-            <!-- this version is required by hadoop-core 2.6.0 -->
+            <!-- guava version aligned with Spark 4 / Hadoop 3.4.2 environment -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>12.0</version>
+                <version>33.4.8-jre</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
-                <version>1.3.1</version>
+                <version>1.10.0</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.5</version>
+                <version>2.21.0</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -773,11 +779,12 @@
                 <version>1.50</version>
             </dependency>
 
-            <!-- Needed to run Avro-based map-reduce -->
+            <!-- Needed to run Avro-based map-reduce - aligned with Spark 4 environment -->
             <dependency>
                 <groupId>com.thoughtworks.paranamer</groupId>
                 <artifactId>paranamer</artifactId>
-                <version>2.8</version>
+                <version>2.8.3</version>
+                <scope>provided</scope>
             </dependency>
 
             <!-- Needed to run Pig jobs -->
@@ -793,19 +800,22 @@
                 <version>${cxf.version}</version>
             </dependency>
 
-            <!-- this version has to be aligned with cdh5.9.0 sharelib -->
+            <!-- JAXB aligned with Spark 4 environment. BREAKING CHANGE from cdh5 sharelib:
+                 groupId changed com.sun.xml.bind -> org.glassfish.jaxb,
+                 jaxb-impl renamed to jaxb-runtime, package namespace javax.xml.bind -> jakarta.xml.bind.
+                 All code using JAXB APIs must be migrated to jakarta.xml.bind.* -->
             <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>2.2.7</version>
-                <scope>runtime</scope>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>4.0.5</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
-                <groupId>com.sun.xml.bind</groupId>
+                <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-core</artifactId>
-                <version>2.2.7</version>
-                <scope>runtime</scope>
+                <version>4.0.5</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -1090,14 +1100,15 @@
 
         <iis.oozie.version>4.1.0-${iis.cdh.version}</iis.oozie.version>
         <iis.pig.version>0.12.0-${iis.cdh.version}</iis.pig.version>
-        <iis.avro.version>1.7.6-${iis.cdh.version}</iis.avro.version>
-        <iis.hadoop.version>2.6.0-${iis.cdh.version}</iis.hadoop.version>
+
+        <iis.avro.version>1.12.1</iis.avro.version>
+        <iis.hadoop.version>3.4.2</iis.hadoop.version>
         <iis.spark.version>4.1.1</iis.spark.version>
         <scala.binary.version>2.13</scala.binary.version>
         <iis.coansys.version>1.10</iis.coansys.version>
 
         <junit.version>5.8.2</junit.version>
-        <mockito.version>3.5.13</mockito.version>
+        <mockito.version>5.14.2</mockito.version>
 
         <otherExcludedGroups/>
     </properties>
