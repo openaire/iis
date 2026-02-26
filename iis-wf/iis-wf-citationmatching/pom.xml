@@ -33,7 +33,7 @@
                     <!-- conflicting scala binary versions -->
                     <groupId>org.apache.spark</groupId>
                     <artifactId>spark-sql_${scala.binary.version}</artifactId>
-_${scala.binary.version}           </exclusion>
+                </exclusion>
                 <exclusion>
                     <!-- conflicting scala binary versions -->
                     <groupId>pl.edu.icm.spark-utils</groupId>
