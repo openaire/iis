@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-avro_to_protobuf classpath eu/dnetlib/iis/common/protobuf/converter/avro_to_protobuf/oozie_app
