@@ -3,7 +3,7 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 import java.io.Serializable;
 import java.util.List;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -92,7 +92,7 @@ public class CommonSimilarWordCalculator implements Serializable {
     //------------------------ toString --------------------------
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("minWordSimilarity", minWordSimilarity)
+        return MoreObjects.toStringHelper(this).add("minWordSimilarity", minWordSimilarity)
                                            .toString();
     }
 
