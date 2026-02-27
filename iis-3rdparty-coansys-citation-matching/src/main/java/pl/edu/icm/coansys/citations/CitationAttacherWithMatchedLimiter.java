@@ -13,7 +13,7 @@ import com.google.common.collect.MinMaxPriorityQueue;
 import pl.edu.icm.coansys.citations.data.MatchableEntity;
 import pl.edu.icm.coansys.citations.util.misc;
 import scala.Tuple2;
-import scala.collection.JavaConversions;
+import scala.jdk.javaapi.CollectionConverters;
 
 /**
  * Attacher of citation into (citation_id, document) pairs with limiter of
@@ -99,8 +99,8 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
     
     private double calculateTokenSimilarity(MatchableEntity citation, MatchableEntity document) {
         
-        Set<String> citTokens = JavaConversions.setAsJavaSet(misc.niceTokens(citation.toReferenceString()));
-        Set<String> docTokens = JavaConversions.setAsJavaSet(misc.niceTokens(document.toReferenceString()));
+        Set<String> citTokens = CollectionConverters.asJava(misc.niceTokens(citation.toReferenceString()));
+        Set<String> docTokens = CollectionConverters.asJava(misc.niceTokens(document.toReferenceString()));
         
         long mutualTokensCount = citTokens.stream().filter(x -> docTokens.contains(x)).count();
         
