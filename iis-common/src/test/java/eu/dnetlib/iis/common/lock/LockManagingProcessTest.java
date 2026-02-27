@@ -2,6 +2,7 @@ package eu.dnetlib.iis.common.lock;
 
 import com.google.common.base.Stopwatch;
 import eu.dnetlib.iis.common.SlowTest;
+import java.util.concurrent.TimeUnit;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.lock.LockManagingProcess.LockMode;
 import org.apache.curator.test.TestingServer;
@@ -157,13 +158,13 @@ public class LockManagingProcessTest {
                     params.put(LockManagingProcess.PARAM_NODE_ID, nodeId);
                     params.put(LockManagingProcess.PARAM_LOCK_MODE, LockMode.obtain.name());
 
-                    Stopwatch timer = new Stopwatch().start();
+                    Stopwatch timer = Stopwatch.createStarted();
 
                     // obtaining lock
                     lockManager.run(portBindings, conf, params);
 
                     // returning processing time
-                    threadWaitTimeFuture.complete(timer.elapsedMillis());
+                    threadWaitTimeFuture.complete(timer.elapsed(TimeUnit.MILLISECONDS));
 
                 } catch (Exception e) {
                     throw new RuntimeException(e);

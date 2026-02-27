@@ -2,6 +2,7 @@ package eu.dnetlib.iis.common.lock;
 
 import java.util.Date;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.CreateMode;
@@ -49,9 +50,9 @@ public class LockManagingProcessUtils {
         } else {
             // waiting until node is removed by other lock manager
             log.info("waiting until lock is released");
-            Stopwatch timer = new Stopwatch().start();
+            Stopwatch timer = Stopwatch.createStarted();
             semaphore.acquire();
-            log.info("lock released, waited for " + timer.elapsedMillis() + " ms");
+            log.info("lock released, waited for " + timer.elapsed(TimeUnit.MILLISECONDS) + " ms");
             semaphore.release();
         }
     }
