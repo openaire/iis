@@ -422,6 +422,19 @@
                 <version>2.20.0</version>
                 <scope>provided</scope>
             </dependency>
+            <!-- explicit definitions are required now in order to deal with version mismatch coming from transitive dependency-->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.20.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.20</version>
+                <scope>provided</scope>
+            </dependency>
 
             <!-- updated avro does not include dependency required by iis-3rdparty-avrojsoncoders -->
             <dependency>
@@ -911,6 +924,22 @@
                     <version>2.22.2</version>
                     <configuration>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <argLine>
+                            --add-opens=java.base/java.lang=ALL-UNNAMED
+                            --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+                            --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+                            --add-opens=java.base/java.io=ALL-UNNAMED
+                            --add-opens=java.base/java.net=ALL-UNNAMED
+                            --add-opens=java.base/java.nio=ALL-UNNAMED
+                            --add-opens=java.base/java.util=ALL-UNNAMED
+                            --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+                            --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+                            --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+                            --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
+                            --add-opens=java.base/sun.security.action=ALL-UNNAMED
+                            --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
+                            --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED
+                        </argLine>
                     </configuration>
                 </plugin>
 
@@ -1015,7 +1044,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.9</version>
+                <version>0.8.12</version>
                 <configuration>
                     <excludes>
                         <exclude>**/schemas/*</exclude>
