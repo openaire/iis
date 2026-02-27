@@ -62,7 +62,7 @@ public class AvroAsJSONOutputFormat extends FileOutputFormat<Text, Text> {
     DataFileWriter<GenericRecord> writer = new DataFileWriter<GenericRecord>(
         new GenericDatumWriter<GenericRecord>(schema));
     if (getCompressOutput(job)) {
-      int level = job.getInt(AvroOutputFormat.DEFLATE_LEVEL_KEY, AvroOutputFormat.DEFAULT_DEFLATE_LEVEL);
+      int level = job.getInt(AvroOutputFormat.DEFLATE_LEVEL_KEY, CodecFactory.DEFAULT_DEFLATE_LEVEL);
       String codecName = job.get(AvroJob.CONF_OUTPUT_CODEC, 
           org.apache.avro.file.DataFileConstants.DEFLATE_CODEC);
       CodecFactory codec = codecName.equals(DataFileConstants.DEFLATE_CODEC)
