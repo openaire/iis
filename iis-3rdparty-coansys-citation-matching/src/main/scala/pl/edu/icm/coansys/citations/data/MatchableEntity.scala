@@ -18,7 +18,7 @@
 
 package pl.edu.icm.coansys.citations.data
 
-import collection.JavaConversions._
+import scala.jdk.CollectionConverters._
 
 import org.apache.commons.lang.StringUtils
 
@@ -50,7 +50,7 @@ class MatchableEntity(val data: MatchableEntityData) extends Serializable {
     if (data.hasRawText)
       Some(removeDiacritics(data.getRawText))
     else
-      data.getAuxiliaryList.find(_.getKey == "rawText").map(x => removeDiacritics(x.getValue))
+      data.getAuxiliaryList.asScala.find(_.getKey == "rawText").map(x => removeDiacritics(x.getValue))
 
 
   def normalisedAuthorTokens: Iterable[String] =

@@ -17,7 +17,7 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>4.9.2</version>
                 <executions>
                     <execution>
                         <id>scala-compile-first</id>
@@ -119,6 +119,6 @@
 
 
     <properties>
-        <scala.version>2.11.12</scala.version>
+        <scala.version>2.13.17</scala.version>
     </properties>
 </project>

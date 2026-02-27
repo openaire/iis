@@ -41,7 +41,7 @@ object ngrams {
 
   object NgramStatistics {
     def fromString(s: String, n: Int): NgramStatistics = {
-      val counter = s.sliding(n).toIterable.groupBy(identity).mapValues(_.size)
+      val counter = s.sliding(n).toIterable.groupBy(identity).mapValues(_.size).toMap
       val overall = counter.values.sum
       NgramStatistics(counter, overall)
     }

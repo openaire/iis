@@ -19,7 +19,7 @@
 package pl.edu.icm.coansys.citations.util
 
 import pl.edu.icm.coansys.models.DocumentProtos.{DocumentWrapper, ReferenceMetadata, BasicMetadata}
-import scala.collection.JavaConversions._
+import scala.jdk.CollectionConverters._
 import pl.edu.icm.coansys.citations.data.MatchableEntity
 import pl.edu.icm.cermine.bibref.parsing.tools.CitationUtils
 import pl.edu.icm.cermine.bibref.CRFBibReferenceParser
@@ -34,7 +34,7 @@ import java.util.Locale
  */
 object misc {
   def normalizedAuthorTokensFromAuthorList(meta: BasicMetadata) = {
-    meta.getAuthorList.toIterable
+    meta.getAuthorList.asScala
       .flatMap {
       author =>
         List(
@@ -95,7 +95,7 @@ object misc {
       i1.toDouble / i2
 
   def tokensFromCermine(s: String): List[String] =
-    CitationUtils.stringToCitation(s).getTokens.map(_.getText).toList
+    CitationUtils.stringToCitation(s).getTokens.asScala.map(_.getText).toList
 
   def niceTokens(s: String) =
     tokensFromCermine(s.toLowerCase(Locale.ENGLISH)).filter(x => x.length > 2 || x.exists(_.isDigit)).take(50).toSet
