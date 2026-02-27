@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchOrganization;
@@ -86,7 +86,7 @@ public class NameStrictWithCharFilteringMatchVoter extends AbstractAffOrgMatchVo
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("matchStrength", getMatchStrength())
                 .add("getOrgNamesFunction", getOrgNamesFunction.getClass().getSimpleName())
                 .add("charsToFilter", charsToFilter)

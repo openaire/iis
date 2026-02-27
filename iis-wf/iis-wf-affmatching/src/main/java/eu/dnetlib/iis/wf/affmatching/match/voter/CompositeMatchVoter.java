@@ -2,7 +2,7 @@ package eu.dnetlib.iis.wf.affmatching.match.voter;
 
 import java.util.List;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
@@ -57,7 +57,7 @@ public class CompositeMatchVoter extends AbstractAffOrgMatchVoter {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("matchStrength", getMatchStrength()).add("voters", voters).toString();   
+        return MoreObjects.toStringHelper(this).add("matchStrength", getMatchStrength()).add("voters", voters).toString();   
     }
 
     

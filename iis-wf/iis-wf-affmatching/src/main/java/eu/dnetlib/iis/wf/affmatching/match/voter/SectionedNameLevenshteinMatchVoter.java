@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 import eu.dnetlib.iis.wf.affmatching.model.AffMatchAffiliation;
@@ -95,7 +95,7 @@ public class SectionedNameLevenshteinMatchVoter extends AbstractSectionedMatchVo
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("minSimilarity", minSimilarity)
                 .add("getOrgNamesFunction", getOrgNamesFunction.getClass().getSimpleName())
                 .toString();

@@ -34,7 +34,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -352,7 +352,7 @@ public class AffOrgMatchVoterStrengthEstimatorAndTest extends TestWithSharedSpar
 
         @Override
         public String toString() {
-            return Objects.toStringHelper(this).add("voterName", voterName)
+            return MoreObjects.toStringHelper(this).add("voterName", voterName)
                                         .add("calculatedStrength", String.format("%1." + VOTER_MATCH_STRENGTH_SCALE + "f", calculatedStrength))
                                         .add("setStrength", String.format("%1." + VOTER_MATCH_STRENGTH_SCALE + "f", setStrength))
                                         .toString();

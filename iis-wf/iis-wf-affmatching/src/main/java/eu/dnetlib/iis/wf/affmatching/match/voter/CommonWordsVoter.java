@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
@@ -163,7 +163,7 @@ public class CommonWordsVoter extends AbstractAffOrgMatchVoter {
     //------------------------ toString --------------------------
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("matchStength", getMatchStrength())
+        return MoreObjects.toStringHelper(this).add("matchStength", getMatchStrength())
                                            .add("ratioRelation", ratioRelation)
                                            .add("charsToFilter", charsToFilter)
                                            .add("minFittingOrgWordsRatio", minCommonWordsRatio)
