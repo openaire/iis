@@ -16,14 +16,14 @@ import eu.dnetlib.iis.wf.citationmatching.direct.service.CitationMatchingDirectC
 import eu.dnetlib.iis.wf.citationmatching.direct.service.ExternalIdCitationMatcher;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.PickFirstDocumentFunction;
 import eu.dnetlib.iis.wf.citationmatching.direct.service.PickResearchArticleDocumentFunction;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SparkSession;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
@@ -100,7 +100,7 @@ public class CitationMatchingDirectJob {
      * @param inputCSV HDFS CSV file location
      */
     private static JavaPairRDD<String, String> loadPmidToPmcidMappings(JavaSparkContext sc, String inputCSV) {
-        SQLContext sqlContext = new SQLContext(sc);
+        SparkSession sqlContext = SparkSession.builder().sparkContext(sc.sc()).getOrCreate();
         Dataset<Row> pmcDF = sqlContext.read()
                 .format("com.databricks.spark.csv")
                 .option("header", "true")

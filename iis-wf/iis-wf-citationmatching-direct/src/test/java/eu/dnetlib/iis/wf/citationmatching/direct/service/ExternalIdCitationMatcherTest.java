@@ -13,7 +13,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.powermock.reflect.Whitebox;
 import scala.Tuple2;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class ExternalIdCitationMatcherTest {
 
-    private ExternalIdCitationMatcher externalIdCitationMatcher = new ExternalIdCitationMatcher();
+    private ExternalIdCitationMatcher externalIdCitationMatcher;
     
     @Mock
     private IdentifierMappingExtractor idMappingExtractor;
@@ -71,8 +70,7 @@ public class ExternalIdCitationMatcherTest {
     
     @BeforeEach
     public void setUp() {
-        Whitebox.setInternalState(externalIdCitationMatcher, "idMappingExtractor", idMappingExtractor);
-        Whitebox.setInternalState(externalIdCitationMatcher, "referencePicker", referencePicker);
+        externalIdCitationMatcher = new ExternalIdCitationMatcher(idMappingExtractor, referencePicker);
     }
     
     
