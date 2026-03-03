@@ -163,7 +163,7 @@ public class ObjectStoreContentProviderUtilsTest {
         when(s3Object.getObjectMetadata()).thenReturn(s3ObjectMeta);
         when(s3ObjectMeta.getContentLength()).thenReturn(Long.valueOf(1));
         when(s3Object.getObjectContent()).thenReturn(s3ObjectInputStream);
-        when(s3ObjectInputStream.read(any())).thenReturn(1, IOUtils.EOF);
+        when(s3ObjectInputStream.read(any(byte[].class), anyInt(), anyInt())).thenReturn(1, IOUtils.EOF);
         
         byte[] result = ObjectStoreContentProviderUtils.getContentFromURL(s3ResourceLoc, context);
 
