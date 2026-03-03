@@ -9,7 +9,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SparkSession;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ public class Avro2JsonTransformer {
         try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             HdfsUtils.remove(sc.hadoopConfiguration(), params.output);
 
-            SQLContext sqlContext = new SQLContext(sc);
+            SparkSession sqlContext = SparkSession.builder().sparkContext(sc.sc()).getOrCreate();
             Dataset<Row> input = sqlContext.read().format("com.databricks.spark.avro").load(params.input);
             input.write().json(params.output);
         }
