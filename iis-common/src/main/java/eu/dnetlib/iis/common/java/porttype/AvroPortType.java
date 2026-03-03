@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.common.java.porttype;
 
 import org.apache.avro.Schema;
-import org.apache.commons.lang.NotImplementedException;
+
 
 /**
  * This port type accepts data stores in a format of Avro 
@@ -51,7 +51,7 @@ public class AvroPortType implements PortType {
 	
 	@Override
 	public int hashCode(){
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	/**

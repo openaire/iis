@@ -2,7 +2,7 @@ package eu.dnetlib.iis.common.java;
 
 import java.util.Map;
 
-import org.apache.commons.lang.NotImplementedException;
+
 import org.apache.hadoop.fs.Path;
 
 /**
@@ -38,6 +38,6 @@ public class PortBindings {
 	
 	@Override
 	public int hashCode(){
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 }
