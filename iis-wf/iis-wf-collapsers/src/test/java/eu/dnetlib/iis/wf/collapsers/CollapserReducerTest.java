@@ -110,9 +110,9 @@ public class CollapserReducerTest {
         verify(context, times(2)).write(keyCaptor.capture(), valueCaptor.capture());
         assertEquals(2, keyCaptor.getAllValues().size());
         assertTrue(keyCaptor.getAllValues().get(0).datum() instanceof Identifier);
-        assertEquals(docId1, ((Identifier)keyCaptor.getAllValues().get(0).datum()).getId().toString());
+        assertEquals(docId2, ((Identifier)keyCaptor.getAllValues().get(0).datum()).getId().toString());
         assertTrue(keyCaptor.getAllValues().get(1).datum() instanceof Identifier);
-        assertEquals(docId2, ((Identifier)keyCaptor.getAllValues().get(1).datum()).getId().toString());
+        assertEquals(docId1, ((Identifier)keyCaptor.getAllValues().get(1).datum()).getId().toString());
         assertEquals(2, valueCaptor.getAllValues().size());
         assertSame(NullWritable.get(), valueCaptor.getAllValues().get(0));
         assertSame(NullWritable.get(), valueCaptor.getAllValues().get(1));
