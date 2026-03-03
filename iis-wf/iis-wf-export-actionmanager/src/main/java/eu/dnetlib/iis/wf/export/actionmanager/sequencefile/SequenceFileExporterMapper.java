@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;

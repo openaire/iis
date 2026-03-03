@@ -2,7 +2,7 @@ package eu.dnetlib.iis.common;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
 /**

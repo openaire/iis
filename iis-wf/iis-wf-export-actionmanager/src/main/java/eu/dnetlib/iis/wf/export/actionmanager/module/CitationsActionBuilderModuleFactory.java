@@ -12,7 +12,7 @@ import eu.dnetlib.iis.export.schemas.Citations;
 import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
 import java.util.*;

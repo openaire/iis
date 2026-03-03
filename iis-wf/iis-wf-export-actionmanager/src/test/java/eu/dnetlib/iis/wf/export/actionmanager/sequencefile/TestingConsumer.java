@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
