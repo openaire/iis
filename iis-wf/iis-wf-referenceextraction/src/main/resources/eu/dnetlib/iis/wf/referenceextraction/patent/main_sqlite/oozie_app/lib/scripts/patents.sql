@@ -19,7 +19,7 @@ regexprmatches("\b"||c4||"\b",prev||" "||next) and not (regexprmatches((select j
    and (not regexprmatches("holotype|journal pone|journal pntd|paratype|scientometrics|specimen|dissection|\bnih\b|hepth|barcode|\bstrain|accession|\bbacter\b|patent ductus|patent foramen|arxiv|cern|biol|clin|letters|report",lower(context))) 
    and (not regexprmatches("[0-9]\."||normal,middle) )
    )
-   or regexprmatches(lower(middle),lower(c4||c2||c5))
+   or regexprmatches(lower(c4||c2||c5), lower(middle))
    )
 );
 
