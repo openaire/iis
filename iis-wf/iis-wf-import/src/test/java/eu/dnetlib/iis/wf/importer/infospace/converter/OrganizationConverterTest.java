@@ -83,7 +83,7 @@ public class OrganizationConverterTest {
         assertEquals("PL", org.getCountryCode());
         assertEquals("www.icm.edu.pl", org.getWebsiteUrl());
         
-        verifyZeroInteractions(log);
+        verifyNoInteractions(log);
         
     }
 
@@ -114,7 +114,7 @@ public class OrganizationConverterTest {
         assertEquals("PL", org.getCountryCode());
         assertEquals("www.icm.edu.pl", org.getWebsiteUrl());
         
-        verifyZeroInteractions(log);
+        verifyNoInteractions(log);
         
     }
     

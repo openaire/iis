@@ -51,7 +51,7 @@ public class InvalidCountableContentApproverWrapperTest {
         // assert
         
         assertTrue(result);
-        verifyZeroInteractions(invalidContentCounter);
+        verifyNoInteractions(invalidContentCounter);
     }
     
     @Test

@@ -98,6 +98,18 @@
             <artifactId>spring-context</artifactId>
         </dependency>
 
+        <!-- JAX-WS API: removed from JDK since Java 9, required by WebService facades -->
+        <dependency>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+        </dependency>
+
+        <!-- AWS SDK v1: no longer transitively provided by hadoop-aws 3.4.2 -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-bundle</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>

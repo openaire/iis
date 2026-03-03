@@ -798,6 +798,21 @@
                 <version>1.2.0</version>
             </dependency>
 
+            <!-- JAX-WS API: required explicitly since Java 9+ removed these from the JDK -->
+            <dependency>
+                <groupId>javax.xml.ws</groupId>
+                <artifactId>jaxws-api</artifactId>
+                <version>2.3.1</version>
+            </dependency>
+
+            <!-- AWS SDK v1: hadoop-aws 3.4.2 demoted aws-java-sdk-core to 'provided' scope;
+                 projects using com.amazonaws.* classes directly must declare it explicitly -->
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-bundle</artifactId>
+                <version>${aws-java-sdk.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-frontend-jaxws</artifactId>
@@ -1109,6 +1124,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.version>[4.2.5.RELEASE]</spring.version>
         <cxf.version>[3.1.5]</cxf.version>
+        <!-- aligned with hadoop-aws 3.4.2 which declares aws-java-sdk-core as provided -->
+        <aws-java-sdk.version>1.12.720</aws-java-sdk.version>
 
         <iis.cdh.version>cdh5.16.2</iis.cdh.version>
 
