@@ -7,7 +7,7 @@ import java.util.Map;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
 

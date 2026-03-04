@@ -6,7 +6,7 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 
 import com.google.common.collect.ImmutableMap;

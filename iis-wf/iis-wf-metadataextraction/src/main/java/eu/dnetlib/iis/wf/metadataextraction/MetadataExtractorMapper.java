@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.avro.mapred.AvroKey;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper;

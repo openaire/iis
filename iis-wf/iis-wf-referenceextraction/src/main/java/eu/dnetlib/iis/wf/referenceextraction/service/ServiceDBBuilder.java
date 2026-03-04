@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
 

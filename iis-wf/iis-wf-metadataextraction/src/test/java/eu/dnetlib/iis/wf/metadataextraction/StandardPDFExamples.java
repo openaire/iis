@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
