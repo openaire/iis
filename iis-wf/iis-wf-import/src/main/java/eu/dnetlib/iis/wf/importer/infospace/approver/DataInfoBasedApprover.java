@@ -2,7 +2,7 @@ package eu.dnetlib.iis.wf.importer.infospace.approver;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import eu.dnetlib.dhp.schema.oaf.DataInfo;

@@ -11,7 +11,7 @@ import java.util.Objects;
 
 import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetriever;
 import eu.dnetlib.iis.wf.referenceextraction.FacadeContentRetrieverResponse;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;

@@ -6,8 +6,8 @@ import java.util.regex.Pattern;
 
 import org.apache.avro.Schema;
 import org.apache.avro.file.DataFileReader;
+import org.apache.avro.file.SeekableInput;
 import org.apache.avro.specific.SpecificDatumReader;
-import org.apache.hadoop.fs.AvroFSInput;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.RemoteIterator;
@@ -96,7 +96,7 @@ class AvroDataStoreReader<T> implements CloseableIterator<T> {
 		long len = path.getFileSystem().getFileStatus(path.getPath()).getLen();
 		FSDataInputStream inputStream = path.getFileSystem().open(path.getPath());
 		return new DataFileReader<T>(
-				new AvroFSInput(inputStream, len), datumReader);
+				new FsSeekableInput(inputStream, len), datumReader);
 		} catch (IOException ex){
 			throw new IOException("Problem with file \""+
 					path.getPath().toString()+"\": "+ex.getMessage(), ex);
@@ -152,5 +152,44 @@ class AvroDataStoreReader<T> implements CloseableIterator<T> {
 			currentReader = null;
 		}
 		fileIterator = null;
+	}
+
+	/**
+	 * Avro SeekableInput adapter for FSDataInputStream.
+	 * Replaces org.apache.hadoop.fs.AvroFSInput which is binary-incompatible with Avro 1.12+.
+	 */
+	private static final class FsSeekableInput implements SeekableInput {
+		private final FSDataInputStream in;
+		private final long length;
+
+		FsSeekableInput(FSDataInputStream in, long length) {
+			this.in = in;
+			this.length = length;
+		}
+
+		@Override
+		public void seek(long p) throws IOException {
+			in.seek(p);
+		}
+
+		@Override
+		public long tell() throws IOException {
+			return in.getPos();
+		}
+
+		@Override
+		public long length() throws IOException {
+			return length;
+		}
+
+		@Override
+		public int read(byte[] b, int off, int len) throws IOException {
+			return in.read(b, off, len);
+		}
+
+		@Override
+		public void close() throws IOException {
+			in.close();
+		}
 	}
 }

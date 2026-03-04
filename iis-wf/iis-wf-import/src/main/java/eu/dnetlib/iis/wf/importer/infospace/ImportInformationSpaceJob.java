@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.avro.specific.SpecificRecord;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;

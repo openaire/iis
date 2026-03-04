@@ -31,7 +31,7 @@ import static eu.dnetlib.iis.wf.ingest.pmc.metadata.TagHierarchyUtils.isWithinEl
 import java.util.List;
 import java.util.Stack;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
