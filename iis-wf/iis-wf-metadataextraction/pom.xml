@@ -80,6 +80,16 @@
 			<artifactId>cermine-impl</artifactId>
 		</dependency>
 
+		<!-- Cermine 1.13 uses CharMatcher.WHITESPACE which was removed in Guava 29+.
+		     Pin Guava to 19.0 (the dependency originally defined for CERMINE) in compile scope to override the provided 33.4.8-jre
+		     brought in by Spark/Hadoop, which breaks Cermine at test runtime. -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>19.0</version>
+			<scope>compile</scope>
+		</dependency>
+
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
