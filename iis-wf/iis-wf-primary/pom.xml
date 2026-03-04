@@ -88,18 +88,6 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-wf-documentsclassification</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>eu.dnetlib.iis</groupId>
-			<artifactId>iis-wf-documentssimilarity</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-wf-affmatching</artifactId>
