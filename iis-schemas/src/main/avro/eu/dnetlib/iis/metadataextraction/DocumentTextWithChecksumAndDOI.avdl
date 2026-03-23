@@ -1,10 +1,12 @@
 @namespace("eu.dnetlib.iis.metadataextraction.schemas")
 protocol IIS{
 
-    record DocumentTextWithDOI {
+    record DocumentTextWithChecksumAndDOI {
 //      document identifier
 //      foreign key: DocumentMetadata.id ("raw document metadata" data store)
         string id;
+//      checksum of the source document
+        string checksum;
 //      optional DOI
         union { null , string } doi = null;
 //      document fulltext
