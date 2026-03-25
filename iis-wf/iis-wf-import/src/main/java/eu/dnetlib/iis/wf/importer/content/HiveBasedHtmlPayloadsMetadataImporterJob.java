@@ -15,6 +15,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.collect.Lists;
 
+import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
@@ -35,6 +36,8 @@ public class HiveBasedHtmlPayloadsMetadataImporterJob {
     private static final String COUNTER_IMPORTED_RECORDS_TOTAL = "import.crawled.html.urls.fromAggregator";
 
     private static final String DATABASE_NAME_PLACEHOLDER = "${databaseName}";
+
+    private static final String QUERY_RESOURCE_PATH = "/eu/dnetlib/iis/wf/importer/content/import_html_payloads_metadata.sql";
     
     public static void main(String[] args) throws Exception {
 
@@ -63,28 +66,9 @@ public class HiveBasedHtmlPayloadsMetadataImporterJob {
         });
     }
 
-    // @formatter:off
-    private static final String QUERY_TEMPLATE = String.join("\n",
-            "select pid, pid_type, dedupid, id, original_url, actual_url,",
-            "  archive_s3_location, html_filename, html_hash, html_size",
-            "from (",
-            "  select pub.pid, pub.pid_type, pub.dedupid, p.id, p.original_url, p.actual_url,",
-            "    SUBSTR(p.`location`, 1, INSTR(p.`location`, '.tar.gz') + LENGTH('.tar.gz') - 1) AS archive_s3_location,",
-            "    SUBSTR(p.`location`, INSTR(p.`location`, '.tar.gz/') + LENGTH('.tar.gz/')) AS html_filename,",
-            "    p.`hash` as html_hash, p.`size` as html_size",
-            "    , row_number() over (partition by p.id, p.original_url, p.actual_url, p.`location` order by",
-            "      (case when pub.pid_type = 'doi' then 2 when pub.pid_type is not null then 1 else 0 end) desc",
-            "    ) as rn",
-            "  from ${databaseName}.html_payload p",
-            "  left outer join ${databaseName}.publication pub",
-            "    on pub.id = p.id and pub.url = p.original_url",
-            ") subq",
-            "where subq.rn = 1"
-    );
-    // @formatter:on
-
     private static String generateQuery(String databaseName) {
-        return QUERY_TEMPLATE.replace(DATABASE_NAME_PLACEHOLDER, databaseName);
+        String queryTemplate = ClassPathResourceProvider.getResourceContent(QUERY_RESOURCE_PATH);
+        return queryTemplate.replace(DATABASE_NAME_PLACEHOLDER, databaseName);
     }
 
     private static JavaRDD<ReportEntry> generateReportEntries(SparkSession sparkSession, long recordsCount) {
