@@ -33,6 +33,11 @@
             <description>cache root directory holding extracted metadata from HTML pages</description>
         </property>
         <property>
+            <name>cacheHtmlNumberOfEmittedFiles</name>
+            <value>1000</value>
+            <description>number of files created by webcrawler module</description>
+        </property>
+        <property>
             <name>output</name>
             <description>output datastore</description>
         </property>
@@ -141,6 +146,7 @@
             <arg>-outputFaultPath=${workingDir}/fault</arg>
             <arg>-lockManagerFactoryClassName=${cacheHtmlLockManagerFactoryClassName}</arg>
             <arg>-cacheRootDir=${cacheRootDir}</arg>
+            <arg>-numberOfEmittedFiles=${cacheHtmlNumberOfEmittedFiles}</arg>
 
             <arg>-outputReportPath=${output_report_root_path}/${output_report_relative_path}</arg>
         </spark>

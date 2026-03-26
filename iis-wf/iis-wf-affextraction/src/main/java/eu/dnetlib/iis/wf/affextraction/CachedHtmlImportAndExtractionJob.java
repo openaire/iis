@@ -1,6 +1,5 @@
 package eu.dnetlib.iis.wf.affextraction;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +19,7 @@ import org.apache.spark.SparkFiles;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.Optional;
 import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -29,15 +29,28 @@ import org.apache.spark.storage.StorageLevel;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 
+import eu.dnetlib.iis.audit.schemas.Fault;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.CachedStorageJobParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.lock.LockManager;
+import eu.dnetlib.iis.common.lock.LockManagerUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.SparkSessionFactory;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentTextWithChecksumAndDOI;
+
+import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+import scala.Tuple2;
 import scala.Tuple3;
 
 /**
@@ -66,11 +79,12 @@ public class CachedHtmlImportAndExtractionJob {
 
     private static final String COUNTER_EXTRACTION_OUTPUT_VALID = "html_extraction.output.valid";
     
+    private static SparkAvroLoader avroLoader = new SparkAvroLoader();
     private static SparkAvroSaver avroSaver = new SparkAvroSaver();
 
     //------------------------ LOGIC --------------------------
     
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         CachedHtmlImportAndExtractionParameters params = new CachedHtmlImportAndExtractionParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
@@ -81,26 +95,62 @@ public class CachedHtmlImportAndExtractionJob {
             
             final Configuration hadoopDriverConf = sc.hadoopConfiguration();
 
-            HdfsUtils.remove(hadoopDriverConf, params.outputPath);
-            HdfsUtils.remove(hadoopDriverConf, params.outputReportPath);
+            HdfsUtils.remove(hadoopDriverConf, params.getOutputPath());
+            HdfsUtils.remove(hadoopDriverConf, params.getOutputReportPath());
 
             sc.sc().addFile(params.scriptDirPath, true);
 
+            final int numberOfEmittedFiles = params.numberOfEmittedFiles;
 
             // Read the CSV
             Dataset<Row> csv = session.read().option("header", "true")
                     .option("multiLine", "false")
                     .csv(params.inputCsv);
             // caching due to generating both reports and output from this dataset
+            // FIXME consider replacing with csv.persist(StorageLevel.MEMORY_AND_DISK());
             csv.cache();
             
             final long importInputRecordsCount = csv.count();
             final int maxHtmlPageLength = params.maxHtmlPageLength;
+
+            LockManager lockManager = LockManagerUtils.instantiateLockManager(params.getLockManagerFactoryClassName(),
+                    hadoopDriverConf);
+
+            final Path cacheRootDir = new Path(params.getCacheRootDir());
+            CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
+            String existingCacheId = cacheManager.getExistingCacheId(hadoopDriverConf, cacheRootDir);
             
-            // Group by archive_s3_location to minimize downloads
-            JavaPairRDD<String, Iterable<Row>> grouped = csv.javaRDD()
+            // skipping already extracted
+            JavaRDD<DocumentText> cachedData = CacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+                    existingCacheId, CacheRecordType.data, DocumentText.class)
+                    .filter(x -> StringUtils.isNotBlank(x.getText()));
+            
+
+            JavaPairRDD<String, DocumentText> cacheByChecksum = cachedData.mapToPair(x -> new Tuple2<>(x.getId().toString(), x));
+
+            // Filter CSV rows by max page length and key by html_hash for cache lookup
+            JavaPairRDD<String, Row> csvByChecksum = csv.javaRDD()
                     .filter(x -> Integer.valueOf(x.getAs(INPUT_CSV_FIELD_HTML_SIZE)) <= maxHtmlPageLength)
-                    .groupBy(row -> row.getAs(INPUT_CSV_FIELD_ARCHIVE_S3_LOCATION));
+                    .mapToPair(row -> new Tuple2<>((String) row.getAs(INPUT_CSV_FIELD_HTML_HASH), row));
+
+            // Left outer join CSV rows with cache to identify cached vs non-cached entries
+            JavaPairRDD<String, Tuple2<Row, Optional<DocumentText>>> csvJoinedWithCache =
+                    csvByChecksum.leftOuterJoin(cacheByChecksum);
+
+            // Get cached extracted metadata (deduplicated by checksum)
+            JavaRDD<String> cachedExtractedMeta = csvJoinedWithCache
+                    .filter(x -> x._2._2.isPresent())
+                    .mapToPair(x -> new Tuple2<>(x._1, x._2._2.get().getText().toString()))
+                    .reduceByKey((a, b) -> a)
+                    .values();
+            cachedExtractedMeta.cache();
+            long retrievedFromCacheCount = cachedExtractedMeta.count();
+
+            // Get CSV rows not found in cache that need processing
+            JavaRDD<Row> toBeProcessedRows = csvJoinedWithCache
+                    .filter(x -> !x._2._2.isPresent())
+                    .values()
+                    .map(x -> x._1);
 
             HashMap<String, String> confAsMap = new HashMap<>();
             for (Entry<String, String> entry : hadoopDriverConf) {
@@ -110,7 +160,12 @@ public class CachedHtmlImportAndExtractionJob {
             // broadcasting the configuration to all executors in order to access S3 files
             Broadcast<HashMap<String, String>> broadcastedConf = sc.broadcast(confAsMap);
             
-            JavaRDD<DocumentTextWithChecksumAndDOI> importOutput = grouped.flatMap(tuple -> {
+            // Group by archive_s3_location to minimize downloads (only non-cached rows)
+            JavaPairRDD<String, Iterable<Row>> grouped = toBeProcessedRows
+                    .groupBy(row -> row.getAs(INPUT_CSV_FIELD_ARCHIVE_S3_LOCATION));
+
+
+            JavaRDD<DocumentTextWithChecksumAndDOI> importedHTMLs = grouped.flatMap(tuple -> {
                 // TODO we should consider changing it in the Lampros' code (now ported to importer!) to avoid this kind of replacement here
                 String archivePath = tuple._1.replaceFirst("s3://", "s3a://");
                 Iterable<Row> rows = tuple._2;
@@ -161,14 +216,12 @@ public class CachedHtmlImportAndExtractionJob {
                     return records.iterator();
                 }
             }).persist(StorageLevel.MEMORY_AND_DISK());
-            long importOutputRecordsCount = importOutput.count();
-
-
+            long importOutputRecordsCount = importedHTMLs.count();
 
             // HTML metadata extraction phase
             JavaRDD<DocumentTextWithChecksumAndDOI> repartRecords = shouldRepartition(params.numberOfPartitions)
-                    ? importOutput.repartition(Integer.parseInt(params.numberOfPartitions))
-                    : importOutput;
+                    ? importedHTMLs.repartition(Integer.parseInt(params.numberOfPartitions))
+                    : importedHTMLs;
 
             String scriptsDirOnWorkerNode = (sc.isLocal()) ? getScriptPath() : "scripts";
             
@@ -177,11 +230,34 @@ public class CachedHtmlImportAndExtractionJob {
            
             extractedMeta.persist(StorageLevel.MEMORY_AND_DISK());
             long extractedMetaCount = extractedMeta.count();
-            extractedMeta.saveAsTextFile(params.outputPath);
+
+            // Build cache entries from newly extracted metadata (deduplicated by checksum)
+            JavaRDD<DocumentText> newCacheEntries = extractedMeta.map(json -> {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode node = mapper.readTree(json);
+                String checksum = node.get("checksum").asText();
+                return DocumentText.newBuilder().setId(checksum).setText(json).build();
+            }).mapToPair(dt -> new Tuple2<>(dt.getId().toString(), dt))
+              .reduceByKey((a, b) -> a)
+              .values();
+
+            // Store updated cache (existing cached data + newly extracted entries)
+            if (!newCacheEntries.isEmpty()) {
+                CacheStorageUtils.storeInCache(avroSaver, DocumentText.SCHEMA$,
+                        cachedData.union(newCacheEntries),
+                        sc.<Fault>emptyRDD(),
+                        cacheRootDir, lockManager, cacheManager, hadoopDriverConf,
+                        numberOfEmittedFiles);
+            }
+
+            // Save final output: cached entries + newly extracted entries
+            JavaRDD<String> allExtractedMeta = cachedExtractedMeta.union(extractedMeta);
+            allExtractedMeta.saveAsTextFile(params.getOutputPath());
+
+            List<ReportEntry> reportEntries = createReportEntries(importInputRecordsCount, importOutputRecordsCount,
+                    retrievedFromCacheCount, extractedMetaCount);
             
-            List<ReportEntry> reportEntries = createReportEntries(importInputRecordsCount, importOutputRecordsCount, extractedMetaCount);
-            
-            avroSaver.saveJavaRDD(sc.parallelize(reportEntries, 1), ReportEntry.SCHEMA$, params.outputReportPath);
+            avroSaver.saveJavaRDD(sc.parallelize(reportEntries, 1), ReportEntry.SCHEMA$, params.getOutputReportPath());
         }
         
     }
@@ -189,11 +265,12 @@ public class CachedHtmlImportAndExtractionJob {
     //------------------------ PRIVATE --------------------------
     
     private static ImmutableList<ReportEntry> createReportEntries(long importInputRecordsCount,
-            long importOutputRecordsCount, long extractionOutputCount) {
+            long importOutputRecordsCount, long retrievedFromCacheCount, long extractionOutputCount) {
         
                 return ImmutableList.of(
                     ReportEntryFactory.createCounterReportEntry(COUNTER_IMPORT_CSVINPUT, importInputRecordsCount),
                     ReportEntryFactory.createCounterReportEntry(COUNTER_IMPORT_OUTPUT, importOutputRecordsCount),
+                    ReportEntryFactory.createCounterReportEntry(COUNTER_RETRIEVED_FROM_CACHE, retrievedFromCacheCount),
                     ReportEntryFactory.createCounterReportEntry(COUNTER_EXTRACTION_OUTPUT_VALID, extractionOutputCount)
                 );
     }
@@ -216,7 +293,7 @@ public class CachedHtmlImportAndExtractionJob {
     }
 
     @Parameters(separators = "=")
-    private static class CachedHtmlImportAndExtractionParameters {
+    private static class CachedHtmlImportAndExtractionParameters extends CachedStorageJobParameters {
         
         @Parameter(names = "-inputCsv", required = true)
         private String inputCsv;
@@ -224,17 +301,14 @@ public class CachedHtmlImportAndExtractionJob {
         @Parameter(names = "-maxHtmlPageLength", required = true)
         private int maxHtmlPageLength;
               
-        @Parameter(names = "-outputPath", required = true)
-        private String outputPath;
-
         @Parameter(names = "-scriptDirPath", required = true, description = "path to directory with scripts")
         private String scriptDirPath;
         
         @Parameter(names = "-numberOfPartitions", required = false, description = "number of partitions the data should be sliced into")
         private String numberOfPartitions;
         
-        @Parameter(names = "-outputReportPath", required = true)
-        private String outputReportPath;
+        @Parameter(names = "-numberOfEmittedFiles", required = true, description = "number of emitted files")
+        private int numberOfEmittedFiles;
         
     }
 }
