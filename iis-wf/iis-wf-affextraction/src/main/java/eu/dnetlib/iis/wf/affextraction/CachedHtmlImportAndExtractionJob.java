@@ -29,8 +29,8 @@ import org.apache.spark.storage.StorageLevel;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ImmutableList;
 
 import eu.dnetlib.iis.audit.schemas.Fault;
@@ -71,6 +71,15 @@ public class CachedHtmlImportAndExtractionJob {
     private static final String INPUT_CSV_FIELD_PID = "pid";
     
     private static final String PID_VALUE_DOI = "doi";
+
+    private static final String JSON_FIELD_ID = "id";
+    private static final String JSON_FIELD_CHECKSUM = "checksum";
+    
+    /**
+     * Placeholder value replacing the 'id' field in cached JSON records.
+     * The actual 'id' is execution-specific and must not be persisted in cache.
+     */
+    private static final String ID_PLACEHOLDER = "$ID_PLACEHOLDER$";
 
     private static final String COUNTER_IMPORT_CSVINPUT= "import.html_landing_pages.csvinput";
     private static final String COUNTER_IMPORT_OUTPUT = "import.html_landing_pages.output";
@@ -137,12 +146,14 @@ public class CachedHtmlImportAndExtractionJob {
             JavaPairRDD<String, Tuple2<Row, Optional<DocumentText>>> csvJoinedWithCache =
                     csvByChecksum.leftOuterJoin(cacheByChecksum);
 
-            // Get cached extracted metadata (deduplicated by checksum)
+            // Get cached extracted metadata, replacing the id placeholder with the actual id from CSV
             JavaRDD<String> cachedExtractedMeta = csvJoinedWithCache
                     .filter(x -> x._2._2.isPresent())
-                    .mapToPair(x -> new Tuple2<>(x._1, x._2._2.get().getText().toString()))
-                    .reduceByKey((a, b) -> a)
-                    .values();
+                    .map(x -> {
+                        String id = x._2._1.getAs(INPUT_CSV_FIELD_ID);
+                        String cachedJson = x._2._2.get().getText().toString();
+                        return updateJsonWithId(cachedJson, id);
+                    });
             cachedExtractedMeta.cache();
             long retrievedFromCacheCount = cachedExtractedMeta.count();
 
@@ -231,12 +242,10 @@ public class CachedHtmlImportAndExtractionJob {
             extractedMeta.persist(StorageLevel.MEMORY_AND_DISK());
             long extractedMetaCount = extractedMeta.count();
 
-            // Build cache entries from newly extracted metadata (deduplicated by checksum)
+            // Build cache entries from newly extracted metadata (deduplicated by checksum).
+            // The 'id' field is replaced with a placeholder since it is execution-specific.
             JavaRDD<DocumentText> newCacheEntries = extractedMeta.map(json -> {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode node = mapper.readTree(json);
-                String checksum = node.get("checksum").asText();
-                return DocumentText.newBuilder().setId(checksum).setText(json).build();
+                return prepareCacheEntry(json);
             }).mapToPair(dt -> new Tuple2<>(dt.getId().toString(), dt))
               .reduceByKey((a, b) -> a)
               .values();
@@ -275,6 +284,44 @@ public class CachedHtmlImportAndExtractionJob {
                 );
     }
     
+    /**
+     * Updates the given JSON string by setting the 'id' field to the provided value.
+     * Used when restoring cached entries with the actual execution-specific id.
+     *
+     * @param json the JSON string to update
+     * @param id the id value to set
+     * @return the updated JSON string
+     */
+    static String updateJsonWithId(String json, String id) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = (ObjectNode) mapper.readTree(json);
+        node.put(JSON_FIELD_ID, id);
+        return mapper.writeValueAsString(node);
+    }
+
+    /**
+     * Prepares a cache entry from the given extracted JSON.
+     * Extracts the checksum field and replaces the id with a placeholder
+     * since the id is execution-specific and must not be persisted in cache.
+     *
+     * @param json the extracted JSON string
+     * @return a {@link DocumentText} with checksum as id and modified JSON as text
+     * @throws IllegalStateException if the checksum field is missing from the JSON
+     */
+    static DocumentText prepareCacheEntry(String json) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = (ObjectNode) mapper.readTree(json);
+        if (node.get(JSON_FIELD_CHECKSUM) == null) {
+            throw new IllegalStateException(
+                    "'" + JSON_FIELD_CHECKSUM + "' field is missing in the JSON record: "
+                            + json.substring(0, Math.min(json.length(), 200)));
+        }
+        String checksum = node.get(JSON_FIELD_CHECKSUM).asText();
+        node.put(JSON_FIELD_ID, ID_PLACEHOLDER);
+        String modifiedJson = mapper.writeValueAsString(node);
+        return DocumentText.newBuilder().setId(checksum).setText(modifiedJson).build();
+    }
+
     /**
      * Checks whether partitioning should be perfomed based on the parameter value.
      */
