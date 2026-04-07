@@ -77,3 +77,5 @@
 {"id": "40|501100002081::1e5e62235d094afd01cd56e65112fc63", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "IRC::", "jsonextrainfo": "{}"}
 {"id": "40|100010414___::1e5e62235d094afd01cd56e65112fc63", "projectGrantId": "unidentified", "projectAcronym": null, "fundingClass": "HRB::", "jsonextrainfo": "{}"}
 {"id": "40|rif_________::f609ee354096b755cedea3b29ab5d34b", "projectGrantId": "COMPLEMENTARY/0916/0008", "projectAcronym": "HSadapt", "fundingClass": "RIF::", "jsonextrainfo": "{}"}
+{"id": "40|100010414___::600ff09d76288c30353b79c1d0cd9b79", "projectGrantId": "CTF-2016-1858", "projectAcronym": null, "fundingClass": "HRB::Cochrane Training Fellowships", "jsonextrainfo": "{}"}
+
