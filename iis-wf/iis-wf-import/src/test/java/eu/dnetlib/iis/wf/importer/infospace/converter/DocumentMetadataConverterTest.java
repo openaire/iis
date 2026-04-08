@@ -304,7 +304,7 @@ public class DocumentMetadataConverterTest {
         if (result.getTitle() == null) {
             result.setTitle(Lists.newArrayList());
         }
-        StructuredProperty title = new StructuredProperty();
+        LangAwareStructuredProperty title = new LangAwareStructuredProperty();
         title.setValue(value);
         if (type != null) {
             Qualifier titleType = new Qualifier();
@@ -318,7 +318,7 @@ public class DocumentMetadataConverterTest {
         if (result.getDescription() == null) {
             result.setDescription(Lists.newArrayList());
         }
-        Field<String> descr = new Field<>();
+        LangAwareField descr = new LangAwareField();
         descr.setValue(value);
         result.getDescription().add(descr);
     }

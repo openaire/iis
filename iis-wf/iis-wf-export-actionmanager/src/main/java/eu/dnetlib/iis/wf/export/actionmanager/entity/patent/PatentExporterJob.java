@@ -371,15 +371,15 @@ public class PatentExporterJob {
         return result;
     }
 
-    private static StructuredProperty buildOafEntityResultMetadataTitle(CharSequence applnTitle) {
-        StructuredProperty subject = new StructuredProperty();
+    private static LangAwareStructuredProperty buildOafEntityResultMetadataTitle(CharSequence applnTitle) {
+        LangAwareStructuredProperty subject = new LangAwareStructuredProperty();
         subject.setValue(applnTitle.toString());
         subject.setQualifier(OAF_ENTITY_RESULT_METADATA_TITLE_QUALIFIER);
         return subject;
     }
 
-    private static Field<String> buildOafEntityResultMetadataDescription(CharSequence applnAbstract) {
-        Field<String> result = new Field<>();
+    private static LangAwareField buildOafEntityResultMetadataDescription(CharSequence applnAbstract) {
+        LangAwareField result = new LangAwareField();
         result.setValue(applnAbstract.toString());
         return result;
     }

@@ -89,7 +89,7 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
 
     }
 
-    private void handleTitle(List<StructuredProperty> titleList, DocumentMetadata.Builder metaBuilder) {
+    private void handleTitle(List<LangAwareStructuredProperty> titleList, DocumentMetadata.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(titleList)) {
 
             titleList.stream().filter(x -> Objects.nonNull(x.getQualifier()))
@@ -106,7 +106,7 @@ public class DocumentMetadataConverter implements OafEntityToAvroConverter<Resul
         }
     }
     
-    private void handleDescription(List<Field<String>> descriptionList, DocumentMetadata.Builder metaBuilder) {
+    private void handleDescription(List<LangAwareField> descriptionList, DocumentMetadata.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(descriptionList)) {
             descriptionList.stream().filter(x -> fieldApprover.approve(x.getDataInfo()))
                     .filter(x -> StringUtils.isNotBlank(x.getValue()))

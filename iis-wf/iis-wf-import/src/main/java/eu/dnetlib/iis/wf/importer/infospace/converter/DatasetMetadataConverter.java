@@ -89,14 +89,14 @@ public class DatasetMetadataConverter implements OafEntityToAvroConverter<Result
             handleResourceType(sourceResult, metaBuilder);
     }
 
-    private void handleTitles(List<StructuredProperty> titleList, DataSetReference.Builder metaBuilder) {
+    private void handleTitles(List<LangAwareStructuredProperty> titleList, DataSetReference.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(titleList)) {
             metaBuilder.setTitles(titleList.stream().filter(titleProp -> fieldApprover.approve(titleProp.getDataInfo()))
                     .map(StructuredProperty::getValue).collect(Collectors.toList()));
         }
     }
     
-    private void handleDescription(List<Field<String>> descriptionList, DataSetReference.Builder metaBuilder) {
+    private void handleDescription(List<LangAwareField> descriptionList, DataSetReference.Builder metaBuilder) {
         if (CollectionUtils.isNotEmpty(descriptionList)) {
             descriptionList.stream().filter(x -> fieldApprover.approve(x.getDataInfo()))
                     .filter(x -> StringUtils.isNotBlank(x.getValue()))

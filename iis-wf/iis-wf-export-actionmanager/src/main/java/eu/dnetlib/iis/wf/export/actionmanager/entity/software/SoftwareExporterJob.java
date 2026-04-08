@@ -312,7 +312,7 @@ public class SoftwareExporterJob {
         urlField.setValue(softwareUrl);
         software.setCodeRepositoryUrl(urlField);
 
-        List<StructuredProperty> title = Lists.newArrayList();
+        List<LangAwareStructuredProperty> title = Lists.newArrayList();
 
         title.add(buildMainTitle(relation.getSoftwareTitle().toString(), relation.getRepositoryName().toString()));
 
@@ -324,7 +324,7 @@ public class SoftwareExporterJob {
         software.setTitle(title);
 
         if (StringUtils.isNotBlank(relation.getSoftwareDescription())) {
-            Field<String> descrField = new Field<>();
+            LangAwareField descrField = new LangAwareField();
             descrField.setValue(relation.getSoftwareDescription().toString());
             software.setDescription(Collections.singletonList(descrField));
         }
@@ -382,19 +382,19 @@ public class SoftwareExporterJob {
         return instance;
     }
 
-    private static StructuredProperty buildMainTitle(String softwareTitle, String repositoryName) {
+    private static LangAwareStructuredProperty buildMainTitle(String softwareTitle, String repositoryName) {
         return buildTitle(MessageFormat.format(SOFTWARE_TITLE_MAIN_TEMPLATE, softwareTitle, repositoryName),
                 InfoSpaceConstants.SEMANTIC_CLASS_MAIN_TITLE);
     }
 
-    private static StructuredProperty buildContextualisedTitle(String softwareTitle, String repositoryName,
+    private static LangAwareStructuredProperty buildContextualisedTitle(String softwareTitle, String repositoryName,
                                                                String publicationTitle) {
         return buildTitle(MessageFormat.format(SOFTWARE_TITLE_ALTERNATIVE_TEMPLATE, softwareTitle, repositoryName,
                 publicationTitle), InfoSpaceConstants.SEMANTIC_CLASS_ALTERNATIVE_TITLE);
     }
 
-    private static StructuredProperty buildTitle(String value, String titleType) {
-        StructuredProperty titleStructuredProperty = new StructuredProperty();
+    private static LangAwareStructuredProperty buildTitle(String value, String titleType) {
+        LangAwareStructuredProperty titleStructuredProperty = new LangAwareStructuredProperty();
         titleStructuredProperty.setValue(value);
         titleStructuredProperty.setQualifier(buildQualifier(titleType, titleType,
                 InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE, InfoSpaceConstants.SEMANTIC_SCHEME_DNET_TITLE));

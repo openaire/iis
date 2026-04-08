@@ -313,7 +313,7 @@ public class DatasetMetadataConverterTest {
         if (result.getTitle()==null) {
             result.setTitle(new ArrayList<>());
         }
-        StructuredProperty structTitle = new StructuredProperty();
+        LangAwareStructuredProperty structTitle = new LangAwareStructuredProperty();
         structTitle.setValue(title);
         if (titleType != null) {
             Qualifier titleQualifier = new Qualifier();
@@ -327,7 +327,7 @@ public class DatasetMetadataConverterTest {
         if (result.getDescription()==null) {
             result.setDescription(new ArrayList<>());
         }
-        Field<String> fieldDescr = new Field<>();
+        LangAwareField fieldDescr = new LangAwareField();
         fieldDescr.setValue(value);
         result.getDescription().add(fieldDescr);
     }
