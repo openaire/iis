@@ -211,6 +211,7 @@ setschema 'docid,prev,middle,next' select c1 as docid,textwindow2s(c2,15,1,5,"(?
 (regexpr("(\w*\/[\w,\.]*\/\w*)",middle)=grantid and fundingclass1 = "SFI") or
 (regexpr("\b((?:06|07|10|11|12|13|14|15|16|17|18|19)\-\w{4}\-\d{4}(?:\-\d{2})*)\b",middle)=grantid and fundingclass1 = "ANR") or
 (regexpr("\b(ANR-\d{2}-\w{4}-\d{4})\b",middle)=grantid and fundingclass1 = "ANR") or
+(fundingclass1 = "RI" and lower(regexpr("(\w+\/\w+\/\w+)",middle)) = lower(grantid)) or
 ( regexpr("(\d+)",middle)=grantid and fundingclass1 = "CONICYT" and regexprmatches("conicyt|fondecyt",lower(j2s(prev,middle,next)) )  ) or 
 ( regexpr("(\b\d{3}[A-Z]\d{3}\b)",middle)=grantid and fundingclass1 = "TUBITAK" and regexprmatches("tubitak|tubitek|tbag|turkey|turkish|\btub\b|\bbitak\b|\bitak\b|tub|ubitak|tu bi tak|tubtak|itak|project",lower(j2s(prev,middle,next)) )  ) or
 ( stripchars(regexpr("([A-Z]{2,3}.+)",middle),"[]\().{}?;") = grantid and fundingclass1 = "SGOV") or
