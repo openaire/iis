@@ -213,6 +213,17 @@ def cqlfields(*args):
 
 cqlfields.registered=True
 
+def string_split_value(s, a):
+    """
+    Returns the substring of `s` starting from the last occurrence of `a` till the end.
+    If `a` is not found in `s`, returns an empty string.
+    """
+    index = s.rfind(a)  # Find the last occurrence of `a`
+    if index == -1:
+        return ""  # `a` not found
+    return s[index+len(a):]  # Return from last occurrence to the end
+string_split_value.registered = True
+
 def comprspaces(*args):
     """
     .. function:: comprspaces(text1, [text2,...]) -> text
