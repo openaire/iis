@@ -47,7 +47,6 @@ import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.SparkSessionFactory;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentText;
 import eu.dnetlib.iis.metadataextraction.schemas.DocumentTextWithChecksumAndDOI;
-
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
@@ -82,11 +81,11 @@ public class CachedHtmlImportAndExtractionJob {
     private static final String ID_PLACEHOLDER = "$ID_PLACEHOLDER$";
 
     private static final String COUNTER_IMPORT_CSVINPUT= "import.html_landing_pages.csvinput";
-    private static final String COUNTER_IMPORT_OUTPUT = "import.html_landing_pages.output";
+    private static final String COUNTER_IMPORT_TO_BE_PROCESSED = "import.html_landing_pages.to_be_processed";
 
-    private static final String COUNTER_RETRIEVED_FROM_CACHE = "html_extraction.retrieved_from_cache";
+    private static final String COUNTER_EXTRACTION_RETRIEVED_FROM_CACHE = "html_extraction.retrieved_from_cache";
 
-    private static final String COUNTER_EXTRACTION_OUTPUT_VALID = "html_extraction.output.valid";
+    private static final String COUNTER_EXTRACTION_PROCESSED = "html_extraction.processed";
     
     private static SparkAvroLoader avroLoader = new SparkAvroLoader();
     private static SparkAvroSaver avroSaver = new SparkAvroSaver();
@@ -278,9 +277,9 @@ public class CachedHtmlImportAndExtractionJob {
         
                 return ImmutableList.of(
                     ReportEntryFactory.createCounterReportEntry(COUNTER_IMPORT_CSVINPUT, importInputRecordsCount),
-                    ReportEntryFactory.createCounterReportEntry(COUNTER_IMPORT_OUTPUT, importOutputRecordsCount),
-                    ReportEntryFactory.createCounterReportEntry(COUNTER_RETRIEVED_FROM_CACHE, retrievedFromCacheCount),
-                    ReportEntryFactory.createCounterReportEntry(COUNTER_EXTRACTION_OUTPUT_VALID, extractionOutputCount)
+                    ReportEntryFactory.createCounterReportEntry(COUNTER_IMPORT_TO_BE_PROCESSED, importOutputRecordsCount),
+                    ReportEntryFactory.createCounterReportEntry(COUNTER_EXTRACTION_RETRIEVED_FROM_CACHE, retrievedFromCacheCount),
+                    ReportEntryFactory.createCounterReportEntry(COUNTER_EXTRACTION_PROCESSED, extractionOutputCount)
                 );
     }
     
