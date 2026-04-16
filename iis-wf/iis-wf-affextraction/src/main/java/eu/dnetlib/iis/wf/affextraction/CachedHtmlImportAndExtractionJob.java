@@ -1,6 +1,11 @@
 package eu.dnetlib.iis.wf.affextraction;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +30,8 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.storage.StorageLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -60,6 +67,8 @@ import scala.Tuple3;
  * @author mhorst
  */
 public class CachedHtmlImportAndExtractionJob {
+    
+    private static final Logger log = LoggerFactory.getLogger(CachedHtmlImportAndExtractionJob.class);
     
     private static final String INPUT_CSV_FIELD_ARCHIVE_S3_LOCATION = "archive_s3_location";
     private static final String INPUT_CSV_FIELD_HTML_FILENAME = "html_filename";
@@ -236,7 +245,68 @@ public class CachedHtmlImportAndExtractionJob {
             String scriptsDirOnWorkerNode = (sc.isLocal()) ? getScriptPath() : "scripts";
             
             JavaRDD<String> extractedMeta = repartRecords
-                    .pipe("bash " + scriptsDirOnWorkerNode + "/run_affiliation_extraction.sh" + " " + scriptsDirOnWorkerNode);
+                    .mapPartitions(records -> {
+                        String command = "bash " + scriptsDirOnWorkerNode + "/run_affiliation_extraction.sh " + scriptsDirOnWorkerNode;
+                        ProcessBuilder pb = new ProcessBuilder("bash", "-c", command);
+                        pb.redirectErrorStream(false);
+                        Process process = pb.start();
+
+                        // Write input records to process stdin in a separate thread
+                        Thread stdinWriter = new Thread(() -> {
+                            try (BufferedWriter writer = new BufferedWriter(
+                                    new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8))) {
+                                while (records.hasNext()) {
+                                    writer.write(records.next().toString());
+                                    writer.newLine();
+                                }
+                            } catch (Exception e) {
+                                log.error("Error writing to subprocess stdin", e);
+                            }
+                        });
+                        stdinWriter.setDaemon(true);
+                        stdinWriter.start();
+
+                        // Capture stderr in a separate thread
+                        StringBuilder stderrBuilder = new StringBuilder();
+                        Thread stderrReader = new Thread(() -> {
+                            try (BufferedReader errReader = new BufferedReader(
+                                    new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
+                                String errLine;
+                                while ((errLine = errReader.readLine()) != null) {
+                                    stderrBuilder.append(errLine).append("\n");
+                                }
+                            } catch (Exception e) {
+                                log.error("Error reading subprocess stderr", e);
+                            }
+                        });
+                        stderrReader.setDaemon(true);
+                        stderrReader.start();
+
+                        // Read stdout lines from the process
+                        List<String> outputLines = new ArrayList<>();
+                        try (BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                outputLines.add(line);
+                            }
+                        }
+
+                        stdinWriter.join();
+                        stderrReader.join();
+                        int exitCode = process.waitFor();
+
+                        if (exitCode != 0) {
+                            String stderr = stderrBuilder.toString();
+                            String truncatedStderr = stderr.length() > 4000 ? stderr.substring(stderr.length() - 4000) : stderr;
+                            throw new IllegalStateException(
+                                    "Subprocess exited with status " + exitCode
+                                    + ". Command: " + command
+                                    + ". Stderr (last 4000 chars): " + truncatedStderr);
+                        }
+
+                        return outputLines.iterator();
+                    });
            
             extractedMeta.persist(StorageLevel.MEMORY_AND_DISK());
             long extractedMetaCount = extractedMeta.count();
