@@ -5,6 +5,8 @@ import java.io.BufferedWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -218,9 +221,8 @@ public class CachedHtmlImportAndExtractionJob {
                     while ((entry = tarInput.getNextTarEntry()) != null) {
                         if (!entry.isFile()) continue;
                         if (htmlMap.containsKey(entry.getName())) {
-                            byte[] content = new byte[(int) entry.getSize()];
-                            tarInput.read(content, 0, content.length);
-                            String htmlText = new String(content, "UTF-8");
+                            byte[] content = IOUtils.readFully(tarInput, (int) entry.getSize());
+                            String htmlText = new String(content, StandardCharsets.UTF_8);
     
                             for (Tuple3<String, String, String> triple : htmlMap.get(entry.getName())) {
                                 DocumentTextWithChecksumAndDOI.Builder documentTextBuilder = DocumentTextWithChecksumAndDOI.newBuilder();
