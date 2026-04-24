@@ -31,13 +31,13 @@ import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.SparkSessionFactory;
-import eu.dnetlib.iis.metadataextraction.schemas.DocumentTextWithChecksumAndDOI;
+import eu.dnetlib.iis.metadataextraction.schemas.DocumentTextWithChecksum;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
-import scala.Tuple3;
+import scala.Tuple2;
 
 /**
  * Iterates over the CSV input file to get the tar.gz package locations in S3 and HTML file names to be extracted from those packages.
- * Provides {@link DocumentTextWithChecksumAndDOI} avro records at the output.
+ * Provides {@link DocumentTextWithChecksum} avro records at the output.
  * 
  * @author mhorst
  */
@@ -48,10 +48,6 @@ public class HtmlLandingPagesExtractionJob {
     private static final String INPUT_CSV_FIELD_HTML_SIZE = "html_size";
     private static final String INPUT_CSV_FIELD_HTML_HASH = "html_hash";
     private static final String INPUT_CSV_FIELD_ID = "id";
-    private static final String INPUT_CSV_FIELD_PID_TYPE = "pid_type";
-    private static final String INPUT_CSV_FIELD_PID = "pid";
-    
-    private static final String PID_VALUE_DOI = "doi";
 
     private static final String COUNTER_CSVINPUT= "import.html_landing_pages.csvinput";
     private static final String COUNTER_OUTPUT = "import.html_landing_pages.output";
@@ -95,24 +91,22 @@ public class HtmlLandingPagesExtractionJob {
             // broadcasting the configuration to all executors in order to access S3 files
             Broadcast<HashMap<String, String>> broadcastedConf = sc.broadcast(confAsMap);
             
-            JavaRDD<DocumentTextWithChecksumAndDOI> output = grouped.flatMap(tuple -> {
+            JavaRDD<DocumentTextWithChecksum> output = grouped.flatMap(tuple -> {
                 // TODO we should consider changing it in the Lampros' code to avoid this kind of replacement here
                 String archivePath = tuple._1.replaceFirst("s3://", "s3a://");
                 Iterable<Row> rows = tuple._2;
 
-                Map<String, List<Tuple3<String, String, String>>> htmlMap = new HashMap<>();
+                Map<String, List<Tuple2<String, String>>> htmlMap = new HashMap<>();
                 for (Row r : rows) {
                     String htmlFilename = r.getAs(INPUT_CSV_FIELD_HTML_FILENAME);
                     String id = r.getAs(INPUT_CSV_FIELD_ID);
-                    String pidType = r.getAs(INPUT_CSV_FIELD_PID_TYPE);
                     String htmlHash = r.getAs(INPUT_CSV_FIELD_HTML_HASH);
-                    String doi = PID_VALUE_DOI.equalsIgnoreCase(pidType) ? r.getAs(INPUT_CSV_FIELD_PID) : null;
                     htmlMap.computeIfAbsent(htmlFilename, k -> new ArrayList<>())
-                           .add(new Tuple3<>(id, doi, htmlHash));
+                           .add(new Tuple2<>(id, htmlHash));
                 }
 
                 // Download and extract archive from S3
-                List<DocumentTextWithChecksumAndDOI> records = new ArrayList<>();
+                List<DocumentTextWithChecksum> records = new ArrayList<>();
                 
                 Path path = new Path(archivePath);
 
@@ -133,11 +127,10 @@ public class HtmlLandingPagesExtractionJob {
                             tarInput.read(content, 0, content.length);
                             String htmlText = new String(content, "UTF-8");
     
-                            for (Tuple3<String, String, String> triple : htmlMap.get(entry.getName())) {
-                                DocumentTextWithChecksumAndDOI.Builder documentTextBuilder = DocumentTextWithChecksumAndDOI.newBuilder();
-                                documentTextBuilder.setId(triple._1());
-                                documentTextBuilder.setDoi(triple._2());
-                                documentTextBuilder.setChecksum(triple._3());
+                            for (Tuple2<String, String> pair : htmlMap.get(entry.getName())) {
+                                DocumentTextWithChecksum.Builder documentTextBuilder = DocumentTextWithChecksum.newBuilder();
+                                documentTextBuilder.setId(pair._1());
+                                documentTextBuilder.setChecksum(pair._2());
                                 documentTextBuilder.setText(htmlText);
                                 records.add(documentTextBuilder.build());
                             }
@@ -162,10 +155,10 @@ public class HtmlLandingPagesExtractionJob {
                 ReportEntryFactory.createCounterReportEntry(COUNTER_OUTPUT, outputRecordsCount)), 1);
     }
     
-    private static void storeInOutput(JavaRDD<DocumentTextWithChecksumAndDOI> results, JavaRDD<ReportEntry> reports,
+    private static void storeInOutput(JavaRDD<DocumentTextWithChecksum> results, JavaRDD<ReportEntry> reports,
             String resultOutputPath, String reportOutputPath) {
         avroSaver.saveJavaRDD(reports, ReportEntry.SCHEMA$, reportOutputPath);
-        avroSaver.saveJavaRDD(results, DocumentTextWithChecksumAndDOI.SCHEMA$, resultOutputPath);
+        avroSaver.saveJavaRDD(results, DocumentTextWithChecksum.SCHEMA$, resultOutputPath);
     }
     
     @Parameters(separators = "=")
