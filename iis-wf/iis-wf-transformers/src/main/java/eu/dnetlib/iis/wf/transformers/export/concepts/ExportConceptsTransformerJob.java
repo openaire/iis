@@ -2,9 +2,9 @@ package eu.dnetlib.iis.wf.transformers.export.concepts;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -53,8 +53,9 @@ public class ExportConceptsTransformerJob {
                     .groupByKey();
 
             JavaRDD<DocumentToConceptIds> output = grouped.map(pair -> {
-                // Deduplicate by conceptId, keeping entry with highest confidenceLevel
-                Map<String, Float> conceptMap = new LinkedHashMap<>();
+                // Deduplicate by conceptId, keeping entry with highest confidenceLevel.
+                // TreeMap gives lexicographic order, matching IdConfidenceTupleDeduplicator behaviour.
+                Map<String, Float> conceptMap = new TreeMap<>();
                 for (DocumentToConceptId c : pair._2) {
                     String cid = c.getConceptId().toString();
                     float cl = c.getConfidenceLevel();
