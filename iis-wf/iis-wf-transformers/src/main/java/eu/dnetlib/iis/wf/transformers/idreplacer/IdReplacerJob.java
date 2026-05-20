@@ -1,7 +1,5 @@
 package eu.dnetlib.iis.wf.transformers.idreplacer;
 
-import java.util.stream.Collectors;
-
 import org.apache.avro.Schema;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Column;
@@ -20,6 +18,7 @@ import eu.dnetlib.iis.common.spark.SparkSessionFactory;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameReader;
 import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
 
+import static org.apache.spark.sql.functions.coalesce;
 import static org.apache.spark.sql.functions.col;
 
 /**
@@ -60,7 +59,8 @@ public class IdReplacerJob {
 
     /**
      * Performs a left join of {@code data} with {@code mapping} on {@code fieldToReplace},
-     * replacing that field's value with {@code newId} from the mapping (null if unmatched).
+     * replacing that field's value with {@code newId} from the mapping. Records with no
+     * mapping entry retain their original field value (matching IdReplacerUDF behaviour).
      */
     private static Dataset<Row> replaceId(Dataset<Row> data, Schema schema,
             Dataset<Row> mapping, String fieldToReplace) {
@@ -73,7 +73,7 @@ public class IdReplacerJob {
 
         Column[] selectCols = schema.getFields().stream()
                 .map(f -> f.name().equals(fieldToReplace)
-                        ? col("_new").alias(f.name())
+                        ? coalesce(col("_new"), data.col(f.name())).alias(f.name())
                         : data.col(f.name()))
                 .toArray(Column[]::new);
 
