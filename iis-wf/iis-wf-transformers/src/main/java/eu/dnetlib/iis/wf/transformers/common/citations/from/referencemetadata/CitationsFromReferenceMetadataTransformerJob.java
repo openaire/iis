@@ -57,7 +57,7 @@ public class CitationsFromReferenceMetadataTransformerJob {
                 }
                 List<Citation> citations = new ArrayList<>();
                 for (ReferenceMetadata ref : references) {
-                    Map<CharSequence, CharSequence> externalIds = null;
+                    Map<CharSequence, CharSequence> externalIds = Collections.emptyMap();
                     ReferenceBasicMetadata basicMetadata = ref.getBasicMetadata();
                     if (basicMetadata != null && basicMetadata.getExternalIds() != null) {
                         externalIds = basicMetadata.getExternalIds();
