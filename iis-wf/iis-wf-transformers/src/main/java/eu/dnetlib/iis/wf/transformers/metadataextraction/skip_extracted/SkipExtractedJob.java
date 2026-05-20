@@ -61,11 +61,11 @@ public class SkipExtractedJob {
                     .filter(pair -> !pair._2._2.isPresent())
                     .map(pair -> pair._2._1);
 
-            // output_meta: meta records whose publicationTypeName is null or not "EMPTY",
+            // output_meta: meta records whose publicationTypeName is null or not "$EMPTY$",
             //              intersected with content ids
             JavaRDD<ExtractedDocumentMetadata> filteredMeta = documentMeta.filter(m -> {
                 CharSequence pubType = m.getPublicationTypeName();
-                return pubType == null || !"EMPTY".equals(pubType.toString());
+                return pubType == null || !"$EMPTY$".equals(pubType.toString());
             });
             JavaPairRDD<String, ExtractedDocumentMetadata> filteredMetaById = filteredMeta.mapToPair(
                     m -> new Tuple2<>(m.getId().toString(), m));
