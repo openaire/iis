@@ -62,9 +62,9 @@ public class IdReplacerJob {
      */
     private static Dataset<Row> replaceId(Dataset<Row> data, Schema schema,
             Dataset<Row> mapping, String fieldToReplace) {
-        Dataset<Row> renamedMapping = mapping.select(
-                col("originalId").alias("_orig"),
-                col("newId").alias("_new"));
+        Dataset<Row> renamedMapping = mapping
+                .withColumnRenamed("originalId", "_orig")
+                .withColumnRenamed("newId", "_new");
 
         Dataset<Row> joined = data.join(renamedMapping,
                 data.col(fieldToReplace).equalTo(renamedMapping.col("_orig")), "left");
