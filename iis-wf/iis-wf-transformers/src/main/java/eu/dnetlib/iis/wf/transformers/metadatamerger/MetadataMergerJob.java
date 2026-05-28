@@ -3,8 +3,10 @@ package eu.dnetlib.iis.wf.transformers.metadatamerger;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -144,16 +146,17 @@ public class MetadataMergerJob {
 
     private static List<CharSequence> mergeStringLists(List<CharSequence> first, List<CharSequence> second) {
         List<CharSequence> merged = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
         if (first != null) {
             for (CharSequence item : first) {
-                if (!merged.contains(item)) {
+                if (seen.add(item.toString())) {
                     merged.add(item);
                 }
             }
         }
         if (second != null) {
             for (CharSequence item : second) {
-                if (!merged.contains(item)) {
+                if (seen.add(item.toString())) {
                     merged.add(item);
                 }
             }
@@ -165,14 +168,10 @@ public class MetadataMergerJob {
             Map<CharSequence, CharSequence> first, Map<CharSequence, CharSequence> second) {
         Map<CharSequence, CharSequence> merged = new HashMap<>();
         if (first != null) {
-            merged.putAll(first);
+            first.forEach((k, v) -> merged.put(k.toString(), v));
         }
         if (second != null) {
-            for (Map.Entry<CharSequence, CharSequence> entry : second.entrySet()) {
-                if (!merged.containsKey(entry.getKey())) {
-                    merged.put(entry.getKey(), entry.getValue());
-                }
-            }
+            second.forEach((k, v) -> merged.putIfAbsent(k.toString(), v));
         }
         return merged.isEmpty() ? null : merged;
     }
