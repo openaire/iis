@@ -48,13 +48,14 @@ public class ChecksumPreprocessingJob {
             JavaPairRDD<String, DocumentContentUrl> byChecksum = withChecksum.mapToPair(
                     doc -> new Tuple2<>(doc.getContentChecksum().toString(), doc));
 
-            JavaPairRDD<String, DocumentContentUrl> dedupedPairs = byChecksum
-                    .reduceByKey((a, b) -> a.getId().toString().compareTo(b.getId().toString()) <= 0 ? a : b);
+            JavaRDD<DocumentContentUrl> deduped = byChecksum
+                    .reduceByKey((a, b) -> a.getId().toString().compareTo(b.getId().toString()) <= 0 ? a : b)
+                    .values();
 
             // Replace id with contentChecksum
-            JavaRDD<DocumentContentUrl> output = dedupedPairs.map(pair ->
-                    DocumentContentUrl.newBuilder(pair._2)
-                            .setId(pair._2.getContentChecksum())
+            JavaRDD<DocumentContentUrl> output = deduped.map(doc ->
+                    DocumentContentUrl.newBuilder(doc)
+                            .setId(doc.getContentChecksum())
                             .build());
 
             avroSaver.saveJavaRDD(output, DocumentContentUrl.SCHEMA$, params.output);
