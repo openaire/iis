@@ -20,8 +20,6 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 /**
  * Spark job that converts PMC-extracted document metadata into the common
  * metadataextraction schema.
- *
- * Replaces the PIG-based ingest/pmc/metadata transformer workflow step.
  */
 public class PmcMetadataTransformerJob {
 

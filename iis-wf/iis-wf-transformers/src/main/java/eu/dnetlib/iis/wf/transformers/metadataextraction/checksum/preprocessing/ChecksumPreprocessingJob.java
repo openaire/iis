@@ -22,8 +22,6 @@ import scala.Tuple2;
  * Spark job that preprocesses DocumentContentUrl records for checksum-based metadata extraction.
  * Filters out records without a contentChecksum, deduplicates by contentChecksum keeping the
  * record with the smallest id, and replaces the id field with the contentChecksum value.
- *
- * Replaces the PIG-based checksum preprocessing transformer workflow step.
  */
 public class ChecksumPreprocessingJob {
 

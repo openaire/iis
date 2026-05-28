@@ -30,8 +30,6 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  *
  * For each reference in each document a Citation is produced with a CitationEntry
  * holding the position, raw text, null destination and the reference's external IDs.
- *
- * Replaces the PIG-based citations/from/referencemetadata transformer workflow step.
  */
 public class CitationsFromReferenceMetadataTransformerJob {
 

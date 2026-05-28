@@ -22,8 +22,6 @@ import scala.Tuple2;
 /**
  * Spark job that filters DocumentContentUrl records keeping only those whose id is present
  * in the provided set of existent identifiers.
- *
- * Replaces the PIG-based existencefilter workflow step.
  */
 public class ExistenceFilterJob {
 

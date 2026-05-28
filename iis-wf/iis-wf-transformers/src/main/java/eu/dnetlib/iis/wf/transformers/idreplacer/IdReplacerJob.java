@@ -25,8 +25,6 @@ import static org.apache.spark.sql.functions.col;
  * Generic Spark job that replaces one or two id fields in an Avro dataset using an
  * IdentifierMapping lookup. Records with no mapping entry retain a null id value
  * in the replaced field (left-join semantics, matching PIG OUTER JOIN behaviour).
- *
- * Replaces the PIG-based idreplacer transformer workflow step.
  */
 public class IdReplacerJob {
 

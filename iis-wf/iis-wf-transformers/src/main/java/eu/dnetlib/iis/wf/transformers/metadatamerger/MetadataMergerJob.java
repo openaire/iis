@@ -29,8 +29,6 @@ import scala.Tuple2;
  * Spark job that merges base document metadata (from importer) with metadata extracted from PDF documents.
  * Performs a full outer join on document id, selecting the first non-empty value for scalar fields,
  * merging arrays and maps, and assembling extracted author names from the extracted metadata.
- *
- * Replaces the PIG-based merger workflow step.
  */
 public class MetadataMergerJob {
 

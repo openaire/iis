@@ -22,8 +22,6 @@ import scala.Tuple2;
  * Spark job that filters out DocumentContentUrl records whose id is already present in the
  * ExtractedDocumentMetadata input (i.e. already processed). Only records not yet extracted
  * are written to the output.
- *
- * Replaces the PIG-based skip_extracted_without_meta transformer workflow step.
  */
 public class SkipExtractedWithoutMetaJob {
 

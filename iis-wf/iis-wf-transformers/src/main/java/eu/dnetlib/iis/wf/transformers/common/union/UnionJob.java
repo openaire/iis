@@ -18,8 +18,6 @@ import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
 
 /**
  * Generic Spark job that unions two Avro datasets sharing the same schema.
- *
- * Replaces the PIG-based common/union transformer workflow step.
  */
 public class UnionJob {
 

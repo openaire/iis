@@ -25,8 +25,6 @@ import eu.dnetlib.iis.common.spark.avro.AvroDataFrameWriter;
  * Generic Spark job that unions two Avro datasets sharing the same schema and deduplicates
  * the result by two grouping fields, keeping only the record with the highest confidenceLevel
  * per group.
- *
- * Replaces the PIG-based common/uniondedup transformer workflow step.
  */
 public class UnionDedupJob {
 

@@ -23,8 +23,6 @@ import scala.Tuple2;
  * Spark job that remaps the inputObjectId in Fault records from a contentChecksum back to the
  * original document id. Only DocumentContentUrl records that have a non-null contentChecksum
  * are considered. The fault's inputObjectId is expected to match the DCU's contentChecksum.
- *
- * Replaces the PIG-based checksum/postprocessing/fault transformer workflow step.
  */
 public class ChecksumFaultPostprocessingJob {
 

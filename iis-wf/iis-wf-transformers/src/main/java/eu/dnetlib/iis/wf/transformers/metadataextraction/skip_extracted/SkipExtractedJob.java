@@ -27,8 +27,6 @@ import scala.Tuple2;
  *   <li>outputDocumentMeta: ExtractedDocumentMetadata records whose publicationTypeName is
  *       null or not "EMPTY", and whose id IS present in the input document content.</li>
  * </ul>
- *
- * Replaces the PIG-based skip_extracted transformer workflow step.
  */
 public class SkipExtractedJob {
 

@@ -19,8 +19,6 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
  * Spark job that extracts document identifiers from DocumentMetadata records.
- *
- * Replaces the PIG-based idextractor workflow step.
  */
 public class DocumentMetadataIdExtractorJob {
 

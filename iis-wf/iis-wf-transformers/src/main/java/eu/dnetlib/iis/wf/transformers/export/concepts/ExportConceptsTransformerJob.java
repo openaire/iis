@@ -28,8 +28,6 @@ import scala.Tuple2;
  * Spark job that groups DocumentToConceptId records by documentId and produces a
  * DocumentToConceptIds export record per document. When the same conceptId appears
  * multiple times, only the entry with the highest confidenceLevel is kept.
- *
- * Replaces the PIG-based export/concepts transformer workflow step.
  */
 public class ExportConceptsTransformerJob {
 

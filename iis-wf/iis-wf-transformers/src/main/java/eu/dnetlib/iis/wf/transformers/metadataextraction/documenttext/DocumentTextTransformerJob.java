@@ -19,8 +19,6 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
  * Spark job that extracts the text field from ExtractedDocumentMetadata records.
- *
- * Replaces the PIG-based documenttext transformer workflow step.
  */
 public class DocumentTextTransformerJob {
 

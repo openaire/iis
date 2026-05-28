@@ -26,8 +26,6 @@ import scala.Tuple2;
 /**
  * Spark job that groups Citation records by sourceDocumentId and produces a single
  * Citations export record per document with its citation entries sorted by position.
- *
- * Replaces the PIG-based export/citations transformer workflow step.
  */
 public class ExportCitationsTransformerJob {
 

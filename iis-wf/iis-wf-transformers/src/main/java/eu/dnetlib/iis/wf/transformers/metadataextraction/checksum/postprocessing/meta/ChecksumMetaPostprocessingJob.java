@@ -24,8 +24,6 @@ import scala.Tuple2;
  * back to the original document id. Only DocumentContentUrl records with a non-null
  * contentChecksum are considered. After checksum preprocessing, the metadata id equals the
  * checksum, so the join is metadata.id = dcu.contentChecksum → replace metadata.id with dcu.id.
- *
- * Replaces the PIG-based checksum/postprocessing/meta transformer workflow step.
  */
 public class ChecksumMetaPostprocessingJob {
 
