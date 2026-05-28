@@ -53,12 +53,8 @@ public class ChecksumPreprocessingJob {
 
             // Replace id with contentChecksum
             JavaRDD<DocumentContentUrl> output = dedupedPairs.map(pair ->
-                    DocumentContentUrl.newBuilder()
+                    DocumentContentUrl.newBuilder(pair._2)
                             .setId(pair._2.getContentChecksum())
-                            .setUrl(pair._2.getUrl())
-                            .setMimeType(pair._2.getMimeType())
-                            .setContentChecksum(pair._2.getContentChecksum())
-                            .setContentSizeKB(pair._2.getContentSizeKB())
                             .build());
 
             avroSaver.saveJavaRDD(output, DocumentContentUrl.SCHEMA$, params.output);
