@@ -25,7 +25,7 @@ import scala.Tuple2;
  *   <li>outputDocumentContent: DocumentContentUrl records whose id is NOT present in the
  *       input metadata (i.e. not yet extracted).</li>
  *   <li>outputDocumentMeta: ExtractedDocumentMetadata records whose publicationTypeName is
- *       null or not "EMPTY", and whose id IS present in the input document content.</li>
+ *       not "$EMPTY$", and whose id IS present in the input document content.</li>
  * </ul>
  */
 public class SkipExtractedJob {
