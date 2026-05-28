@@ -3,7 +3,7 @@ protocol IIS{
 
 // At least one of rawText, destinationDocumentId, externalDestinationDocumentIds fields is not empty.
     record CitationEntry {
-//      position of citation in the bibliography of the source document
+//      position of citation in the bibliography of the source document, starting with '1'
         int position;
 //      raw citation text
         union { null , string } rawText = null;

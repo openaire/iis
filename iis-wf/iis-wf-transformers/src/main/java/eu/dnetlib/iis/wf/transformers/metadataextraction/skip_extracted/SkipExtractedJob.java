@@ -52,17 +52,27 @@ public class SkipExtractedJob {
 
             JavaPairRDD<String, DocumentContentUrl> contentById = documentContent.mapToPair(
                     d -> new Tuple2<>(d.getId().toString(), d));
-            JavaPairRDD<String, ExtractedDocumentMetadata> metaById = documentMeta.mapToPair(
-                    m -> new Tuple2<>(m.getId().toString(), m));
+
+            // Distinct meta ids (matching PIG's 'distinct cachedDocumentId').
+            // Prevents cross-product explosion and duplicate content records in the output.
+            JavaPairRDD<String, Boolean> distinctMetaIds = documentMeta
+                    .mapToPair(m -> new Tuple2<>(m.getId().toString(), Boolean.TRUE))
+                    .reduceByKey((a, b) -> a);
 
             // output_content: content records with no matching meta record
             JavaRDD<DocumentContentUrl> outputContent = contentById
-                    .leftOuterJoin(metaById)
+                    .leftOuterJoin(distinctMetaIds)
                     .filter(pair -> !pair._2._2.isPresent())
                     .map(pair -> pair._2._1);
 
+            // Distinct content ids (matching PIG's 'distinct documentContentId').
+            // Prevents duplicate meta records when contentById has multiple records per id.
+            JavaPairRDD<String, Boolean> distinctContentIds = contentById
+                    .mapValues(v -> Boolean.TRUE)
+                    .reduceByKey((a, b) -> a);
+
             // output_meta: meta records whose publicationTypeName is null or not "$EMPTY$",
-            //              intersected with content ids
+            //              intersected with distinct content ids
             JavaRDD<ExtractedDocumentMetadata> filteredMeta = documentMeta.filter(m -> {
                 CharSequence pubType = m.getPublicationTypeName();
                 return pubType == null || !"$EMPTY$".equals(pubType.toString());
@@ -70,7 +80,7 @@ public class SkipExtractedJob {
             JavaPairRDD<String, ExtractedDocumentMetadata> filteredMetaById = filteredMeta.mapToPair(
                     m -> new Tuple2<>(m.getId().toString(), m));
             JavaRDD<ExtractedDocumentMetadata> outputMeta = filteredMetaById
-                    .join(contentById)
+                    .join(distinctContentIds)
                     .map(pair -> pair._2._1);
 
             avroSaver.saveJavaRDD(outputContent, DocumentContentUrl.SCHEMA$, params.outputDocumentContent);

@@ -1,8 +1,6 @@
 package eu.dnetlib.iis.wf.transformers.metadataextraction.skip_extracted_without_meta;
 
 import java.io.IOException;
-import java.util.Optional;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -46,16 +44,19 @@ public class SkipExtractedWithoutMetaJob {
             JavaRDD<ExtractedDocumentMetadata> documentMeta = avroLoader.loadJavaRDD(sc,
                     params.inputDocumentMeta, ExtractedDocumentMetadata.class);
 
-            // Collect the set of already-extracted document ids
-            JavaPairRDD<String, ExtractedDocumentMetadata> metaById = documentMeta.mapToPair(
-                    m -> new Tuple2<>(m.getId().toString(), m));
-
             JavaPairRDD<String, DocumentContentUrl> contentById = documentContent.mapToPair(
                     d -> new Tuple2<>(d.getId().toString(), d));
 
-            // Left join content with meta; keep only records where meta is absent
+            // Distinct set of already-extracted document ids (matching PIG's 'distinct cachedDocumentId').
+            // Deduplication avoids a cross-product explosion when meta has duplicate ids, and prevents
+            // duplicate content records in the output when both sides share the same key.
+            JavaPairRDD<String, Boolean> distinctMetaIds = documentMeta
+                    .mapToPair(m -> new Tuple2<>(m.getId().toString(), Boolean.TRUE))
+                    .reduceByKey((a, b) -> a);
+
+            // Left join content with distinct meta ids; keep only records where meta is absent
             JavaRDD<DocumentContentUrl> output = contentById
-                    .leftOuterJoin(metaById)
+                    .leftOuterJoin(distinctMetaIds)
                     .filter(pair -> !pair._2._2.isPresent())
                     .map(pair -> pair._2._1);
 

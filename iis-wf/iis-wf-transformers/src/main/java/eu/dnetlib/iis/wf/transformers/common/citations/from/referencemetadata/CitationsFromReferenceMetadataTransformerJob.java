@@ -63,7 +63,7 @@ public class CitationsFromReferenceMetadataTransformerJob {
                         externalIds = basicMetadata.getExternalIds();
                     }
                     CitationEntry entry = CitationEntry.newBuilder()
-                            .setPosition(ref.getPosition() != null ? ref.getPosition() : 0)
+                            .setPosition(ref.getPosition())
                             .setRawText(ref.getText())
                             .setDestinationDocumentId(null)
                             .setConfidenceLevel(null)
