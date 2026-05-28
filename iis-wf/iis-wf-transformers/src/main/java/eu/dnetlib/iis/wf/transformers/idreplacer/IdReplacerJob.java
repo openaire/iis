@@ -58,7 +58,7 @@ public class IdReplacerJob {
     /**
      * Performs a left join of {@code data} with {@code mapping} on {@code fieldToReplace},
      * replacing that field's value with {@code newId} from the mapping. Records with no
-     * mapping entry retain their original field value (matching IdReplacerUDF behaviour).
+     * mapping entry retain their original field value.
      */
     private static Dataset<Row> replaceId(Dataset<Row> data, Schema schema,
             Dataset<Row> mapping, String fieldToReplace) {

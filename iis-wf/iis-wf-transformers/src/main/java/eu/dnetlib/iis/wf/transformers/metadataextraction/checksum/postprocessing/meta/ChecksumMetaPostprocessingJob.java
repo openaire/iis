@@ -45,8 +45,6 @@ public class ChecksumMetaPostprocessingJob {
                     params.inputDocumentContentUrl, DocumentContentUrl.class);
 
             // Build a mapping: checksum -> original document id
-            // After preprocessing, dcu.id IS the checksum, so we use dcu.contentChecksum
-            // but to join with meta.id we use dcu.contentChecksum as the key
             JavaPairRDD<String, String> checksumToDocId = dcu
                     .filter(d -> d.getContentChecksum() != null)
                     .mapToPair(d -> new Tuple2<>(d.getContentChecksum().toString(), d.getId().toString()));
