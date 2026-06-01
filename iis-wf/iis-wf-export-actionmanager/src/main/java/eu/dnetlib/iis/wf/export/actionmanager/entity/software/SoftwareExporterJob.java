@@ -234,16 +234,12 @@ public class SoftwareExporterJob {
         forwardAction.setClazz(Relation.class);
         forwardAction.setPayload(buildRelation(documentId, softwareId, confidenceLevel, collectedFromKey));
 
-        AtomicAction<Relation> reverseAction = new AtomicAction<>();
-        reverseAction.setClazz(Relation.class);
-        reverseAction.setPayload(buildRelation(softwareId, documentId, confidenceLevel, collectedFromKey));
-
-        return Arrays.asList(forwardAction, reverseAction);
+        return Arrays.asList(forwardAction);
     }
 
     private static Relation buildRelation(String source, String target, Float confidenceLevel, String collectedFromKey) {
         return BuilderModuleHelper.createRelation(source, target, OafConstants.REL_TYPE_RESULT_RESULT,
-                OafConstants.SUBREL_TYPE_RELATIONSHIP, OafConstants.REL_CLASS_ISRELATEDTO, 
+                OafConstants.SUBREL_TYPE_RELATIONSHIP, OafConstants.REL_CLASS_CITES, 
                 BuilderModuleHelper.buildInferenceForConfidenceLevel(confidenceLevel, INFERENCE_PROVENANCE),
                 collectedFromKey);
     }

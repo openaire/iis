@@ -123,7 +123,7 @@ public class SoftwareExporterJobTest {
         // verifying relations
         List<AtomicAction<Relation>> capturedRelationActions = IteratorUtils.toList(SequenceFileTextValueReader.fromFile(outputRelationPath), text ->
                 AtomicActionDeserializationUtils.deserializeAction(text.toString()));
-        assertEquals(2, capturedRelationActions.size());
+        assertEquals(1, capturedRelationActions.size());
 
         for (int i = 0; i < capturedRelationActions.size(); i++) {
             verifyAction(capturedRelationActions.get(i), Relation.class);

@@ -80,9 +80,7 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/relations/relations-actionset-id</arg>
             <arg>
-                -Pexpectation_file_paths=eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/document_to_referencedDocument.properties,
-                eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/referencedDocument_to_document.properties
-            </arg>
+                -Pexpectation_file_paths=eu/dnetlib/iis/wf/export/actionmanager/relation/citation/default/output/document_to_referencedDocument.properties</arg>
         </java>
         <ok to="report-consumer"/>
         <error to="fail"/>

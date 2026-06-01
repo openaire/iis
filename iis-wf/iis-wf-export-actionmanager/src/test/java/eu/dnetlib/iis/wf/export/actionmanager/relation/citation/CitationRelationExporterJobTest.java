@@ -70,27 +70,21 @@ class CitationRelationExporterJobTest extends TestWithSharedSparkSession {
                 .map(Tuple2::_2)
                 .map(x -> AtomicActionDeserializationUtils.<Relation>deserializeAction(x.toString()))
                 .collect();
-        assertEquals(2, atomicActions.size());
+        assertEquals(1, atomicActions.size());
         assertThat(atomicActions, hasItem(matchingAtomicAction(
                 createAtomicAction("DocumentId", "DestinationDocumentId", OafConstants.REL_CLASS_CITES, 1.0f)
-        )));
-        assertThat(atomicActions, hasItem(matchingAtomicAction(
-                createAtomicAction("DestinationDocumentId", "DocumentId", OafConstants.REL_CLASS_ISCITEDBY, 1.0f)
         )));
 
         assertEquals(1, HdfsTestUtils.countFiles(spark().sparkContext().hadoopConfiguration(), outputReportPath.toString(),
                 DataStore.AVRO_FILE_EXT));
         List<ReportEntry> reportEntries = new AvroDatasetReader(spark()).read(outputReportPath.toString(), ReportEntry.SCHEMA$, ReportEntry.class)
                 .collectAsList();
-        assertEquals(3, reportEntries.size());
+        assertEquals(2, reportEntries.size());
         assertThat(reportEntries, hasItem(
                 ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.references", 1)
         ));
         assertThat(reportEntries, hasItem(
                 ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.cites.docs", 1)
-        ));
-        assertThat(reportEntries, hasItem(
-                ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.iscitedby.docs", 1)
         ));
     }
 
