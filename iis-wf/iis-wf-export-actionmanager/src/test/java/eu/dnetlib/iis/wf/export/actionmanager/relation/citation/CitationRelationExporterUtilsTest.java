@@ -112,7 +112,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
 
         @Test
         @DisplayName("Processing returns dataset with relations for valid input")
-        public void givenOneCitationsRecord_whenProcessed_thenDataSetWithTwoRelationsIsReturned() {
+        public void givenOneCitationsRecord_whenProcessed_thenDataSetWithOneRelationIsReturned() {
             AvroDataFrameSupport avroDataFrameSupport = new AvroDataFrameSupport(spark());
             List<CitationEntry> citationEntries = Arrays.asList(
                     createCitationEntry("DestinationDocumentId", 0.9f),
