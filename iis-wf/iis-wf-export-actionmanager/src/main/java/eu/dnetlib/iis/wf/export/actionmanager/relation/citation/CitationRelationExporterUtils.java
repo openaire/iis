@@ -12,7 +12,6 @@ import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
 import org.apache.hadoop.io.Text;
 import org.apache.spark.api.java.function.FilterFunction;
-import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
@@ -21,7 +20,6 @@ import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.expressions.UserDefinedFunction;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 import static org.apache.spark.sql.functions.*;
 
@@ -31,7 +29,6 @@ public class CitationRelationExporterUtils {
             InfoSpaceConstants.INFERENCE_PROVENANCE_SEPARATOR + AlgorithmName.document_referencedDocuments;
     private static final String REPORT_ENTRY_KEY_REFERENCES = "processing.citationMatching.relation.references";
     private static final String REPORT_ENTRY_KEY_CITES_DOCS = "processing.citationMatching.relation.cites.docs";
-    private static final String REPORT_ENTRY_KEY_ISCITEDBY_DOCS = "processing.citationMatching.relation.iscitedby.docs";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private CitationRelationExporterUtils() {
@@ -51,7 +48,7 @@ public class CitationRelationExporterUtils {
                 .groupBy(col("documentId"), col("destinationDocumentId"))
                 .agg(max(col("confidenceLevel")).as("confidenceLevel"))
                 .as(Encoders.bean(DocumentRelation.class))
-                .flatMap(toRelationFlatMapFn(collectedFromKey), Encoders.kryo(Relation.class));
+                .map(toRelationMapFn(collectedFromKey), Encoders.kryo(Relation.class));
     }
 
     private static Dataset<Row> documentIdAndCitationEntry(Dataset<Row> citations) {
@@ -60,19 +57,13 @@ public class CitationRelationExporterUtils {
                         explode(col("citations")).as("citationEntry"));
     }
 
-    private static FlatMapFunction<DocumentRelation, Relation> toRelationFlatMapFn(final String collectedFromKey) {
-        return (FlatMapFunction<DocumentRelation, Relation>) documentRelation -> {
-            Relation forwardRelation = buildRelation(documentRelation.documentId,
+    private static MapFunction<DocumentRelation, Relation> toRelationMapFn(final String collectedFromKey) {
+        return (MapFunction<DocumentRelation, Relation>) documentRelation -> {
+            return buildRelation(documentRelation.documentId,
                     documentRelation.destinationDocumentId,
                     OafConstants.REL_CLASS_CITES,
                     documentRelation.confidenceLevel,
                     collectedFromKey);
-            Relation backwardRelation = buildRelation(documentRelation.destinationDocumentId,
-                    documentRelation.documentId,
-                    OafConstants.REL_CLASS_ISCITEDBY,
-                    documentRelation.confidenceLevel,
-                    collectedFromKey);
-            return Stream.of(forwardRelation, backwardRelation).iterator();
         };
     }
 
@@ -134,12 +125,10 @@ public class CitationRelationExporterUtils {
     public static Dataset<ReportEntry> relationsToReportEntries(SparkSession spark, Dataset<Relation> relations) {
         long totalRelationCount = totalRelationCount(relations);
         long uniqueCitesRelationCount = uniqueCitesRelationCount(relations);
-        long uniqueIsCitedByRelationCount = uniqueIsCitedByRelationCount(relations);
 
         return spark.createDataset(Arrays.asList(
                 ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_REFERENCES, totalRelationCount),
-                ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_CITES_DOCS, uniqueCitesRelationCount),
-                ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_ISCITEDBY_DOCS, uniqueIsCitedByRelationCount)
+                ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_CITES_DOCS, uniqueCitesRelationCount)
         ), Encoders.kryo(ReportEntry.class));
     }
 
@@ -151,10 +140,6 @@ public class CitationRelationExporterUtils {
 
     private static long uniqueCitesRelationCount(Dataset<Relation> relations) {
         return uniqueRelationCountByRelClass(relations, OafConstants.REL_CLASS_CITES);
-    }
-
-    private static long uniqueIsCitedByRelationCount(Dataset<Relation> relations) {
-        return uniqueRelationCountByRelClass(relations, OafConstants.REL_CLASS_ISCITEDBY);
     }
 
     private static long uniqueRelationCountByRelClass(Dataset<Relation> relations, String relClass) {

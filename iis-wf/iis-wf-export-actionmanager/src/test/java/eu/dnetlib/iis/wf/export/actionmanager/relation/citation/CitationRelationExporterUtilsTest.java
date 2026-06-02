@@ -112,7 +112,7 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
 
         @Test
         @DisplayName("Processing returns dataset with relations for valid input")
-        public void givenOneCitationsRecord_whenProcessed_thenDataSetWithTwoRelationsIsReturned() {
+        public void givenOneCitationsRecord_whenProcessed_thenDataSetWithOneRelationIsReturned() {
             AvroDataFrameSupport avroDataFrameSupport = new AvroDataFrameSupport(spark());
             List<CitationEntry> citationEntries = Arrays.asList(
                     createCitationEntry("DestinationDocumentId", 0.9f),
@@ -126,11 +126,9 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
 
             List<Relation> results = processCitations(citationsDF, isValidConfidenceLevel, collectedFromKey).collectAsList();
 
-            assertEquals(2, results.size());
+            assertEquals(1, results.size());
             assertThat(results, hasItem(matchingRelation(
                     createRelation("DocumentId", "DestinationDocumentId", OafConstants.REL_CLASS_CITES, 0.9f))));
-            assertThat(results, hasItem(matchingRelation(
-                    createRelation("DestinationDocumentId", "DocumentId", OafConstants.REL_CLASS_ISCITEDBY, 0.9f))));
         }
     }
 
@@ -152,17 +150,14 @@ class CitationRelationExporterUtilsTest extends TestWithSharedSparkSession {
     public void givenRelations_whenCreatingReportEntries_thenReportEntriesAreReturned() {
         Dataset<Relation> relations = spark().createDataset(Arrays.asList(
                 createRelation("source", "target1", OafConstants.REL_CLASS_CITES, 0.1f),
-                createRelation("target1", "source", OafConstants.REL_CLASS_ISCITEDBY, 0.1f),
-                createRelation("source", "target2", OafConstants.REL_CLASS_CITES, 0.2f),
-                createRelation( "target2", "source", OafConstants.REL_CLASS_ISCITEDBY, 0.2f)
+                createRelation("source", "target2", OafConstants.REL_CLASS_CITES, 0.2f)
         ), Encoders.kryo(Relation.class));
 
         List<ReportEntry> results = relationsToReportEntries(spark(), relations).collectAsList();
 
-        assertEquals(3, results.size());
+        assertEquals(2, results.size());
         assertThat(results, hasItem(ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.references", 2)));
         assertThat(results, hasItem(ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.cites.docs", 1)));
-        assertThat(results, hasItem(ReportEntryFactory.createCounterReportEntry("processing.citationMatching.relation.iscitedby.docs", 2)));
     }
 
     private static Citations createCitations(String documentId, List<CitationEntry> citationEntries) {

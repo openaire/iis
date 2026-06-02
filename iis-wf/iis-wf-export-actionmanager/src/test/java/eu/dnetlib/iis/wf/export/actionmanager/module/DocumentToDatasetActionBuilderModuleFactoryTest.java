@@ -51,23 +51,14 @@ public class DocumentToDatasetActionBuilderModuleFactoryTest extends AbstractAct
 
         // assert
         assertNotNull(actions);
-        assertEquals(2, actions.size());
+        assertEquals(1, actions.size());
 
         AtomicAction<Relation> action = actions.get(0);
         assertNotNull(action);
         assertEquals(Relation.class, action.getClazz());
         Expectations expectations = new Expectations(docId, datasetId, matchStrength, 
                 OafConstants.REL_TYPE_RESULT_RESULT, OafConstants.SUBREL_TYPE_RELATIONSHIP, 
-                OafConstants.REL_CLASS_REFERENCES);
-        assertOafRel(action.getPayload(), expectations);
-        
-//      checking backward relation
-        action = actions.get(1);
-        assertNotNull(action);
-        assertEquals(Relation.class, action.getClazz());
-        expectations.setSource(datasetId);
-        expectations.setTarget(docId);
-        expectations.setRelationClass(OafConstants.REL_CLASS_IS_REFERENCED_BY);
+                OafConstants.REL_CLASS_CITES);
         assertOafRel(action.getPayload(), expectations);
     }
     
