@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
 import java.io.Serializable;
+import java.util.Collections;
 
 import com.google.common.base.Preconditions;
 
@@ -32,6 +33,8 @@ public class AffMatchResultConverter implements Serializable {
         MatchedOrganization matchedOrganization = new MatchedOrganization();
         
         matchedOrganization.setDocumentId(affMatchResult.getAffiliation().getDocumentId());
+
+        matchedOrganization.setAffiliationPositions(Collections.singletonList(affMatchResult.getAffiliation().getPosition()));
         
         matchedOrganization.setOrganizationId(affMatchResult.getOrganization().getId());
         

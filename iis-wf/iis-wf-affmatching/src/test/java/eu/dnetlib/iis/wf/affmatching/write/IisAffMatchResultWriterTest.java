@@ -18,9 +18,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -203,7 +205,8 @@ public class IisAffMatchResultWriterTest {
     private void assertExtractDocOrgIdFunction(Function<MatchedOrganization, Tuple2<CharSequence, CharSequence>> function) throws Exception {
         
         // given
-        MatchedOrganization matchedOrg = new MatchedOrganization("DOC_ID", "ORG_ID", 0.6f);
+        List<Integer> positions = Collections.singletonList(1);
+        MatchedOrganization matchedOrg = new MatchedOrganization("DOC_ID", positions, "ORG_ID", 0.6f);
         
         // execute
         Tuple2<CharSequence, CharSequence> extractedDocOrgId = function.call(matchedOrg);

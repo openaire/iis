@@ -22,9 +22,8 @@ import pl.edu.icm.sparkutils.test.SparkJobExecutor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
 
 import static com.google.common.collect.ImmutableList.of;
 import static com.google.common.collect.Lists.newArrayList;
@@ -241,7 +240,9 @@ public class AffMatchingDocOrgQualityTest {
         
         for (SimpleAffMatchResult simpleResult : simpleAffMatchResults) {
             
-            MatchedOrganization expectedResult = new MatchedOrganization(simpleResult.getDocumentId(), simpleResult.getOrganizationId(), 1f);
+            MatchedOrganization expectedResult = new MatchedOrganization(simpleResult.getDocumentId(), 
+            Collections.singletonList(simpleResult.getAffiliationPosition()),
+            simpleResult.getOrganizationId(), 1f);
             
             
             if (!expectedResults.contains(expectedResult)) {

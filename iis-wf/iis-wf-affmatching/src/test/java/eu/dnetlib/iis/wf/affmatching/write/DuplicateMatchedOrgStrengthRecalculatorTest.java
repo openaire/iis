@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author madryk
  */
@@ -16,10 +20,13 @@ public class DuplicateMatchedOrgStrengthRecalculatorTest {
     
     private DuplicateMatchedOrgStrengthRecalculator strengthRecalculator = new DuplicateMatchedOrgStrengthRecalculator();
     
+    private List<Integer> positions1 = Collections.singletonList(1);
+
+    private List<Integer> positions2 = Collections.singletonList(2);
+
+    private MatchedOrganization matchedOrganization1 = new MatchedOrganization("DOC_ID", positions1, "ORG_ID", 0.6f);
     
-    private MatchedOrganization matchedOrganization1 = new MatchedOrganization("DOC_ID", "ORG_ID", 0.6f);
-    
-    private MatchedOrganization matchedOrganization2 = new MatchedOrganization("DOC_ID", "ORG_ID", 0.3f);
+    private MatchedOrganization matchedOrganization2 = new MatchedOrganization("DOC_ID", positions2, "ORG_ID", 0.3f);
     
     
     //------------------------ TESTS --------------------------
@@ -63,6 +70,7 @@ public class DuplicateMatchedOrgStrengthRecalculatorTest {
         // assert
         assertEquals("DOC_ID", retMatchedOrganization.getDocumentId());
         assertEquals("ORG_ID", retMatchedOrganization.getOrganizationId());
+        assertEquals(Arrays.asList(1, 2), retMatchedOrganization.getAffiliationPositions());
         assertEquals(0.72f, retMatchedOrganization.getMatchStrength(), FLOAT_COMPARE_EPSILON);
     }
     

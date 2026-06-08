@@ -1,20 +1,24 @@
 {
     "documentId":"DOC_1",
+    "affiliationPositions": null,
     "organizationId":"20|CNR",
     "matchStrength":1.0
 }
 {
     "documentId":"DOC_2",
+    "affiliationPositions": null,
     "organizationId":"20|UCB",
     "matchStrength":1.0
 }
 {
     "documentId":"DOC_3",
+    "affiliationPositions": null,
     "organizationId":"20|UCB",
     "matchStrength":1.0
 }
 {
     "documentId":"DOC_1",
+    "affiliationPositions": null,
     "organizationId":"20|UCB",
     "matchStrength":0.9
 }
