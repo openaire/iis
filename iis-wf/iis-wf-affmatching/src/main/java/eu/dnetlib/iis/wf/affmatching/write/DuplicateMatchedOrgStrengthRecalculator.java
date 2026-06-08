@@ -56,9 +56,11 @@ public class DuplicateMatchedOrgStrengthRecalculator implements Serializable {
      * @return combined list of affiliation positions of two {@link MatchedOrganization}s
      */
     private List<Integer> combinePositions(MatchedOrganization match1, MatchedOrganization match2) {
-        return Stream.concat(match1.getAffiliationPositions().stream(), match2.getAffiliationPositions().stream())
-                                       .distinct()
-                                       .sorted()
-                                       .collect(Collectors.toList());
+        Stream<Integer> positions1 = match1.getAffiliationPositions() != null ? match1.getAffiliationPositions().stream() : Stream.empty();
+        Stream<Integer> positions2 = match2.getAffiliationPositions() != null ? match2.getAffiliationPositions().stream() : Stream.empty();
+        return Stream.concat(positions1, positions2)
+                     .distinct()
+                     .sorted()
+                     .collect(Collectors.toList());
     }
 }

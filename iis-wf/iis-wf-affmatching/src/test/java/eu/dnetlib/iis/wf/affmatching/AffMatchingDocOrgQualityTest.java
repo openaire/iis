@@ -241,7 +241,7 @@ public class AffMatchingDocOrgQualityTest {
         for (SimpleAffMatchResult simpleResult : simpleAffMatchResults) {
             
             MatchedOrganization expectedResult = new MatchedOrganization(simpleResult.getDocumentId(), 
-            Collections.singletonList(simpleResult.getAffiliationPosition()),
+            null,
             simpleResult.getOrganizationId(), 1f);
             
             

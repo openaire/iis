@@ -74,4 +74,19 @@ public class DuplicateMatchedOrgStrengthRecalculatorTest {
         assertEquals(0.72f, retMatchedOrganization.getMatchStrength(), FLOAT_COMPARE_EPSILON);
     }
     
+    @Test
+    public void recalculateStrength_NULL_AFFILIATION_POSITIONS() {
+        
+        // given
+        matchedOrganization1.setAffiliationPositions(null);
+        matchedOrganization2.setAffiliationPositions(null);        
+        // execute
+        MatchedOrganization retMatchedOrganization = strengthRecalculator.recalculateStrength(matchedOrganization1, matchedOrganization2);
+        
+        // assert
+        assertEquals("DOC_ID", retMatchedOrganization.getDocumentId());
+        assertEquals("ORG_ID", retMatchedOrganization.getOrganizationId());
+        assertEquals(Collections.emptyList(), retMatchedOrganization.getAffiliationPositions());
+        assertEquals(0.72f, retMatchedOrganization.getMatchStrength(), FLOAT_COMPARE_EPSILON);
+    }
 }
