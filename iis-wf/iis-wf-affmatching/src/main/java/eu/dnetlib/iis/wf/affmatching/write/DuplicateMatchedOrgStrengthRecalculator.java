@@ -52,8 +52,8 @@ public class DuplicateMatchedOrgStrengthRecalculator implements Serializable {
     /**
      * Combines affiliation positions of two {@link MatchedOrganization}s. Resulting list of positions is sorted and does not contain duplicates.
      * @param match1 first {@link MatchedOrganization} to combine positions from
-     * @param match2 second {@link MatchedOrganization}s to combine positions from
-     * @return combined list of affiliation positions of two {@link MatchedOrganization}s
+     * @param match2 second {@link MatchedOrganization} to combine positions from
+     * @return sorted list of distinct affiliation positions from both {@link MatchedOrganization}s
      */
     private List<Integer> combinePositions(MatchedOrganization match1, MatchedOrganization match2) {
         Stream<Integer> positions1 = match1.getAffiliationPositions() != null ? match1.getAffiliationPositions().stream() : Stream.empty();
