@@ -7,6 +7,9 @@ protocol IIS {
 
         // eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata#id
         string documentId;
+
+        // related affiliation positions in the document, can be null when the match comes from the project based matching
+        union { null , array<int> } affiliationPositions = null;
         
         // eu.dnetlib.iis.importer.schemas.Organization#id       
         string organizationId;

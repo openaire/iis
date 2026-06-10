@@ -1,8 +1,18 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
-import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
-import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -15,13 +25,12 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import eu.dnetlib.iis.common.schemas.ReportEntry;
+import eu.dnetlib.iis.wf.affmatching.model.AffMatchResult;
+import eu.dnetlib.iis.wf.affmatching.model.MatchedOrganization;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
 * @author Łukasz Dumiszewski
@@ -203,7 +212,8 @@ public class IisAffMatchResultWriterTest {
     private void assertExtractDocOrgIdFunction(Function<MatchedOrganization, Tuple2<CharSequence, CharSequence>> function) throws Exception {
         
         // given
-        MatchedOrganization matchedOrg = new MatchedOrganization("DOC_ID", "ORG_ID", 0.6f);
+        List<Integer> positions = Collections.singletonList(1);
+        MatchedOrganization matchedOrg = new MatchedOrganization("DOC_ID", positions, "ORG_ID", 0.6f);
         
         // execute
         Tuple2<CharSequence, CharSequence> extractedDocOrgId = function.call(matchedOrg);

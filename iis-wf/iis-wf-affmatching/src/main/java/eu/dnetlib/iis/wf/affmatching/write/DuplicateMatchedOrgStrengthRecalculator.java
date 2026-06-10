@@ -1,6 +1,9 @@
 package eu.dnetlib.iis.wf.affmatching.write;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 
@@ -41,6 +44,23 @@ public class DuplicateMatchedOrgStrengthRecalculator implements Serializable {
         float newMatchStrength = match1.getMatchStrength() + (remainingMatchStrength * match2.getMatchStrength());
         
         
-        return new MatchedOrganization(match1.getDocumentId(), match1.getOrganizationId(), newMatchStrength);
+        return new MatchedOrganization(match1.getDocumentId(), combinePositions(match1, match2), match1.getOrganizationId(), newMatchStrength);
+    }
+
+    //------------------------ PRIVATE --------------------------
+
+    /**
+     * Combines affiliation positions of two {@link MatchedOrganization}s. Resulting list of positions is sorted and does not contain duplicates.
+     * @param match1 first {@link MatchedOrganization} to combine positions from
+     * @param match2 second {@link MatchedOrganization} to combine positions from
+     * @return sorted list of distinct affiliation positions from both {@link MatchedOrganization}s
+     */
+    private List<Integer> combinePositions(MatchedOrganization match1, MatchedOrganization match2) {
+        Stream<Integer> positions1 = match1.getAffiliationPositions() != null ? match1.getAffiliationPositions().stream() : Stream.empty();
+        Stream<Integer> positions2 = match2.getAffiliationPositions() != null ? match2.getAffiliationPositions().stream() : Stream.empty();
+        return Stream.concat(positions1, positions2)
+                     .distinct()
+                     .sorted()
+                     .collect(Collectors.toList());
     }
 }

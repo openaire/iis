@@ -84,6 +84,7 @@ public class AffMatchingDedupJob {
     private static MatchedOrganizationWithProvenance buildMatchedOrganizationWithProvenance(Tuple2<MatchedOrganization,String> source) {
         MatchedOrganizationWithProvenance.Builder builder = MatchedOrganizationWithProvenance.newBuilder();
         builder.setDocumentId(source._1.getDocumentId());
+        builder.setAffiliationPositions(source._1.getAffiliationPositions());
         builder.setOrganizationId(source._1.getOrganizationId());
         builder.setMatchStrength(source._1.getMatchStrength());
         builder.setProvenance(source._2);

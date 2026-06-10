@@ -1,5 +1,23 @@
 package eu.dnetlib.iis.wf.affmatching;
 
+import static com.google.common.collect.ImmutableList.of;
+import static com.google.common.collect.Lists.newArrayList;
+import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
+import static eu.dnetlib.iis.common.utils.AvroTestUtils.readLocalAvroDataStore;
+import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
+import static eu.dnetlib.iis.common.utils.JsonTestUtils.readMultipleJsons;
+import static java.util.stream.Collectors.toList;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.importer.schemas.Organization;
 import eu.dnetlib.iis.importer.schemas.ProjectToOrganization;
@@ -11,28 +29,9 @@ import eu.dnetlib.iis.wf.affmatching.read.AffiliationConverter;
 import eu.dnetlib.iis.wf.affmatching.read.AffiliationReader;
 import eu.dnetlib.iis.wf.affmatching.read.AffiliationReaderFactory;
 import eu.dnetlib.iis.wf.affmatching.read.IisAffiliationReader;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
 import pl.edu.icm.sparkutils.test.SparkJobExecutor;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.List;
-import java.util.function.BiFunction;
-
-import static com.google.common.collect.ImmutableList.of;
-import static com.google.common.collect.Lists.newArrayList;
-import static eu.dnetlib.iis.common.utils.AvroTestUtils.createLocalAvroDataStore;
-import static eu.dnetlib.iis.common.utils.AvroTestUtils.readLocalAvroDataStore;
-import static eu.dnetlib.iis.common.utils.JsonAvroTestUtils.readMultipleJsonDataStores;
-import static eu.dnetlib.iis.common.utils.JsonTestUtils.readMultipleJsons;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Affiliation matching module test that measures quality of matching.<br/>
@@ -241,7 +240,9 @@ public class AffMatchingDocOrgQualityTest {
         
         for (SimpleAffMatchResult simpleResult : simpleAffMatchResults) {
             
-            MatchedOrganization expectedResult = new MatchedOrganization(simpleResult.getDocumentId(), simpleResult.getOrganizationId(), 1f);
+            MatchedOrganization expectedResult = new MatchedOrganization(simpleResult.getDocumentId(), 
+            null,
+            simpleResult.getOrganizationId(), 1f);
             
             
             if (!expectedResults.contains(expectedResult)) {
