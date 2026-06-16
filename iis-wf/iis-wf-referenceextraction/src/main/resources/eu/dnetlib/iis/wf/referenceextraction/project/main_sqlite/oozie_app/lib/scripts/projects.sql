@@ -351,7 +351,7 @@ delete from matched_undefined_miur_only where docid in (select docid from output
 delete from matched_undefined_wt_only where docid in (select docid from output_table where fundingClass1="WT");
 delete from matched_undefined_gsri where docid in (select docid from output_table where fundingClass1="GSRI");
 delete from hfri_unidentified_only where docid in (select docid from output_hfri);
-delete from hrb_unidentified_only where docid in (select docid from output_table where fundingClass1="HRB"));
+delete from hrb_unidentified_only where docid in (select docid from output_table where fundingClass1="HRB");
 
 delete from output_table where j2s(docid,id) in (select j2s(T.docid, T.id) from output_table S, output_table T where  S.docid = T.docid and S.id in (select id from grants where grantid in (select * from gold)) and T.id in (select id from grants where grantid in ("246686", "283595","643410")));
 delete from output_table where fundingclass1 = "EC" and j2s(docid, grantid) in (select j2s(docid, grantid) from output_table where fundingclass1 = "RCN");
