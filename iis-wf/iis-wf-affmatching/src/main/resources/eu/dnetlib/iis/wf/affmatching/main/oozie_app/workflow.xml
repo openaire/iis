@@ -67,7 +67,7 @@
         </property>
         <property>
             <name>sparkDriverMaxResultSize</name>
-            <value>2g</value>
+            <value>4g</value>
             <description>limit of total size of serialized results of all partitions for each Spark action in bytes</description>
         </property>
         <property>
