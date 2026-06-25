@@ -1,7 +1,7 @@
 package eu.dnetlib.iis.wf.affmatching;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -83,11 +83,15 @@ public class AffMatchingService implements Serializable {
         
         
         JavaRDD<AffMatchAffiliation> normalizedAffiliations = affiliations.map(aff -> affMatchAffiliationNormalizer.normalize(aff)).filter(aff -> (StringUtils.isNotBlank(aff.getOrganizationName())));
+        // Cached because all matchers reuse these RDDs; without cache each matcher re-reads from source
+        normalizedAffiliations.cache();
         
         JavaRDD<AffMatchOrganization> normalizedOrganizations = organizations.map(org -> affMatchOrganizationNormalizer.normalize(org)).filter(org -> (StringUtils.isNotBlank(org.getName())));
         
         
         JavaRDD<AffMatchOrganization> enrichedOrganizations = normalizedOrganizations.map(x -> affMatchOrganizationAltNameFiller.fillAlternativeNames(x));
+        // Cached because all matchers reuse these RDDs; without cache each matcher re-reads from source
+        enrichedOrganizations.cache();
         
         JavaRDD<AffMatchResult> allMatchedAffOrgs = doMatch(sc, normalizedAffiliations, enrichedOrganizations);
         
@@ -134,21 +138,36 @@ public class AffMatchingService implements Serializable {
 
     private JavaRDD<AffMatchResult> doMatch(JavaSparkContext sc, JavaRDD<AffMatchAffiliation> normalizedAffiliations, JavaRDD<AffMatchOrganization> normalizedOrganizations) {
         
-        JavaPairRDD<Tuple2<String, String>, AffMatchResult> allMatchedAffOrgsWithKey = sc.parallelizePairs(new ArrayList<>());
+        // Start with an empty typed RDD rather than parallelizePairs on an empty list to avoid
+        // carrying an empty RDD through all union() calls
+        JavaPairRDD<Tuple2<String, String>, AffMatchResult> allMatchedAffOrgsWithKey = null;
         
         
         for (AffOrgMatcher affOrgMatcher : affOrgMatchers) {
             
             JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(normalizedAffiliations, normalizedOrganizations);
             
+            // Deduplicate within this matcher's results and force a shuffle boundary.
+            // This breaks the single giant Stage 16 into one smaller stage per matcher,
+            // making each stage independently sized, monitored, and retryable.
+            // It also reduces data volume before the cross-matcher union below.
             JavaPairRDD<Tuple2<String, String>, AffMatchResult> matchedAffOrgsWithKey = matchedAffOrgs
-                    .keyBy(x -> new Tuple2<>(x.getAffiliation().getId(), x.getOrganization().getId()));
+                    .keyBy(x -> new Tuple2<>(x.getAffiliation().getId(), x.getOrganization().getId()))
+                    .reduceByKey((r1, r2) -> affMatchResultChooser.chooseBetter(r1, r2));
             
-            allMatchedAffOrgsWithKey = allMatchedAffOrgsWithKey.union(matchedAffOrgsWithKey);
-            
+            if (allMatchedAffOrgsWithKey == null) {
+                allMatchedAffOrgsWithKey = matchedAffOrgsWithKey;
+            } else {
+                allMatchedAffOrgsWithKey = allMatchedAffOrgsWithKey.union(matchedAffOrgsWithKey);
+            }
             
         }
         
+        if (allMatchedAffOrgsWithKey == null) {
+            return sc.emptyRDD();
+        }
+        
+        // Final cross-matcher deduplication: keep the best result when two matchers agreed on the same pair
         JavaRDD<AffMatchResult> allMatchedAffOrgs = allMatchedAffOrgsWithKey
                 .reduceByKey((r1, r2) -> affMatchResultChooser.chooseBetter(r1, r2))
                 .values();
