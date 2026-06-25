@@ -36,7 +36,9 @@ create table grants as select acronym,
      from 
           (setschema 'acronym,normalizedacro,grantid,fundingclass1,fundingclass2,id,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10' 
           select case when c1 is null then "UNKNOWN" else c1 end as acronym, 
-                 case when c1 is not null then regexpr("[_\s]",normalizetext(lower(c1)),"[_\s]") else "unknown" end as normalizedacro, 
+                 case when c1 is not null then regexpr("[_\s]",normalizetext(lower(c1)),"[_\s]") 
+                      when c4 = "EC::ERASMUS+" then regexpr("-| ", c3,"") 
+                      else "unknown" end as normalizedacro, 
                  c3 as grantid,strsplit(c4,"delimiter:::") as fundingClass,c2 as id, 
                  jsonpath(c5,'$.NWOgebied','$.dossiernr','$.orgname', '$.activity', '$.administeringic', '$.serialnumber', '$.coreprojectnum','$.alias','$.keywords','$.settore') 
                        from 
