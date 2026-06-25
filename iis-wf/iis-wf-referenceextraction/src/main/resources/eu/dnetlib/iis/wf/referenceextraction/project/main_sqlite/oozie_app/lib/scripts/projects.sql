@@ -187,7 +187,34 @@ select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'text
          where regexprmatches("\b"||gid||"\b",j2s(prev,middle,next)) and (regexpcountuniquematches(lower(terms), lower(j2s(prev,middle,next))) = lt or regexpcountuniquematches(lower(terms), lower(j2s(prev,middle,next)))>1)) 
 group by docid,id
 
+union all
 
+
+select jdict('documentId', docid,'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, fundingclass1, grantid
+from (
+        select docid, prev, middle ,next, regexpr_prev_middle, id, grantid,fundingclass1
+        from (
+                select docid, prev, middle ,next, regexpr_prev_middle, id, grantid,fundingclass1
+                from (
+                        select * from (
+                            select docid, prev, middle, next, regexpr_prev_middle
+                            from (
+                                  select docid, prev, middle, next, jsplitv(regexpr_prev_middle) as regexpr_prev_middle
+                                  from (
+                                          select regexprfindall("(\d{4}-? ?\d-? ?[A-Z]{2}\d{2}-? ?[A-Z]{2}\d{3}-? ?[A-Z]{3}-? ?[\d]{9})", prev||middle) as regexpr_prev_middle, docid,  middle, prev, next
+                                          from ( setschema 'docid,prev,middle,next' select c1, textwindow2s(regexpr("\n",c2," "), 10, 1, 10, "\d{9}") from pubs )
+                                          where regexpr_prev_middle is not null
+                                )
+                              )
+                              group by docid, prev, middle, next
+                            )
+                        where regexprmatches(regexpr("(\d{5,})",regexpr_prev_middle), middle)
+                ), grants 
+
+                where fundingclass2 = "ERASMUS+" and (middle = grantid  or regexpr("-| ", regexpr_prev_middle,"") = normalizedacro)
+            )
+)
+   
 union all
 -- CHIST-ERA
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, fundingclass1, grantid from
