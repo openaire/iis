@@ -211,10 +211,9 @@ from (
                         where regexprmatches(regexpr("(\d{5,})",regexpr_prev_middle), middle)
                 ), grants 
 
-                where fundingclass2 = "ERASMUS+" and (middle = grantid  or regexpr("-| ", regexpr_prev_middle,"") = normalizedacro)
+                where fundingclass2 = "ERASMUS+" and ((middle = grantid  or regexpr("-| ", regexpr_prev_middle,"") = normalizedacro) and grantid like "%-%-%")
             )
 )
-   
 union all
 -- CHIST-ERA
 select jdict('documentId', docid, 'projectId', id, 'confidenceLevel', 0.8, 'textsnippet', (prev||" <<< "||middle||" >>> "||next)) as C1, docid, id, fundingclass1, grantid from
