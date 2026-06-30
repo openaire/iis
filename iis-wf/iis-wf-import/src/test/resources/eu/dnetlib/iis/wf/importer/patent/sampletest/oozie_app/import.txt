@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-import_patent classpath eu/dnetlib/iis/wf/importer/patent/oozie_app

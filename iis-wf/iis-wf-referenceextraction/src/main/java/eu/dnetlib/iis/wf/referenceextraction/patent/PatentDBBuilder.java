@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
@@ -36,6 +38,7 @@ public class PatentDBBuilder extends AbstractDBBuilder<PatentReferenceExtraction
 
         String targetDbLocation = System.getProperty("java.io.tmpdir") + File.separatorChar + "patents.db";
         File targetDbFile = new File(targetDbLocation);
+        FileUtils.copyFile(new File("scripts/base_lens.db"), targetDbFile);
         targetDbFile.setWritable(true);
 
         return new ProcessExecutionContext(

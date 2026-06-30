@@ -82,9 +82,9 @@
                 eu.dnetlib.iis.referenceextraction.softwareurl.schemas.SoftwareHeritageOrigin,
                 eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/sh_origins.json}
             </arg>
-			<arg>-C{patent,
-				eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent,
-				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/patent.json}
+			<arg>-C{raw_patent,
+				eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput,
+				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/input/meta/raw_patent.json}
 			</arg>
 			<arg>-Odocument_metadata=${workingDir}/producer/document_metadata</arg>
 			<arg>-Odocument_to_project=${workingDir}/producer/document_to_project</arg>
@@ -98,7 +98,7 @@
 			<arg>-Odocument_text_wos=${workingDir}/producer/document_text_wos</arg>
 			<arg>-Odocument_text_classpath=${workingDir}/producer/document_text_classpath</arg>
             <arg>-Osoftwareheritage_origins=${workingDir}/producer/softwareheritage_origins</arg>
-			<arg>-Opatent=${workingDir}/producer/patent</arg>
+			<arg>-Oraw_patent=${workingDir}/producer/raw_patent</arg>
 		</java>
 		<ok to="document_text_producer" />
 		<error to="fail" />
@@ -201,9 +201,34 @@
 				</property>
 			</configuration>
 		</map-reduce>
-		<ok to="primary_processing" />
+		<ok to="referenceextraction_patent_sqlite_builder" />
 		<error to="fail" />
 	</action>
+
+	<!-- preparing SQLite database with patents-->
+	<action name="referenceextraction_patent_sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/patent_sqlite_builder/working_dir</value>
+                </property>
+                <property>
+                    <name>input_patent</name>
+                    <value>${workingDir}/producer/raw_patent</value>
+                </property>
+                <property>
+                    <name>output_patent_db</name>
+                    <value>${workingDir}/patent_sqlite_builder/lens.db</value>
+                </property>
+            </configuration>
+        </sub-workflow>
+        <ok to="primary_processing"/>
+        <error to="fail"/>
+    </action>
+
 
 	<action name="primary_processing">
 		<sub-workflow>
@@ -311,8 +336,8 @@
                     <value>${workingDir}/producer/softwareheritage_origins</value>
                 </property>
 				<property>
-					<name>input_patent</name>
-					<value>${workingDir}/producer/patent</value>
+					<name>input_patent_db</name>
+					<value>${workingDir}/patent_sqlite_builder/lens.db</value>
 				</property>
                 <property>
                     <name>output_merged_metadata</name>
@@ -342,10 +367,6 @@
 					<name>output_document_to_patent</name>
 					<value>${workingDir}/exported/document_to_patent</value>
 				</property>
-                <property>
-                    <name>output_patent_metadata</name>
-                    <value>${workingDir}/exported/patent_metadata</value>
-                </property>
 				<property>
 					<name>output_document_to_pdb</name>
 					<value>${workingDir}/exported/document_to_pdb</value>
@@ -420,16 +441,8 @@
                     <value>eu.dnetlib.iis.common.lock.LockManagerFactoryMock</value>
                 </property>
                 <property>
-                    <name>patentLockManagerFactoryClassName</name>
-                    <value>eu.dnetlib.iis.common.lock.LockManagerFactoryMock</value>
-                </property>
-                <property>
                     <name>software_webcrawl_cache_location</name>
                     <value>${workingDir}/cache/software_webcrawl</value>
-                </property>
-                <property>
-                    <name>patent_cache_location</name>
-                    <value>${workingDir}/cache/patent</value>
                 </property>
 				<property>
 					<name>metric_pusher_creator_class_name</name>
@@ -439,56 +452,8 @@
 					<name>metric_pusher_address</name>
 					<value>${workingDir}/report/pushgateway</value>
 				</property>
-                <property>
-                    <name>patentMetadataRetrieverFacadeFactoryClassname</name>
-                    <value>eu.dnetlib.iis.wf.primary.processing.FileContentReturningPatentServiceFacadeFactory</value>
-                </property>
-                <property>
-                    <name>patentServiceAuthnConsumerKey</name>
-                    <value>expectedConsumerKey</value>
-                </property>
-                <property>
-                    <name>patentServiceAuthnConsumerSecret</name>
-                    <value>expectedConsumerSecret</value>
-                </property>
-                <property>
-                    <name>patentServiceEndpointAuthHost</name>
-                    <value>expectedAuthHost</value>
-                </property>
-                <property>
-                    <name>patentServiceEndpointAuthPort</name>
-                    <value>expectedAuthPort</value>
-                </property>
-                <property>
-                    <name>patentServiceEndpointAuthScheme</name>
-                    <value>expectedAuthScheme</value>
-                </property>
-                <property>
-                    <name>patentServiceEndpointAuthUriRoot</name>
-                    <value>expectedAuthUriRoot</value>
-                </property>
-                <property>
-                    <name>patentServiceEndpointOpsHost</name>
-                    <value>expectedOpsHost</value>
-                </property>
-                <property>
-                    <name>patentServiceEndpointOpsPort</name>
-                    <value>expectedOpsPort</value>
-                </property>
-                <property>
-                    <name>patentServiceEndpointOpsScheme</name>
-                    <value>expectedOpsScheme</value>
-                </property>
-                <property>
-                    <name>patentServiceEndpointOpsUriRoot</name>
-                    <value>expectedOpsUriRoot</value>
-                </property>
 				<property>
 					<name>affiliation_matching_number_of_emitted_files</name>
-					<value>1</value>
-				</property>
-				<property>
-					<name>referenceextraction_patent_number_of_emitted_filesa</name>
 					<value>1</value>
 				</property>
 				<property>
@@ -516,6 +481,11 @@
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_dataset.json}
 			</arg>
 			<arg>-Idocument_to_dataset=${workingDir}/exported/document_to_dataset</arg>
+			<arg>-C{document_to_patent,
+				eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
+				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_patent.json}
+			</arg>
+			<arg>-Idocument_to_patent=${workingDir}/exported/document_to_patent</arg>
 			<arg>-C{document_to_project,
 				eu.dnetlib.iis.referenceextraction.project.schemas.DocumentToProject,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_project.json}
@@ -551,11 +521,6 @@
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/document_to_patent.json}
 			</arg>
 			<arg>-Idocument_to_patent=${workingDir}/exported/document_to_patent</arg>
-            <arg>-C{patent_metadata,
-                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
-                eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/extracted_patent_metadata.json}
-            </arg>
-            <arg>-Ipatent_metadata=${workingDir}/exported/patent_metadata</arg>
 			<arg>-C{citation,
 				eu.dnetlib.iis.export.schemas.Citations,
 				eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/citations.json}
@@ -629,17 +594,14 @@
             <arg>-C{documentToDatasetTotalReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_dataset_total.json}</arg>
             <arg>-IdocumentToDatasetTotalReport=${workingDir}/report/document_to_dataset_total</arg>
             
-            <arg>-C{documentToProjectFunderReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_project_by_funder.json}</arg>
+            <arg>-C{documentToPatentReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_patent.json}</arg>
+            <arg>-IdocumentToPatentReport=${workingDir}/report/document_to_patent</arg>
+            
+			<arg>-C{documentToProjectFunderReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/document_to_project_by_funder.json}</arg>
             <arg>-IdocumentToProjectFunderReport=${workingDir}/report/document_to_project_by_funder</arg>
 
             <arg>-C{docSoftwareUrlWebcrawlReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_softwareurl_webcrawl.json}</arg>
             <arg>-IdocSoftwareUrlWebcrawlReport=${workingDir}/report/referenceextraction_software</arg>
-
-            <arg>-C{patentMetadataRetrieval,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_patent_metadata_retrieval.json}</arg>
-            <arg>-IpatentMetadataRetrieval=${workingDir}/report/patent_metadata_retrieval</arg>
-            
-            <arg>-C{patentMetadataExtraction,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/doc_patent_metadata_extraction.json}</arg>
-            <arg>-IpatentMetadataExtraction=${workingDir}/report/patent_metadata_extraction</arg>
 
             <arg>-C{execTimeReport,eu.dnetlib.iis.common.schemas.ReportEntry,eu/dnetlib/iis/wf/primary/processing/sampledataproducer/output/report/primary-processing-execution-times.json}</arg>
             <arg>-IexecTimeReport=${workingDir}/report/primary-processing-execution-times</arg>

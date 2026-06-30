@@ -30,13 +30,36 @@
                 eu.dnetlib.iis.metadataextraction.schemas.DocumentText,
                 eu/dnetlib/iis/common/data/empty.json}
             </arg>
-            <arg>-C{imported_patent,
-                eu.dnetlib.iis.referenceextraction.patent.schemas.ImportedPatent,
-                eu/dnetlib/iis/wf/referenceextraction/patent/data/imported_patent.json}
+            <arg>-C{raw_patent,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.PatentReferenceExtractionInput,
+                eu/dnetlib/iis/wf/referenceextraction/patent/data/raw_patent.json}
             </arg>
             <arg>-Odocument_text=${workingDir}/producer/document_text</arg>
-            <arg>-Oimported_patent=${workingDir}/producer/imported_patent</arg>
+            <arg>-Oraw_patent=${workingDir}/producer/raw_patent</arg>
         </java>
+        <ok to="referenceextraction_patent_sqlite_builder"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="referenceextraction_patent_sqlite_builder">
+        <sub-workflow>
+            <app-path>${wf:appPath()}/sqlite_builder</app-path>
+            <propagate-configuration/>
+            <configuration>
+                <property>
+                    <name>workingDir</name>
+                    <value>${workingDir}/sqlite_builder/working_dir</value>
+                </property>
+                <property>
+                    <name>input_patent</name>
+                    <value>${workingDir}/producer/raw_patent</value>
+                </property>
+                <property>
+                    <name>output_patent_db</name>
+                    <value>${workingDir}/sqlite_builder/lens.db</value>
+                </property>
+            </configuration>
+        </sub-workflow>
         <ok to="referenceextraction_patent"/>
         <error to="fail"/>
     </action>
@@ -51,40 +74,24 @@
                     <value>${workingDir}/referenceextraction_patent/working_dir</value>
                 </property>
                 <property>
-                    <name>patentMetadataRetrieverFacadeFactoryClassname</name>
-                    <value>eu.dnetlib.iis.wf.referenceextraction.patent.TestServiceFacadeFactories$FileContentReturningFacadeFactory</value>
-                </property>
-                <property>
-                    <name>patentLockManagerFactoryClassName</name>
-                    <value>eu.dnetlib.iis.common.lock.LockManagerFactoryMock</value>
-                </property>
-                <property>
                     <name>input_document_text</name>
                     <value>${workingDir}/producer/document_text</value>
                 </property>
                 <property>
-                    <name>input_patent</name>
-                    <value>${workingDir}/producer/imported_patent</value>
+                    <name>input_patent_db</name>
+                    <value>${workingDir}/sqlite_builder/lens.db</value>
                 </property>
                 <property>
                     <name>output_document_to_patent</name>
                     <value>${workingDir}/referenceextraction_patent/output</value>
                 </property>
                 <property>
-                    <name>output_patent_metadata</name>
-                    <value>${workingDir}/referenceextraction_patent/output_patent_metadata</value>
-                </property>
-                <property>
                     <name>output_report_root_path</name>
                     <value>${workingDir}/referenceextraction_patent/report</value>
                 </property>
                 <property>
-                    <name>cacheRootDir</name>
-                    <value>${workingDir}/referenceextraction_patent/working_dir</value>
-                </property>
-                <property>
-                    <name>referenceextraction_patent_number_of_emitted_filesa</name>
-                    <value>1</value>
+                    <name>output_report_relative_path</name>
+                    <value>document_to_patent</value>
                 </property>
             </configuration>
         </sub-workflow>
@@ -100,12 +107,7 @@
                 eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
                 eu/dnetlib/iis/common/data/empty.json}
             </arg>
-            <arg>-C{patent_metadata,
-                eu.dnetlib.iis.referenceextraction.patent.schemas.Patent,
-                eu/dnetlib/iis/common/data/empty.json}
-            </arg>
             <arg>-Idocument_to_patent=${workingDir}/referenceextraction_patent/output</arg>
-            <arg>-Ipatent_metadata=${workingDir}/referenceextraction_patent/output_patent_metadata</arg>
         </java>
         <ok to="end"/>
         <error to="fail"/>

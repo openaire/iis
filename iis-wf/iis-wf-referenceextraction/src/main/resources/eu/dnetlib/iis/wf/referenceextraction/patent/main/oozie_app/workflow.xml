@@ -53,10 +53,6 @@
             <name>spark2EventLogDir</name>
             <description>spark 2.* event log dir location</description>
         </property>
-        <property>
-            <name>cacheRootDir</name>
-            <description>patents retrieval cache root directory</description>
-        </property>
     </parameters>
 
     <global>
