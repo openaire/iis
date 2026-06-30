@@ -20,9 +20,17 @@
 			<arg>org.apache.avro.Schema.Type.NULL</arg>
 			<capture-output />
 		</java>
-		<ok to="producer" />
+		<ok to="purge-caches" />
 		<error to="fail" />
 	</action>
+
+	<action name="purge-caches">
+        <fs>
+            <delete path="${nameNode}${workingDir}/cache" />
+        </fs>
+        <ok to="producer"/>
+        <error to="fail"/>
+    </action>
 
 	<action name="producer">
 		<java>
