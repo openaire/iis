@@ -37,6 +37,11 @@
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_dataset.json}
             </arg>
             <arg>-Odocument_to_dataset=${workingDir}/producer/document_to_dataset</arg>
+            <arg>-C{document_to_patent,
+                eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent,
+                eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_patent.json}
+            </arg>
+            <arg>-Odocument_to_patent=${workingDir}/producer/document_to_patent</arg>
             <arg>-C{document_to_service,
                 eu.dnetlib.iis.referenceextraction.service.schemas.DocumentToService,
                 eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/input/document_to_service.json}
@@ -105,6 +110,10 @@
                     <value>${workingDir}/producer/document_to_dataset</value>
                 </property>
                 <property>
+                    <name>input_document_to_patent</name>
+                    <value>${workingDir}/producer/document_to_patent</value>
+                </property>
+                <property>
                     <name>input_document_to_service</name>
                     <value>${workingDir}/producer/document_to_service</value>
                 </property>
@@ -159,6 +168,10 @@
                 </property>
                 <property>
                     <name>action_set_id_document_referencedDatasets</name>
+                    <value>actionset-id</value>
+                </property>
+                <property>
+                    <name>action_set_id_document_patent</name>
                     <value>actionset-id</value>
                 </property>
                 <property>
@@ -219,6 +232,7 @@
         <path start="consumer-document_covid19" />
         <path start="consumer-document_similarity" />
         <path start="consumer-document_to_dataset" />
+        <path start="consumer-document_to_patent" />
         <path start="consumer-document_to_service" />
         <path start="consumer-document_to_project" />
         <path start="consumer-document_to_research_initiatives" />
@@ -288,6 +302,17 @@
             <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
             <arg>-Iseqfile=${workingDir}/output/document_referencedDatasets/actionset-id</arg>
             <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_dataset_1.properties</arg>
+        </java>
+        <ok to="joining" />
+        <error to="fail" />
+    </action>
+
+    <action name="consumer-document_to_patent">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.TestingConsumer</arg>
+            <arg>-Iseqfile=${workingDir}/output/document_patent/actionset-id</arg>
+            <arg>-Pexpectation_file_paths=/eu/dnetlib/iis/wf/export/actionmanager/sequencefile/sampledataproducer/output/document_to_patent_1.properties</arg>
         </java>
         <ok to="joining" />
         <error to="fail" />

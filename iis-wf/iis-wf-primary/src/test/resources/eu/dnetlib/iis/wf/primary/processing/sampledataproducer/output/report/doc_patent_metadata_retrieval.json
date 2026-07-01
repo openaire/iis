@@ -1,3 +1,0 @@
-{"key": "processing.referenceExtraction.patent.retrieval.fromCache.total", "type": "COUNTER", "value": "0"}
-{"key": "processing.referenceExtraction.patent.retrieval.processed.fault", "type": "COUNTER", "value": "0"}
-{"key": "processing.referenceExtraction.patent.retrieval.processed.total", "type": "COUNTER", "value": "1"}

@@ -167,8 +167,9 @@
             <description>WoS types</description>
         </property>
         <property>
-            <name>import_patent_tsv</name>
-            <description>input TSV file location with patents basic metadata</description>
+            <name>import_patent_db</name>
+            <value>/user/dnet.production/iis/cache/lens.org/lens.db</value>
+            <description>input database file location for patents basic metadata, currently fixed, to be dynamically imported in future</description>
         </property>
         <!-- import timeouts related -->
         <property>
@@ -218,10 +219,6 @@
         <property>
             <name>software_webcrawl_cache_location</name>
             <description>software reference extraction HDFS cache location</description>
-        </property>
-        <property>
-            <name>patent_cache_location</name>
-            <description>patent HDFS cache location</description>
         </property>
         <!-- project reference extraction related -->
         <property>
@@ -314,11 +311,6 @@
             <description>document to patent action-set identifier of exported data</description>
         </property>
         <property>
-            <name>export_action_set_id_entity_patent</name>
-            <value>$UNDEFINED$</value>
-            <description>action-set identifier of exported data containing patent entities</description>
-        </property>
-        <property>
             <name>export_action_set_id_citation_relations</name>
             <value>$UNDEFINED$</value>
             <description>action-set identifier of exported data containing citation relations</description>
@@ -388,15 +380,6 @@
             <name>export_referenceextraction_pdb_url_root</name>
             <value>http://www.rcsb.org/pdb/explore/explore.do?structureId=</value>
             <description>protein databank URL root part to be concatenated with pdb identifier when forming final URL</description>
-        </property>
-        <property>
-            <name>export_patent_date_of_collection</name>
-            <description>date of collection of patent file formatted as yyyy-MM-dd'T'HH:mm</description>
-        </property>
-        <property>
-            <name>export_patent_epo_url_root</name>
-            <value>https://register.epo.org/application?number=</value>
-            <description>EPO patent web archive URL root part to be concatenated with patent auth and nr when forming final URL</description>
         </property>
         <property>
             <name>output_remote_location</name>
@@ -582,11 +565,6 @@
                     <name>mimetypes_wos</name>
                     <value>${import_content_mimetypes_wos}</value>
                 </property>
-                <!-- import patent related -->
-                <property>
-                    <name>input_patent_tsv</name>
-                    <value>${import_patent_tsv}</value>
-                </property>
                 <!-- import timeouts related -->
                 <property>
                     <name>resultset_client_read_timeout</name>
@@ -731,8 +709,8 @@
                     <value>${workingDir}/primary_import/concept</value>
                 </property>
                 <property>
-                    <name>input_patent</name>
-                    <value>${workingDir}/primary_import/patent</value>
+                    <name>input_patent_db</name>
+                    <value>${import_patent_db}</value>
                 </property>
                 <property>
                     <name>output_merged_metadata</name>
@@ -790,10 +768,6 @@
                 <property>
                     <name>output_document_to_patent</name>
                     <value>${workingDir}/exported/document_to_patent</value>
-                </property>
-                <property>
-                    <name>output_patent_metadata</name>
-                    <value>${workingDir}/exported/patent_metadata</value>
                 </property>
                 <property>
                     <name>output_report_root_path</name>
@@ -872,10 +846,6 @@
                     <name>input_document_to_patent</name>
                     <value>${workingDir}/exported/document_to_patent</value>
                 </property>
-                <property>
-                    <name>input_patent</name>
-                    <value>${workingDir}/exported/patent_metadata</value>
-                </property>
                 <!-- entities exporting modes -->
                 <property>
                     <name>active_export_software</name>
@@ -943,10 +913,6 @@
                     <value>${export_action_set_id_document_patent}</value>
                 </property>
                 <property>
-                    <name>action_set_id_entity_patent</name>
-                    <value>${export_action_set_id_entity_patent}</value>
-                </property>
-                <property>
                     <name>action_set_id_citation_relations</name>
                     <value>${export_action_set_id_citation_relations}</value>
                 </property>
@@ -1002,14 +968,6 @@
                 <property>
                     <name>referenceextraction_pdb_url_root</name>
                     <value>${export_referenceextraction_pdb_url_root}</value>
-                </property>
-                <property>
-                    <name>patent_date_of_collection</name>
-                    <value>${export_patent_date_of_collection}</value>
-                </property>
-                <property>
-                    <name>patent_epo_url_root</name>
-                    <value>${export_patent_epo_url_root}</value>
                 </property>
                 <property>
                     <name>output_report_root_path</name>
