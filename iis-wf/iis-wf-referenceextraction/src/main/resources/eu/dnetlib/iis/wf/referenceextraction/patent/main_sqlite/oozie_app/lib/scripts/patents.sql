@@ -8,7 +8,7 @@ stdinput() );
 
 
 --create temp table results as select * from (
-select jdict('documentId', docid, 'lens_id', id, 'confidenceLevel', 0.8,'textsnippet',context) from (
+select jdict('documentId', docid, 'lensId', id, 'confidenceLevel', 0.8,'textsnippet',context) from (
 select  docid, patents.c1 as id, patents.c2 as patentcode, prev||" "||middle||" "||next as context from 
 (setschema 'docid,prev,middle,next' select c1 as docid, textwindow2s(keywords(c2),7,1,3, "(?:\D|\b)[A-Z]?\d{6,}(\b|\D)") from (setschema 'c1,c2' select * from pubs)), patents
 where regexpr("(\d{6,})", middle) = normal 
