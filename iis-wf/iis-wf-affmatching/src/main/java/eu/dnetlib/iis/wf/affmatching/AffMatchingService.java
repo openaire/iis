@@ -148,7 +148,7 @@ public class AffMatchingService implements Serializable {
             JavaRDD<AffMatchResult> matchedAffOrgs = affOrgMatcher.match(normalizedAffiliations, normalizedOrganizations);
             
             // Deduplicate within this matcher's results and force a shuffle boundary.
-            // This breaks the single giant Stage 16 into one smaller stage per matcher,
+            // This breaks the single giant stage into one smaller stage per matcher,
             // making each stage independently sized, monitored, and retryable.
             // It also reduces data volume before the cross-matcher union below.
             JavaPairRDD<Tuple2<String, String>, AffMatchResult> matchedAffOrgsWithKey = matchedAffOrgs
