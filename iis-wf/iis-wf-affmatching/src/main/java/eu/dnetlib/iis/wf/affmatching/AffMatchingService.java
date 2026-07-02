@@ -138,8 +138,7 @@ public class AffMatchingService implements Serializable {
 
     private JavaRDD<AffMatchResult> doMatch(JavaSparkContext sc, JavaRDD<AffMatchAffiliation> normalizedAffiliations, JavaRDD<AffMatchOrganization> normalizedOrganizations) {
         
-        // Start with an empty typed RDD rather than parallelizePairs on an empty list to avoid
-        // carrying an empty RDD through all union() calls
+        // Initialize lazily on the first matcher to avoid union()ing an empty RDD through the whole DAG
         JavaPairRDD<Tuple2<String, String>, AffMatchResult> allMatchedAffOrgsWithKey = null;
         
         

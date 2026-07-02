@@ -53,6 +53,9 @@ public class DocOrgRelationAffOrgJoiner implements AffOrgJoiner {
         
         JavaRDD<AffMatchDocumentOrganization> documentOrganizations = documentOrganizationFetcher.fetchDocumentOrganizations();
 
+        // Cache to avoid recomputing the document-organization pipeline twice
+        documentOrganizations.cache();
+
         // Count organizations per document to identify skewed (high-fanout) keys.
         // Documents linked to an excessive number of organizations via project chains create
         // Cartesian-product partitions in the join below that dwarf all other partitions combined.
@@ -66,14 +69,15 @@ public class DocOrgRelationAffOrgJoiner implements AffOrgJoiner {
                 .join(orgCountPerDoc)
                 .filter(x -> x._2._2 <= MAX_ORGANIZATIONS_PER_DOCUMENT)
                 .mapValues(v -> v._1);
-        
+
         JavaRDD<Tuple2<AffMatchAffiliation, AffMatchOrganization>> affOrgBucketPairs = affiliationsDocIdKey
                 .join(documentOrganizationDocIdKey)
                 .mapToPair(x -> new Tuple2<String, AffMatchAffiliation>(x._2._2.getOrganizationId(), x._2._1))
                 .join(organizationsOrgIdKey)
                 .values();
-        
-        
+
+        documentOrganizations.unpersist();
+
         return affOrgBucketPairs;
     }
 
