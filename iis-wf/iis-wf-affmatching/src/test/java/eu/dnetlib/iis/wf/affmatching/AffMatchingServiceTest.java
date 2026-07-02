@@ -24,7 +24,6 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import scala.Tuple2;
 
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -110,24 +109,23 @@ public class AffMatchingServiceTest {
     
     
     @Mock
-    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> parallelizedAffMatchResults;
-    
-    @Mock
     private JavaRDD<AffMatchResult> matchedAffOrgs1;
 
     @Mock
     private JavaPairRDD<Tuple2<String, String>, AffMatchResult> matchedAffOrgsWithKey1;
-    
+
+    @Mock
+    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> dedupedMatchedAffOrgsWithKey1;
+
     @Mock
     private JavaRDD<AffMatchResult> matchedAffOrgs2;
     
     @Mock
     private JavaPairRDD<Tuple2<String, String>, AffMatchResult> matchedAffOrgsWithKey2;
 
-    
     @Mock
-    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> allAffMatchResults1;
-    
+    private JavaPairRDD<Tuple2<String, String>, AffMatchResult> dedupedMatchedAffOrgsWithKey2;
+
     @Mock
     private JavaPairRDD<Tuple2<String, String>, AffMatchResult> allAffMatchResults2;
     
@@ -159,9 +157,15 @@ public class AffMatchingServiceTest {
     
     @Captor
     private ArgumentCaptor<Function<AffMatchResult, Tuple2<String, String>>> matchedAffOrgs1KeyByFunction;
-    
+
+    @Captor
+    private ArgumentCaptor<Function2<AffMatchResult, AffMatchResult, AffMatchResult>> matchedAffOrgs1ReduceFunction;
+
     @Captor
     private ArgumentCaptor<Function<AffMatchResult, Tuple2<String, String>>> matchedAffOrgs2KeyByFunction;
+
+    @Captor
+    private ArgumentCaptor<Function2<AffMatchResult, AffMatchResult, AffMatchResult>> matchedAffOrgs2ReduceFunction;
     
     @Captor
     private ArgumentCaptor<Function2<AffMatchResult, AffMatchResult, AffMatchResult>> allAffMatchResultsReduceFunction;
@@ -299,20 +303,19 @@ public class AffMatchingServiceTest {
         
         
         //--- matching
-        
-        doReturn(parallelizedAffMatchResults).when(sc).parallelizePairs(new ArrayList<>());
-        
-        //- first matcher
+
+        //- first matcher: keyBy → per-matcher reduceByKey (stage boundary + intra-matcher dedup)
         when(affOrgMatcher1.match(normalizedAndFilteredAffiliations, altNamesFilledOrganizations)).thenReturn(matchedAffOrgs1);
         doReturn(matchedAffOrgsWithKey1).when(matchedAffOrgs1).keyBy(Mockito.any());
-        when(parallelizedAffMatchResults.union(matchedAffOrgsWithKey1)).thenReturn(allAffMatchResults1);
-        
-        //- second matcher
+        doReturn(dedupedMatchedAffOrgsWithKey1).when(matchedAffOrgsWithKey1).reduceByKey(Mockito.any());
+
+        //- second matcher: keyBy → per-matcher reduceByKey, then union with first matcher's deduped results
         when(affOrgMatcher2.match(normalizedAndFilteredAffiliations, altNamesFilledOrganizations)).thenReturn(matchedAffOrgs2);
         doReturn(matchedAffOrgsWithKey2).when(matchedAffOrgs2).keyBy(Mockito.any());
-        when(allAffMatchResults1.union(matchedAffOrgsWithKey2)).thenReturn(allAffMatchResults2);
-        
-        //- pick unique matches
+        doReturn(dedupedMatchedAffOrgsWithKey2).when(matchedAffOrgsWithKey2).reduceByKey(Mockito.any());
+        when(dedupedMatchedAffOrgsWithKey1.union(dedupedMatchedAffOrgsWithKey2)).thenReturn(allAffMatchResults2);
+
+        //- final cross-matcher deduplication
         doReturn(allUniqueAffMatchResults).when(allAffMatchResults2).reduceByKey(Mockito.any());
         when(allUniqueAffMatchResults.values()).thenReturn(allUniqueAffMatchResultsValues);
         
@@ -346,8 +349,14 @@ public class AffMatchingServiceTest {
         verify(matchedAffOrgs1).keyBy(matchedAffOrgs1KeyByFunction.capture());
         assertMatchedAffOrgsKeyByFunction(matchedAffOrgs1KeyByFunction.getValue());
 
+        verify(matchedAffOrgsWithKey1).reduceByKey(matchedAffOrgs1ReduceFunction.capture());
+        assertAllAffMatchResultsReduceFunction(matchedAffOrgs1ReduceFunction.getValue());
+
         verify(matchedAffOrgs2).keyBy(matchedAffOrgs2KeyByFunction.capture());
         assertMatchedAffOrgsKeyByFunction(matchedAffOrgs2KeyByFunction.getValue());
+
+        verify(matchedAffOrgsWithKey2).reduceByKey(matchedAffOrgs2ReduceFunction.capture());
+        assertAllAffMatchResultsReduceFunction(matchedAffOrgs2ReduceFunction.getValue());
 
         verify(allAffMatchResults2).reduceByKey(allAffMatchResultsReduceFunction.capture());
         assertAllAffMatchResultsReduceFunction(allAffMatchResultsReduceFunction.getValue());
