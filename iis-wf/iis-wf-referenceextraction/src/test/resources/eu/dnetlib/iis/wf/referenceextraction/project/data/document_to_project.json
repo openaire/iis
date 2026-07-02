@@ -386,7 +386,7 @@
   "documentId": "50|core_ac_uk__::2fea53c390909c2640b2d1a94d53c0a7",
   "projectId": "40|inca________::1e5e62235d094afd01cd56e65112fc63",
   "confidenceLevel": 0.8,
-  "textsnippet": "This work was supported by INCA (plbio 2010-216 and INCa-DGOS-Inserm 6046) "
+  "textsnippet": "This work was supported by INCA (plbio 2010-216 and INCa-DGOS-Inserm 6046)"
 }
 {
   "documentId": "50|arXiv_______::a343cdcd534d696dd93c7ee9d78b9be7",
@@ -479,3 +479,10 @@
   "confidenceLevel": 0.8,
   "textsnippet": "of a full Cochrane Training Fellowship supported by the Health Research Board, Ireland (Grant No: <<< CTF-2016-1858). >>> "
 }
+{
+  "documentId": "50|doi_________::2f68a76b3df5b3c23268f0dd1dbde21b",
+  "projectId": "40|erasmusplus_::dc55a0b400942c1211f5d9e2d3e9b02a",
+  "confidenceLevel": 0.8,
+  "textsnippet": "Funding: This research has been done in the project \u003c\u003c\u003c 2021-1-TR01-KA220-VET-000028090 \u003e\u003e\u003e named DigiRescueMe, Standardization and Digitalization of Rescue Education in Mining"
+}
+
