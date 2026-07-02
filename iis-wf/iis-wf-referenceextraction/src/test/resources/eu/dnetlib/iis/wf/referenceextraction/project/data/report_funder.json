@@ -36,7 +36,7 @@
 {
   "key": "processing.referenceExtraction.project.references.byfunder.ec",
   "type": "COUNTER",
-  "value": "23"
+  "value": "24"
 }
 {
   "key": "processing.referenceExtraction.project.references.byfunder.fct",
@@ -191,5 +191,5 @@
 {
    "key": "processing.referenceExtraction.project.references.total",
    "type": "COUNTER",
-   "value": "80"
+   "value": "81"
 }
