@@ -25,7 +25,7 @@ public final class InfoSpaceConstants {
     public static final String ROW_PREFIX_DATASOURCE = "10|";
 
     public static final String OPENAIRE_ENTITY_ID_PREFIX = "openaire____";
-    public static final String LENS_ENTITY_ID_PREFIX = "lens.org____";
+    public static final String LENS_ENTITY_ID_PREFIX = "lens________";
 
     public static final String SEMANTIC_CLASS_MAIN_TITLE = "main title";
     public static final String SEMANTIC_CLASS_ALTERNATIVE_TITLE = "alternative title";

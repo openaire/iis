@@ -58,7 +58,7 @@ public class DocumentToPatentActionBuilderModuleFactoryTest extends AbstractActi
         AtomicAction<Relation> action = actions.get(0);
         assertNotNull(action);
         assertEquals(Relation.class, action.getClazz());
-        String patentId = "50|lens.org____::" +  IdentifierFactory.md5(lensId);
+        String patentId = "50|lens________::" +  IdentifierFactory.md5(lensId);
         Expectations expectations = new Expectations(docId, patentId, matchStrength, 
                 OafConstants.REL_TYPE_RESULT_RESULT, OafConstants.SUBREL_TYPE_RELATIONSHIP, 
                 OafConstants.REL_CLASS_ISRELATEDTO);
