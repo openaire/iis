@@ -1,14 +1,12 @@
 package pl.edu.icm.coansys.citations;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.spark.api.java.JavaPairRDD;
-
-import com.google.common.collect.MinMaxPriorityQueue;
 
 import pl.edu.icm.coansys.citations.data.MatchableEntity;
 import pl.edu.icm.coansys.citations.util.misc;
@@ -52,21 +50,32 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
      */
     public JavaPairRDD<MatchableEntity, MatchableEntity> attachCitationsAndLimitDocs(JavaPairRDD<String, MatchableEntity> citIdDocPairs, JavaPairRDD<String, MatchableEntity> citations) {
         
-        JavaPairRDD<MatchableEntity, MatchableEntity> citDocPairs = citIdDocPairs
-                .groupByKey()
+        return citIdDocPairs
                 .join(citations)
-                .flatMapToPair(docsWithCit -> {
-                    
-                    MatchableEntity citation = docsWithCit._2._2;
-                    
-                    Collection<EntityWithSimilarity> docsFiltered = calculateSimilarityAndLimitDocs(citation, docsWithCit._2._1);
-                    
-                    return docsFiltered.stream()
-                            .map(x -> new Tuple2<MatchableEntity, MatchableEntity>(citation, x.getEntity()))
-                            .collect(Collectors.toList()).iterator();
-                });
-        
-        return citDocPairs;
+                .combineByKey(
+                        docAndCit -> {
+                            List<EntityWithSimilarity> topK = new ArrayList<>(sameCitationsLimit);
+                            topK.add(new EntityWithSimilarity(docAndCit._1,
+                                    calculateTokenSimilarity(docAndCit._2, docAndCit._1)));
+                            return new Tuple2<MatchableEntity, List<EntityWithSimilarity>>(docAndCit._2, topK);
+                        },
+                        (acc, docAndCit) -> {
+                            addToTopK(acc._2, new EntityWithSimilarity(docAndCit._1,
+                                    calculateTokenSimilarity(acc._1, docAndCit._1)));
+                            return acc;
+                        },
+                        (acc1, acc2) -> {
+                            for (EntityWithSimilarity item : acc2._2) {
+                                addToTopK(acc1._2, item);
+                            }
+                            return acc1;
+                        }
+                )
+                .flatMapToPair(entry ->
+                        entry._2._2.stream()
+                                .map(x -> new Tuple2<MatchableEntity, MatchableEntity>(entry._2._1, x.getEntity()))
+                                .iterator()
+                );
     }
     
     
@@ -79,22 +88,21 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
     
     //------------------------ PRIVATE --------------------------
     
-    private Collection<EntityWithSimilarity> calculateSimilarityAndLimitDocs(MatchableEntity citation, Iterable<MatchableEntity> documents) {
-        
-        MinMaxPriorityQueue<EntityWithSimilarity> queue = MinMaxPriorityQueue
-                .orderedBy(new EntityWithSimilarityComparator())
-                .maximumSize(sameCitationsLimit)
-                .create();
-        
-        for (MatchableEntity document : documents) {
-            
-            double similarity = calculateTokenSimilarity(citation, document);
-            
-            queue.add(new EntityWithSimilarity(document, similarity));
-            
+    private void addToTopK(List<EntityWithSimilarity> list, EntityWithSimilarity candidate) {
+        if (list.size() < sameCitationsLimit) {
+            list.add(candidate);
+            return;
         }
-        
-        return queue;
+        EntityWithSimilarityComparator comparator = new EntityWithSimilarityComparator();
+        int worstIdx = 0;
+        for (int i = 1; i < list.size(); i++) {
+            if (comparator.compare(list.get(i), list.get(worstIdx)) > 0) {
+                worstIdx = i;
+            }
+        }
+        if (comparator.compare(candidate, list.get(worstIdx)) < 0) {
+            list.set(worstIdx, candidate);
+        }
     }
     
     private double calculateTokenSimilarity(MatchableEntity citation, MatchableEntity document) {
@@ -134,7 +142,9 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
         
     }
     
-    private static class EntityWithSimilarityComparator implements Comparator<EntityWithSimilarity> {
+    private static class EntityWithSimilarityComparator implements Comparator<EntityWithSimilarity>, Serializable {
+        
+        private static final long serialVersionUID = 1L;
         
         @Override
         public int compare(EntityWithSimilarity o1, EntityWithSimilarity o2) {
