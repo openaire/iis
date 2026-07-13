@@ -22,8 +22,8 @@ public class DocOrgRelationAffOrgJoiner implements AffOrgJoiner {
     /**
      * Maximum number of organization associations allowed per document when building the join key.
      * Documents linked to more organizations than this threshold (e.g. a paper with many grant partners)
-     * are the primary cause of data skew in CoGroupedRDD [43]: one task handles the entire Cartesian
-     * product of (affiliations × organizations) for a hot document ID, producing partitions orders of
+     * are the primary cause of data skew: one task handles the entire Cartesian product of 
+     * (affiliations × organizations) for a hot document ID, producing partitions orders of
      * magnitude larger than the median. Such documents contribute very little signal for affiliation
      * matching because the affiliation–organization pairing becomes essentially random at this scale.
      * Tune this value based on observed skew; 100 is a conservative starting point.

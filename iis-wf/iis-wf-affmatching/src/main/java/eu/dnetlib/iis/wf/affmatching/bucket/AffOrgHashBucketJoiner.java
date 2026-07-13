@@ -48,9 +48,6 @@ public class AffOrgHashBucketJoiner implements AffOrgJoiner {
      * Number of random salt values used to split hot buckets. Affiliations in a hot bucket are
      * assigned a random salt in [0, SALT_FACTOR), while organizations are replicated with every
      * salt value, so the cross-product is distributed across SALT_FACTOR independent tasks.
-     * <p>
-     * With the observed ~280x skew ratio between the hottest task and the p75, a factor of 20
-     * is sufficient to bring the hottest task close to the cluster median.
      */
     static final int SALT_FACTOR = 20;
 
