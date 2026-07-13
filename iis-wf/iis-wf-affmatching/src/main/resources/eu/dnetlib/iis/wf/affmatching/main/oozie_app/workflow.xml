@@ -71,6 +71,14 @@
             <description>limit of total size of serialized results of all partitions for each Spark action in bytes</description>
         </property>
         <property>
+            <name>sparkDefaultParallelism</name>
+            <value>2560</value>
+            <description>default number of partitions for RDDs; increase to reduce per-partition size and avoid shuffle spill.
+                Rule of thumb: 2-3x the total number of executor cores in the cluster.
+                Cluster has 1280 vcores, so 2x = 2560 (recommended minimum).
+                With 101 GB shuffle spill observed, the original partition count was too low.</description>
+        </property>
+        <property>
             <name>oozieActionShareLibForSpark2</name>
             <description>oozie action sharelib for spark 2.*</description>
         </property>
@@ -140,6 +148,9 @@
                 --conf spark.sql.queryExecutionListeners=${spark2SqlQueryExecutionListeners}
                 --conf spark.yarn.historyServer.address=${spark2YarnHistoryServerAddress}
                 --conf spark.eventLog.dir=${nameNode}${spark2EventLogDir}
+                --conf spark.default.parallelism=${sparkDefaultParallelism}
+                --conf spark.memory.fraction=0.8
+                --conf spark.memory.storageFraction=0.3
             </spark-opts>
 
             <arg>-inputAvroOrgPath=${input_organizations}</arg>
