@@ -2,7 +2,6 @@ package pl.edu.icm.coansys.citations;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +36,9 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
     }
     
     public CitationAttacherWithMatchedLimiter(int sameCitationsLimit) {
+        if (sameCitationsLimit < 0) {
+            throw new IllegalArgumentException("sameCitationsLimit must be non-negative, but was: " + sameCitationsLimit);
+        }
         this.sameCitationsLimit = sameCitationsLimit;
     }
     
@@ -93,14 +95,13 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
             list.add(candidate);
             return;
         }
-        EntityWithSimilarityComparator comparator = new EntityWithSimilarityComparator();
         int worstIdx = 0;
         for (int i = 1; i < list.size(); i++) {
-            if (comparator.compare(list.get(i), list.get(worstIdx)) > 0) {
+            if (compareBySimiliarity(list.get(i), list.get(worstIdx)) > 0) {
                 worstIdx = i;
             }
         }
-        if (comparator.compare(candidate, list.get(worstIdx)) < 0) {
+        if (compareBySimiliarity(candidate, list.get(worstIdx)) < 0) {
             list.set(worstIdx, candidate);
         }
     }
@@ -142,19 +143,11 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
         
     }
     
-    private static class EntityWithSimilarityComparator implements Comparator<EntityWithSimilarity>, Serializable {
-        
-        private static final long serialVersionUID = 1L;
-        
-        @Override
-        public int compare(EntityWithSimilarity o1, EntityWithSimilarity o2) {
-            int similarityCompare = -Double.compare(o1.getSimilarity(), o2.getSimilarity());
-            
-            if (similarityCompare == 0) {
-                return o1.getEntity().id().compareTo(o2.getEntity().id());
-            }
-            return similarityCompare;
+    private static int compareBySimiliarity(EntityWithSimilarity o1, EntityWithSimilarity o2) {
+        int similarityCompare = -Double.compare(o1.getSimilarity(), o2.getSimilarity());
+        if (similarityCompare == 0) {
+            return o1.getEntity().id().compareTo(o2.getEntity().id());
         }
-        
+        return similarityCompare;
     }
 }

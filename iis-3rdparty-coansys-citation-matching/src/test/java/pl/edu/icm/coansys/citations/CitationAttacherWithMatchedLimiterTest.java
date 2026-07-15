@@ -1,6 +1,7 @@
 package pl.edu.icm.coansys.citations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pl.edu.icm.coansys.citations.MatchableEntityDataProvider.*;
 
@@ -53,6 +54,11 @@ public class CitationAttacherWithMatchedLimiterTest {
     
     
     //------------------------ TESTS --------------------------
+    
+    @Test
+    public void constructor_NEGATIVE_LIMIT() {
+        assertThrows(IllegalArgumentException.class, () -> new CitationAttacherWithMatchedLimiter(-1));
+    }
     
     @Test
     public void attachCitationsAndLimitDocs() {
