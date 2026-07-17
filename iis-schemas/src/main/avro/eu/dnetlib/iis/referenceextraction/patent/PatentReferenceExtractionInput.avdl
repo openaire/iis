@@ -2,6 +2,10 @@
 protocol IIS{
 
     record PatentReferenceExtractionInput {
-        string appln_nr;
+        string c1;
+        string c2;
+        union{null, string} normal = null;
+        union{null, string} c4 = null;
+        union{null, string} c5 = null;
     }
 }

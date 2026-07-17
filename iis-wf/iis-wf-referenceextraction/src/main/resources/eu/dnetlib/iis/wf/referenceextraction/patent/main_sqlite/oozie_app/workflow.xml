@@ -14,6 +14,16 @@
             <name>output_document_to_patent</name>
             <description>output document to patent</description>
         </property>
+        <property>
+            <name>output_report_root_path</name>
+            <description>base directory for storing reports</description>
+        </property>
+        <property>
+            <name>output_report_relative_path</name>
+            <value>document_to_patent</value>
+            <description>directory for storing report (relative to output_report_root_path)</description>
+        </property>
+
     </parameters>
 
     <global>
@@ -98,8 +108,19 @@
             </configuration>
             <file>${input_patent_db}#patent.db</file>
         </map-reduce>
-        <ok to="end"/>
+        <ok to="report"/>
         <error to="fail"/>
+    </action>
+
+    <action name="report">
+        <java>
+            <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
+            <arg>eu.dnetlib.iis.common.report.ReportGenerator</arg>
+            <arg>-Preport.processing.referenceExtraction.patent.references=${hadoop:counters('main')[RECORDS][MAP_OUT]}</arg>
+            <arg>-Oreport=${output_report_root_path}/${output_report_relative_path}</arg>
+        </java>
+        <ok to="end" />
+        <error to="fail" />
     </action>
 
     <kill name="fail">
