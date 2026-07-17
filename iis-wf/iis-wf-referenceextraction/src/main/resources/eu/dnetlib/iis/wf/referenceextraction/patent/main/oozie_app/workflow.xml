@@ -8,7 +8,6 @@
         </property>
         <property>
             <name>input_patent_db</name>
-            <value>com.cloudera.spark.lineage.NavigatorAppListener</value>
             <description>pre-built sqlite database with patents</description>
         </property>
         <property>

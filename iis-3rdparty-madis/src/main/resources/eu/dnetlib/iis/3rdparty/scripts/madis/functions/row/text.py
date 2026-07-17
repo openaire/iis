@@ -215,7 +215,7 @@ cqlfields.registered=True
 
 def string_split_value(s, a):
     """
-    Returns the substring of `s` starting from the last occurrence of `a` till the end.
+    Returns the substring of `s` starting after the last occurrence of `a` till the end.
     If `a` is not found in `s`, returns an empty string.
     """
     index = s.rfind(a)  # Find the last occurrence of `a`

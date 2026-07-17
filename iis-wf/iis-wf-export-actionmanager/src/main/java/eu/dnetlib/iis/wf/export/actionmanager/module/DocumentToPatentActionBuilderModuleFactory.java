@@ -65,7 +65,7 @@ public class DocumentToPatentActionBuilderModuleFactory extends AbstractActionBu
         // ------------------------ PRIVATE --------------------------
         
         /**
-         * Creates similarity related actions.
+         * Creates document-to-patent relation actions.
          */
         private AtomicAction<Relation> createAction(String source, String target, float confidenceLevel,
                 String relClass) throws TrustLevelThresholdExceededException {
