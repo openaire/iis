@@ -142,7 +142,6 @@ public class Covid19ReferenceExtractionJob {
 
         @Parameter(names = "-predefinedConceptId", required = true)
         private String predefinedConceptId;
-
         @Parameter(names = "-predefinedConfidenceLevel", required = true)
         private String predefinedConfidenceLevel;
 
