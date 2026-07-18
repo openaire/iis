@@ -496,10 +496,6 @@
                     <name>match_content_with_metadata</name>
                     <value>${match_content_with_metadata}</value>
                 </property>
-                <property>
-                    <name>active_import_patent</name>
-                    <value>${active_referenceextraction_patent}</value>
-                </property>
                 <!-- import metadata related -->
                 <property>
                     <name>infospace_graph_location</name>
@@ -636,10 +632,6 @@
                 <property>
                     <name>output_wos</name>
                     <value>${workingDir}/primary_import/wos</value>
-                </property>
-                <property>
-                    <name>output_patent</name>
-                    <value>${workingDir}/primary_import/patent</value>
                 </property>
                 <property>
                     <name>output_faults</name>
