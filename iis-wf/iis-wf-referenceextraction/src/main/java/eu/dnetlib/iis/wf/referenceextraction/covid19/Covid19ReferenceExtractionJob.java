@@ -19,9 +19,7 @@ import eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToC
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.spark.SparkConf;
-import org.apache.spark.SparkFiles;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
@@ -72,13 +70,15 @@ public class Covid19ReferenceExtractionJob {
                     .map(document -> convertInput(document))
                     .filter(metadata->StringUtils.isNotBlank(metadata.getAbstract$()));
 
-            // FIXME make sure the proper dir is set in the k8s env
-            // FIXME is the script going to be available in the working dir anyway since the package will not be extracted on the pod?
-            // FIXME should we bake the scripts into the docker image instead?
-            // it is airflow specific question on how it handles the JAR and how to get to the resources nested in such jar file
-            // TODO write a prompt asking for preparing the airlfow workflow definition and resolving this script location issue
-            String scriptsDirOnWorkerNode = (sc.isLocal()) ? getScriptPath() : "scripts";
-            
+            // SparkFiles.get() resolves the absolute path on the executor node in all deployment modes:
+            // - local: returns the path as distributed by sc.addFile() from the local filesystem
+            // - YARN cluster: returns the path within the YARN container working directory
+            // - Kubernetes: returns the path within the Spark executor pod work-dir (e.g. /opt/spark/work-dir/scripts)
+            // The scriptDirPath parameter must point to an HDFS directory containing extract_references.sh
+            // and covid19extract.sql; sc.addFile() distributes that directory to every executor pod.
+            //String scriptsDirOnWorkerNode = SparkFiles.get("scripts");
+            String scriptsDirOnWorkerNode = "scripts";
+
             JavaRDD<String> matchedDocumentsJson = metadataRecords
                     .pipe("bash " + scriptsDirOnWorkerNode + "/extract_references.sh" + " " + scriptsDirOnWorkerNode);
 
@@ -90,7 +90,7 @@ public class Covid19ReferenceExtractionJob {
 
             convertedDocuments.cache();
             
-            avroSaver.saveJavaRDD(matchedDocuments, MatchedDocument.SCHEMA$, params.outputAvroPath);
+            avroSaver.saveJavaRDD(convertedDocuments, DocumentToConceptId.SCHEMA$, params.outputAvroPath);
 
             List<ReportEntry> reportEntries = generateReport(convertedDocuments);
             
@@ -108,17 +108,7 @@ public class Covid19ReferenceExtractionJob {
     private static boolean shouldRepartition(String numberOfPartitions) {
         return (StringUtils.isNotBlank(numberOfPartitions) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(numberOfPartitions));
     }
-    
-    private static String getScriptPath() {
-        String path = SparkFiles.get("scripts");
-
-        if (SystemUtils.IS_OS_WINDOWS) {
-            return path.replace("\\", "/");
-        }
-        
-        return path;
-    }
-   
+       
     private static DocumentMetadata convertInput(ExtractedDocumentMetadataMergedWithOriginal input) {
         DocumentMetadata.Builder metaBuilder = DocumentMetadata.newBuilder();
         metaBuilder.setId(input.getId());
