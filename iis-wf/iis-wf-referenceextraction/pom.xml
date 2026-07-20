@@ -117,13 +117,31 @@
                                                 <exclude>META-INF/*.SF</exclude>
                                                 <exclude>META-INF/*.DSA</exclude>
                                                 <exclude>META-INF/*.RSA</exclude>
+                                                <!-- need to exclude large model resources -->
+                                                <exclude>models/*.json</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <!-- AWS SDK bundles are provided by the cluster (hadoop-aws transitive deps) -->
+                                        <filter>
+                                            <artifact>software.amazon.awssdk:bundle</artifact>
+                                            <excludes>
+                                                <exclude>**</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <filter>
+                                            <artifact>com.amazonaws:aws-java-sdk-bundle</artifact>
+                                            <excludes>
+                                                <exclude>**</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <filter>
+                                            <artifact>software.amazon.s3.analyticsaccelerator:analyticsaccelerator-s3</artifact>
+                                            <excludes>
+                                                <exclude>**</exclude>
                                             </excludes>
                                         </filter>
                                     </filters>
                                     <transformers>
-                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                            <mainClass>eu.dnetlib.iis.wf.citationmatching.IisCitationMatchingJob</mainClass>
-                                        </transformer>
                                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                         <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                             <resource>META-INF/spring.handlers</resource>
