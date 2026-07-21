@@ -843,10 +843,6 @@
                     <name>active_export_software</name>
                     <value>${active_referenceextraction_software_url}</value>
                 </property>
-                <property>
-                    <name>active_export_patent</name>
-                    <value>${active_referenceextraction_patent}</value>
-                </property>
                 <!-- action set id properties -->
                 <property>
                     <name>action_set_id_document_similarities_standard</name>
