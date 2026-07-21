@@ -29,6 +29,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.avro.SchemaConverters;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructType;
 
@@ -73,14 +74,11 @@ public class Covid19ReferenceExtractionJob {
                     ? rawDocuments.repartition(Integer.parseInt(params.numberOfPartitions))
                     : rawDocuments;
 
-            // Select only the fields required by covid19extract.sql and filter blank abstracts
-            // and null years. toJSON() serialises each row as a single-line JSON string consumed
-            // by madis via stdinput(); the SQL uses jsonpath(c1, '$.id', '$.title', '$.abstract', '$.date')
-            // to read these fields.
+            // Select only the fields required by covid19extract.sql and filter blank abstracts.
+            // toJSON() serialises each row as a single-line JSON string consumed by madis via stdinput();
+            // the SQL uses jsonpath(c1, '$.id', '$.title', '$.abstract', '$.date') to read these fields.
             Dataset<String> metadataJson = repartDocuments
-                    .filter(col("abstract").isNotNull()
-                            .and(length(col("abstract")).gt(0))
-                            .and(col("year").isNotNull()))
+                    .filter(col("abstract").isNotNull().and(length(col("abstract")).gt(0)))
                     .select(
                             col("id"),
                             col("title"),
@@ -101,10 +99,11 @@ public class Covid19ReferenceExtractionJob {
                     .pipe("bash " + scriptsDirOnWorkerNode + "/extract_references.sh " + scriptsDirOnWorkerNode);
 
             // Parse each pipe output line (MatchedDocument JSON) and convert to a DocumentToConceptId row.
-            StructType outputSchema = new StructType()
-                    .add("documentId", DataTypes.StringType, false)
-                    .add("conceptId", DataTypes.StringType, false)
-                    .add("confidenceLevel", DataTypes.FloatType, false);
+            // StructType outputSchema = new StructType()
+            //        .add("documentId", DataTypes.StringType, false)
+            //        .add("conceptId", DataTypes.StringType, false)
+            //        .add("confidenceLevel", DataTypes.FloatType, false);
+            StructType outputSchema = (StructType) SchemaConverters.toSqlType(DocumentToConceptId.SCHEMA$).dataType();
 
             JavaRDD<Row> convertedRowsRDD = matchedDocumentsRDD.map(recordString -> {
                 MatchedDocument matched = AvroGsonFactory.create().fromJson(recordString, MatchedDocument.class);
