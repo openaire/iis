@@ -1,29 +1,36 @@
 package eu.dnetlib.iis.wf.referenceextraction.covid19;
 
 import static eu.dnetlib.iis.common.report.ReportEntryFactory.createCounterReportEntry;
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.length;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
-import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
+import eu.dnetlib.iis.common.spark.SparkSessionFactory;
+import eu.dnetlib.iis.common.spark.avro.AvroDataFrameReader;
 import eu.dnetlib.iis.common.utils.AvroGsonFactory;
-import eu.dnetlib.iis.referenceextraction.covid19.schemas.DocumentMetadata;
 import eu.dnetlib.iis.referenceextraction.covid19.schemas.MatchedDocument;
 import eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
+import eu.dnetlib.iis.wf.referenceextraction.ReferenceExtractionIOUtils;
+import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
-import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.RowFactory;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructType;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,137 +38,133 @@ import java.util.List;
 /**
  * Covid-19 reference extraction job.
  * <br/><br/>
- * Processes documents {link ExtractedDocumentMetadataMergedWithOriginal} and calculates {@link MatchedDocument} out of them.
- * 
+ * Processes documents {@link ExtractedDocumentMetadataMergedWithOriginal} and calculates
+ * {@link eu.dnetlib.iis.referenceextraction.researchinitiative.schemas.DocumentToConceptId} out of them.
+ *
  * @author Marek Horst
  */
 public class Covid19ReferenceExtractionJob {
 
-    private static final String COUNTER_REFERENCES_TOTAL = "processing.referenceExtraction.covid-19.reference.total";
-    
-    private static SparkAvroLoader avroLoader = new SparkAvroLoader();
     private static SparkAvroSaver avroSaver = new SparkAvroSaver();
 
+    private static final String COUNTER_REFERENCES_TOTAL = "processing.referenceExtraction.covid-19.reference.total";
+
     //------------------------ LOGIC --------------------------
-    
+
     public static void main(String[] args) throws IOException {
         Covid19ReferenceExtractionJobParameters params = new Covid19ReferenceExtractionJobParameters();
         JCommander jcommander = new JCommander(params);
         jcommander.parse(args);
 
-        try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
-            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputAvroPath);
-            HdfsUtils.remove(sc.hadoopConfiguration(), params.outputReportPath);
+        try (SparkSession spark = SparkSessionFactory.withConfAndKryo(new SparkConf())) {
+            HdfsUtils.remove(spark.sparkContext().hadoopConfiguration(), params.outputAvroPath);
+            HdfsUtils.remove(spark.sparkContext().hadoopConfiguration(), params.outputReportPath);
 
-            sc.sc().addFile(params.scriptDirPath, true);
+            spark.sparkContext().addFile(params.scriptDirPath, true);
 
             String conceptId = params.predefinedConceptId;
             float confidenceLevel = Float.parseFloat(params.predefinedConfidenceLevel);
 
-            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> rawDocuments = avroLoader
-                    .loadJavaRDD(sc, params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.class);
-            
-            JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> repartDocuments = 
-                    shouldRepartition(params.numberOfPartitions)
+            AvroDataFrameReader avroDataFrameReader = new AvroDataFrameReader(spark);
+            Dataset<Row> rawDocuments = avroDataFrameReader.read(
+                    params.inputAvroPath, ExtractedDocumentMetadataMergedWithOriginal.SCHEMA$);
+
+            Dataset<Row> repartDocuments = shouldRepartition(params.numberOfPartitions)
                     ? rawDocuments.repartition(Integer.parseInt(params.numberOfPartitions))
                     : rawDocuments;
-            
-            JavaRDD<DocumentMetadata> metadataRecords = repartDocuments
-                    .map(document -> convertInput(document))
-                    .filter(metadata->StringUtils.isNotBlank(metadata.getAbstract$()));
+
+            // Select only the fields required by covid19extract.sql and filter blank abstracts
+            // and null years. toJSON() serialises each row as a single-line JSON string consumed
+            // by madis via stdinput(); the SQL uses jsonpath(c1, '$.id', '$.title', '$.abstract', '$.date')
+            // to read these fields.
+            Dataset<String> metadataJson = repartDocuments
+                    .filter(col("abstract").isNotNull()
+                            .and(length(col("abstract")).gt(0))
+                            .and(col("year").isNotNull()))
+                    .select(
+                            col("id"),
+                            col("title"),
+                            col("abstract"),
+                            col("year").cast(DataTypes.StringType).alias("date"))
+                    .toJSON();
 
             // SparkFiles.get() resolves the absolute path on the executor node in all deployment modes:
-            // - local: returns the path as distributed by sc.addFile() from the local filesystem
-            // - YARN cluster: returns the path within the YARN container working directory
-            // - Kubernetes: returns the path within the Spark executor pod work-dir (e.g. /opt/spark/work-dir/scripts)
+            // - local: path as distributed by sc.addFile() from the local filesystem
+            // - YARN cluster: path within the YARN container working directory
+            // - Kubernetes: path within the Spark executor pod work-dir (e.g. /opt/spark/work-dir/scripts)
             // The scriptDirPath parameter must point to an HDFS directory containing extract_references.sh
             // and covid19extract.sql; sc.addFile() distributes that directory to every executor pod.
-            //String scriptsDirOnWorkerNode = SparkFiles.get("scripts");
+            // String scriptsDirOnWorkerNode = SparkFiles.get("scripts");
             String scriptsDirOnWorkerNode = "scripts";
 
-            JavaRDD<String> matchedDocumentsJson = metadataRecords
-                    .pipe("bash " + scriptsDirOnWorkerNode + "/extract_references.sh" + " " + scriptsDirOnWorkerNode);
+            JavaRDD<String> matchedDocumentsRDD = metadataJson.toJavaRDD()
+                    .pipe("bash " + scriptsDirOnWorkerNode + "/extract_references.sh " + scriptsDirOnWorkerNode);
 
-            JavaRDD<MatchedDocument> matchedDocuments = matchedDocumentsJson
-                    .map(recordString -> AvroGsonFactory.create().fromJson(recordString, MatchedDocument.class)
-            );
+            // Parse each pipe output line (MatchedDocument JSON) and convert to a DocumentToConceptId row.
+            StructType outputSchema = new StructType()
+                    .add("documentId", DataTypes.StringType, false)
+                    .add("conceptId", DataTypes.StringType, false)
+                    .add("confidenceLevel", DataTypes.FloatType, false);
 
-            JavaRDD<DocumentToConceptId> convertedDocuments = matchedDocuments.map(meta -> convertOutput(meta, conceptId, confidenceLevel));
+            JavaRDD<Row> convertedRowsRDD = matchedDocumentsRDD.map(recordString -> {
+                MatchedDocument matched = AvroGsonFactory.create().fromJson(recordString, MatchedDocument.class);
+                return RowFactory.create(matched.getId().toString(), conceptId, confidenceLevel);
+            });
 
-            convertedDocuments.cache();
-            
-            avroSaver.saveJavaRDD(convertedDocuments, DocumentToConceptId.SCHEMA$, params.outputAvroPath);
+            Dataset<Row> convertedDocumentsDF = spark.createDataFrame(convertedRowsRDD, outputSchema);
 
-            List<ReportEntry> reportEntries = generateReport(convertedDocuments);
-            
-            avroSaver.saveJavaRDD(sc.parallelize(reportEntries, 1), ReportEntry.SCHEMA$, params.outputReportPath);
+            convertedDocumentsDF.cache();
+
+            new ReferenceExtractionIOUtils.AvroDataStoreWriter()
+                    .write(convertedDocumentsDF, params.outputAvroPath, DocumentToConceptId.SCHEMA$);
+
+            List<ReportEntry> reportEntries = generateReport(convertedDocumentsDF.count());
+            JavaRDD<ReportEntry> reportRDD = JavaSparkContext.fromSparkContext(spark.sparkContext()).parallelize(reportEntries, 1);
+            avroSaver.saveJavaRDD(reportRDD, ReportEntry.SCHEMA$, params.outputReportPath);
         }
-        
     }
 
     //------------------------ PRIVATE --------------------------
-    
-    
+
     /**
-     * Checks whether partitioning should be perfomed based on the parameter value.
+     * Checks whether repartitioning should be performed based on the parameter value.
      */
     private static boolean shouldRepartition(String numberOfPartitions) {
-        return (StringUtils.isNotBlank(numberOfPartitions) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(numberOfPartitions));
-    }
-       
-    private static DocumentMetadata convertInput(ExtractedDocumentMetadataMergedWithOriginal input) {
-        DocumentMetadata.Builder metaBuilder = DocumentMetadata.newBuilder();
-        metaBuilder.setId(input.getId());
-        metaBuilder.setTitle(input.getTitle());
-        metaBuilder.setAbstract$(input.getAbstract$());
-        if (input.getYear() != null) {
-            metaBuilder.setDate(String.valueOf(input.getYear()));    
-        }
-        return metaBuilder.build();
-    }
-    
-    private static DocumentToConceptId convertOutput(MatchedDocument input, String conceptId, float confidenceLevel) {
-        DocumentToConceptId.Builder resultBuilder = DocumentToConceptId.newBuilder();
-        resultBuilder.setDocumentId(input.getId());
-        resultBuilder.setConceptId(conceptId);
-        resultBuilder.setConfidenceLevel(confidenceLevel);
-        return resultBuilder.build();
+        return StringUtils.isNotBlank(numberOfPartitions)
+                && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(numberOfPartitions);
     }
 
     /**
-     * Generates the reference extraction execution report
-     * 
-     * @param results result rdd of the reference extraction job execution
+     * Generates the reference extraction execution report.
+     *
+     * @param totalResultsCount total number of matched documents
      */
-    private static List<ReportEntry> generateReport(JavaRDD<DocumentToConceptId> results) {
-        Preconditions.checkNotNull(results);
-        long totalResultsCount = results.count();
+    private static List<ReportEntry> generateReport(long totalResultsCount) {
         return ImmutableList.of(createCounterReportEntry(COUNTER_REFERENCES_TOTAL, totalResultsCount));
     }
 
     @Parameters(separators = "=")
     private static class Covid19ReferenceExtractionJobParameters {
-        
+
         @Parameter(names = "-inputAvroPath", required = true)
         private String inputAvroPath;
-        
+
         @Parameter(names = "-outputAvroPath", required = true)
         private String outputAvroPath;
 
         @Parameter(names = "-predefinedConceptId", required = true)
         private String predefinedConceptId;
-        
+
         @Parameter(names = "-predefinedConfidenceLevel", required = true)
         private String predefinedConfidenceLevel;
 
         @Parameter(names = "-scriptDirPath", required = true, description = "path to directory with scripts")
         private String scriptDirPath;
-        
+
         @Parameter(names = "-numberOfPartitions", required = false, description = "number of partitions the data should be sliced into")
         private String numberOfPartitions;
-        
+
         @Parameter(names = "-outputReportPath", required = true)
         private String outputReportPath;
-        
     }
 }
