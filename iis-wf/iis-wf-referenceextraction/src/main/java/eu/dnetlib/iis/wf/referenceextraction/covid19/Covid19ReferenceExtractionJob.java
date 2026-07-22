@@ -86,25 +86,14 @@ public class Covid19ReferenceExtractionJob {
                             col("year").cast(DataTypes.StringType).alias("date"))
                     .toJSON();
 
-            // SparkFiles.get() resolves the absolute path on the executor node in all deployment modes:
-            // - local: path as distributed by sc.addFile() from the local filesystem
-            // - YARN cluster: path within the YARN container working directory
-            // - Kubernetes: path within the Spark executor pod work-dir (e.g. /opt/spark/work-dir/scripts)
-            // The scriptDirPath parameter must point to an HDFS directory containing extract_references.sh
-            // and covid19extract.sql; sc.addFile() distributes that directory to every executor pod.
-            // String scriptsDirOnWorkerNode = SparkFiles.get("scripts");
             String scriptsDirOnWorkerNode = "scripts";
 
             JavaRDD<String> matchedDocumentsRDD = metadataJson.toJavaRDD()
                     .pipe("bash " + scriptsDirOnWorkerNode + "/extract_references.sh " + scriptsDirOnWorkerNode);
 
-            // Parse each pipe output line (MatchedDocument JSON) and convert to a DocumentToConceptId row.
-            // StructType outputSchema = new StructType()
-            //        .add("documentId", DataTypes.StringType, false)
-            //        .add("conceptId", DataTypes.StringType, false)
-            //        .add("confidenceLevel", DataTypes.FloatType, false);
             StructType outputSchema = (StructType) SchemaConverters.toSqlType(DocumentToConceptId.SCHEMA$).dataType();
 
+            // Parse each pipe output line (MatchedDocument JSON) and convert to a DocumentToConceptId row.
             JavaRDD<Row> convertedRowsRDD = matchedDocumentsRDD.map(recordString -> {
                 MatchedDocument matched = AvroGsonFactory.create().fromJson(recordString, MatchedDocument.class);
                 return RowFactory.create(matched.getId().toString(), conceptId, confidenceLevel);
