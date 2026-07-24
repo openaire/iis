@@ -38,9 +38,10 @@
             <arg>eu.dnetlib.iis.wf.referenceextraction.community.CommunityDBBuilder</arg>
             <!-- All input and output ports have to be bound to paths in 
             HDFS, working directory has to be specified as well -->
-            <arg>-Icommunity=${input_community}</arg>
-            <arg>-Ocommunity_db=${output_community_db}</arg>
+            <arg>-Iinput=${input_community}</arg>
+            <arg>-OoutputDb=${output_community_db}</arg>
             <arg>-PscriptLocation=scripts/buildcummunitiesdb.sql</arg>
+            <arg>-PinitDbLocation=$UNDEFINED$</arg>
         </java>
         <ok to="end"/>
         <error to="fail"/>

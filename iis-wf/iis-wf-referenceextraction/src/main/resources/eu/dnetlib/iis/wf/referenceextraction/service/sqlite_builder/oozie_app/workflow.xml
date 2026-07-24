@@ -38,9 +38,10 @@
             <arg>eu.dnetlib.iis.wf.referenceextraction.service.ServiceDBBuilder</arg>
             <!-- All input and output ports have to be bound to paths in 
             HDFS, working directory has to be specified as well -->
-            <arg>-Iservice=${input_service}</arg>
-            <arg>-Oservice_db=${output_service_db}</arg>
+            <arg>-Iinput=${input_service}</arg>
+            <arg>-OoutputDb=${output_service_db}</arg>
             <arg>-PscriptLocation=scripts/buildeoscdb.sql</arg>
+            <arg>-PinitDbLocation=$UNDEFINED$</arg>
         </java>
         <ok to="end"/>
         <error to="fail"/>

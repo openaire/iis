@@ -46,9 +46,10 @@
             <arg>eu.dnetlib.iis.wf.referenceextraction.dataset.DatasetDBBuilder</arg>
             <!-- All input and output ports have to be bound to paths in 
             HDFS, working directory has to be specified as well -->
-            <arg>-Idataset=${input_dataset}</arg>
-            <arg>-Odataset_db=${output_dataset_db}</arg>
+            <arg>-Iinput=${input_dataset}</arg>
+            <arg>-OoutputDb=${output_dataset_db}</arg>
             <arg>-PscriptLocation=scripts/builddatacitedb.sql</arg>
+            <arg>-PinitDbLocation=$UNDEFINED$</arg>
         </java>
         <ok to="end"/>
         <error to="fail"/>
