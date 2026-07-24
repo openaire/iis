@@ -12,12 +12,19 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.base.Preconditions;
+
 import org.apache.avro.Schema;
 import org.apache.avro.specific.SpecificRecord;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 
+import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
 import eu.dnetlib.iis.common.java.PortBindings;
 import eu.dnetlib.iis.common.java.io.CloseableIterator;
 import eu.dnetlib.iis.common.java.io.DataStore;
@@ -37,19 +44,29 @@ import eu.dnetlib.iis.common.java.porttype.PortType;
 public abstract class AbstractDBBuilder<T extends SpecificRecord> implements eu.dnetlib.iis.common.java.Process {
 
     /**
-     * Avro input records schema.
+     * Madis script location.
      */
-    private final Schema inputSchema;
+    public final static String PARAM_SCRIPT_LOCATION = "scriptLocation";
+
+    /**
+     * Pre-initialized SQLite database location.
+     */
+    public final static String PARAM_INIT_DB_LOCATION = "initDbLocation";
 
     /**
      * Input port name.
      */
-    private final String inputPort;
+    public static final String INPUT_PORT = "input";
 
     /**
      * Output port name pointing to produced database.
      */
-    private final String outputPort;
+    public static final String OUTPUT_PORT = "outputDb";
+
+    /**
+     * Avro input records schema.
+     */
+    private final Schema inputSchema;
 
     /**
      * Underlying file system facade factory.
@@ -87,27 +104,21 @@ public abstract class AbstractDBBuilder<T extends SpecificRecord> implements eu.
 
     /**
      * @param inputSchema avro input records schema
-     * @param inputPort input port containing avro records
-     * @param outputPort output port where database should be created
      */
-    protected AbstractDBBuilder(Schema inputSchema, String inputPort, String outputPort) {
+    protected AbstractDBBuilder(Schema inputSchema) {
         this((conf) -> {
             return new HadoopFileSystemFacade(FileSystem.get(conf));
-        }, inputSchema, inputPort, outputPort);
+        }, inputSchema);
     }
     
     /**
      * @param fsFacadeFactory file system facade factory
      * @param inputSchema avro input records schema
-     * @param inputPort input port containing avro records
-     * @param outputPort output port where database should be created
      */
     protected AbstractDBBuilder(FileSystemFacadeFactory fsFacadeFactory,
-            Schema inputSchema, String inputPort, String outputPort) {
+            Schema inputSchema) {
         this.fsFacadeFactory = fsFacadeFactory;
         this.inputSchema = inputSchema;
-        this.inputPort = inputPort;
-        this.outputPort = outputPort;
     }
 
     // -------------------------- LOGIC -------------------------------------
@@ -118,7 +129,24 @@ public abstract class AbstractDBBuilder<T extends SpecificRecord> implements eu.
      * @param parameters process execution parameters
      * @throws IOException
      */
-    protected abstract ProcessExecutionContext initializeProcess(Map<String, String> parameters) throws IOException;
+    protected ProcessExecutionContext initializeProcess(Map<String, String> parameters) throws IOException {
+        String scriptLocation = parameters.get(PARAM_SCRIPT_LOCATION);
+        Preconditions.checkArgument(StringUtils.isNotBlank(scriptLocation),
+                "sql script location not provided, '%s' parameter is missing!", PARAM_SCRIPT_LOCATION);
+        
+        String targetDbLocation = System.getProperty("java.io.tmpdir") + File.separatorChar + "temp.db";
+        File targetDbFile = new File(targetDbLocation);
+        
+        String initDbLocation = parameters.get(PARAM_INIT_DB_LOCATION);
+        if (StringUtils.isNotBlank(initDbLocation) && !WorkflowRuntimeParameters.UNDEFINED_NONEMPTY_VALUE.equals(initDbLocation)) {
+            FileUtils.copyFile(new File(initDbLocation), targetDbFile);
+            targetDbFile.setWritable(true);
+        }
+
+        return new ProcessExecutionContext(
+                Runtime.getRuntime().exec("python /opt/madis/mexec.py -d " + targetDbLocation + " -f " + scriptLocation),
+                targetDbFile);
+    }
     
     /**
      * Provides input records interator.
@@ -143,7 +171,7 @@ public abstract class AbstractDBBuilder<T extends SpecificRecord> implements eu.
         FileSystemFacade fileSystemFacade = fsFacadeFactory.create(conf);
 
         try (CloseableIterator<T> inputRecordsIt = getInputRecordsIterator(
-                new FileSystemPath(fileSystemFacade.getFileSystem(), portBindings.getInput().get(inputPort)))) {
+                new FileSystemPath(fileSystemFacade.getFileSystem(), portBindings.getInput().get(INPUT_PORT)))) {
             try (JsonStreamWriter<T> writer = new JsonStreamWriter<T>(inputSchema,
                     new BufferedOutputStream(process.getOutputStream()))) {
                 while (inputRecordsIt.hasNext()) {
@@ -161,7 +189,7 @@ public abstract class AbstractDBBuilder<T extends SpecificRecord> implements eu.
 
         try (InputStream inStream = new FileInputStream(executionContext.getOutputFile());
                 OutputStream outStream = fileSystemFacade.create(
-                        new FileSystemPath(fileSystemFacade.getFileSystem(), portBindings.getOutput().get(outputPort)).getPath())) {
+                        new FileSystemPath(fileSystemFacade.getFileSystem(), portBindings.getOutput().get(OUTPUT_PORT)).getPath())) {
             IOUtils.copy(inStream, outStream);
         }
     }
@@ -169,20 +197,20 @@ public abstract class AbstractDBBuilder<T extends SpecificRecord> implements eu.
     @Override
     public Map<String, PortType> getInputPorts() {
         Map<String, PortType> inputPorts = new HashMap<String, PortType>();
-        inputPorts.put(inputPort, new AvroPortType(inputSchema));
+        inputPorts.put(INPUT_PORT, new AvroPortType(inputSchema));
         return inputPorts;
     }
 
     @Override
     public Map<String, PortType> getOutputPorts() {
         Map<String, PortType> outputPorts = new HashMap<String, PortType>();
-        outputPorts.put(outputPort, new AnyPortType());
+        outputPorts.put(OUTPUT_PORT, new AnyPortType());
         return outputPorts;
     }
 
     
     // -------------------------- PRIVATE -------------------------------------
-    
+
     /**
      * Provides error message from error stream.
      */

@@ -21,6 +21,7 @@ import java.io.*;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,10 +33,6 @@ import static org.mockito.Mockito.*;
 public class DBBuilderTest {
     
     private static final Schema SCHEMA_PROJECT = Project.SCHEMA$;
-    
-    private static final String PORT_NAME_INPUT = "input";
-    
-    private static final String PORT_NAME_OUTPUT = "output";
 
     private final PortBindings portBindings = new PortBindings(new HashMap<>(), new HashMap<>());
     
@@ -72,7 +69,7 @@ public class DBBuilderTest {
                 (conf) -> {
                     return fileSystemFacade;
                 },
-                SCHEMA_PROJECT, PORT_NAME_INPUT, PORT_NAME_OUTPUT) {
+                SCHEMA_PROJECT) {
 
             @Override
             protected ProcessExecutionContext initializeProcess(Map<String, String> parameters) throws IOException {
@@ -195,9 +192,9 @@ public class DBBuilderTest {
         
         // assert
         assertNotNull(result);
-        assertNotNull(result.get(PORT_NAME_INPUT));
-        assertTrue(result.get(PORT_NAME_INPUT) instanceof AvroPortType);
-        assertSame(SCHEMA_PROJECT, ((AvroPortType) result.get(PORT_NAME_INPUT)).getSchema());
+        assertNotNull(result.get(AbstractDBBuilder.INPUT_PORT));
+        assertTrue(result.get(AbstractDBBuilder.INPUT_PORT) instanceof AvroPortType);
+        assertSame(SCHEMA_PROJECT, ((AvroPortType) result.get(AbstractDBBuilder.INPUT_PORT)).getSchema());
     }
     
     @Test
@@ -207,8 +204,8 @@ public class DBBuilderTest {
         
         // assert
         assertNotNull(result);
-        assertNotNull(result.get(PORT_NAME_OUTPUT));
-        assertTrue(result.get(PORT_NAME_OUTPUT) instanceof AnyPortType);
+        assertNotNull(result.get(AbstractDBBuilder.OUTPUT_PORT));
+        assertTrue(result.get(AbstractDBBuilder.OUTPUT_PORT) instanceof AnyPortType);
     }
     
     // --------------------------------- PRIVATE -----------------------------------------

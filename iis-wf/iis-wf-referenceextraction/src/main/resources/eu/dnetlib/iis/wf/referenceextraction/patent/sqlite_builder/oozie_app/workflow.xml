@@ -33,9 +33,10 @@
         <java>
             <main-class>eu.dnetlib.iis.common.java.ProcessWrapper</main-class>
             <arg>eu.dnetlib.iis.wf.referenceextraction.patent.PatentDBBuilder</arg>
-            <arg>-Ipatents=${input_patent}</arg>
-            <arg>-Opatents_db=${output_patent_db}</arg>
+            <arg>-Iinput=${input_patent}</arg>
+            <arg>-OoutputDb=${output_patent_db}</arg>
             <arg>-PscriptLocation=scripts/buildpatentdb.sql</arg>
+            <arg>-PinitDbLocation=scripts/base_lens.db</arg>
         </java>
         <ok to="end"/>
         <error to="fail"/>
