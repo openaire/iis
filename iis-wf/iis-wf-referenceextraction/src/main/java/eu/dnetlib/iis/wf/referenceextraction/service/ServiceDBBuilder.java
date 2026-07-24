@@ -39,7 +39,7 @@ public class ServiceDBBuilder extends AbstractDBBuilder<Service> {
         targetDbFile.setWritable(true);
 
         return new ProcessExecutionContext(
-                Runtime.getRuntime().exec("python scripts/madis/mexec.py -w " + targetDbLocation + " -f " + scriptLocation),
+                Runtime.getRuntime().exec("python /opt/madis/mexec.py -w " + targetDbLocation + " -f " + scriptLocation),
                 targetDbFile);
         
     }
