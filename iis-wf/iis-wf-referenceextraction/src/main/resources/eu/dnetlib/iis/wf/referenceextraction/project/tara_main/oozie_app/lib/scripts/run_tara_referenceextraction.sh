@@ -4,4 +4,6 @@
 # the dir should contain madis scripts in 'scripts' dir and projects db file as 'projects.db';
 
 set -o pipefail
-python scripts/madis/mexec.py -d projects.db -f scripts/taraextract.sql
+
+# $MADIS_HOME is exported in the docker image environment
+python $MADIS_HOME/mexec.py -d projects.db -f scripts/taraextract.sql

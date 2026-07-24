@@ -48,12 +48,6 @@
 
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
-            <artifactId>iis-3rdparty-madis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-3rdparty-avro-json</artifactId>
             <version>${project.version}</version>
         </dependency>

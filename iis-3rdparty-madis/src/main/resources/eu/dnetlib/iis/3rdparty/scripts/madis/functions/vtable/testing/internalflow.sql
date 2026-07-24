@@ -1,1 +1,0 @@
-create table %{tablename} as select * from getvars() where variable!='execdb';
