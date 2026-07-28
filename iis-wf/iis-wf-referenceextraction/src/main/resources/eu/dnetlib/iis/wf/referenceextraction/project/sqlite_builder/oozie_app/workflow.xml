@@ -40,8 +40,10 @@
             <arg>eu.dnetlib.iis.wf.referenceextraction.project.ProjectDBBuilder</arg>
             <!-- All input and output ports have to be bound to paths in 
             HDFS, working directory has to be specified as well -->
-            <arg>-Iproject=${input_project}</arg>
-            <arg>-Oproject_db=${output_project_db}</arg>
+            <arg>-Ipatent=${input_project}</arg>
+            <arg>-OoutputDb=${output_project_db}</arg>
+            <arg>-PscriptLocation=scripts/buildprojectdb.sql</arg>
+            <arg>-PinitDbLocation=scripts/base_projects.db</arg>
         </java>
         <ok to="end"/>
         <error to="fail"/>
