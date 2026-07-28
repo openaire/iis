@@ -1,8 +1,8 @@
 package pl.edu.icm.coansys.citations;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.Set;
 
 import org.apache.spark.api.java.JavaPairRDD;
@@ -56,10 +56,12 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
                 .join(citations)
                 .combineByKey(
                         docAndCit -> {
-                            List<EntityWithSimilarity> topK = new ArrayList<>(sameCitationsLimit);
+                            PriorityQueue<EntityWithSimilarity> topK = new PriorityQueue<>(
+                                    Comparator.comparingDouble(EntityWithSimilarity::getSimilarity)
+                                            .thenComparing(e -> e.getEntity().id()));
                             topK.add(new EntityWithSimilarity(docAndCit._1,
                                     calculateTokenSimilarity(docAndCit._2, docAndCit._1)));
-                            return new Tuple2<MatchableEntity, List<EntityWithSimilarity>>(docAndCit._2, topK);
+                            return new Tuple2<MatchableEntity, PriorityQueue<EntityWithSimilarity>>(docAndCit._2, topK);
                         },
                         (acc, docAndCit) -> {
                             addToTopK(acc._2, new EntityWithSimilarity(docAndCit._1,
@@ -90,19 +92,10 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
     
     //------------------------ PRIVATE --------------------------
     
-    private void addToTopK(List<EntityWithSimilarity> list, EntityWithSimilarity candidate) {
-        if (list.size() < sameCitationsLimit) {
-            list.add(candidate);
-            return;
-        }
-        int worstIdx = 0;
-        for (int i = 1; i < list.size(); i++) {
-            if (compareBySimiliarity(list.get(i), list.get(worstIdx)) > 0) {
-                worstIdx = i;
-            }
-        }
-        if (compareBySimiliarity(candidate, list.get(worstIdx)) < 0) {
-            list.set(worstIdx, candidate);
+    private void addToTopK(PriorityQueue<EntityWithSimilarity> heap, EntityWithSimilarity candidate) {
+        heap.add(candidate);
+        if (heap.size() > sameCitationsLimit) {
+            heap.poll();
         }
     }
     
@@ -143,11 +136,4 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
         
     }
     
-    private static int compareBySimiliarity(EntityWithSimilarity o1, EntityWithSimilarity o2) {
-        int similarityCompare = -Double.compare(o1.getSimilarity(), o2.getSimilarity());
-        if (similarityCompare == 0) {
-            return o1.getEntity().id().compareTo(o2.getEntity().id());
-        }
-        return similarityCompare;
-    }
 }
