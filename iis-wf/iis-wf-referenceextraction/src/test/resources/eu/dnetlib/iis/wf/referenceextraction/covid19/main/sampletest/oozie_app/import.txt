@@ -1,2 +1,0 @@
-## This is a classpath-based import file (this header is required)
-referenceextraction_covid19 classpath eu/dnetlib/iis/wf/referenceextraction/covid19/main/oozie_app
