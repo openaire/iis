@@ -23,6 +23,10 @@ protocol IIS{
         union { null , string } issue = null;
         union { null , string } url = null;
         union { null , map<string> } externalIds = null;
+
+//      crossref specific extension
+        union { null , string } journal = null;
+        union { null , string } type = null;
     }
 
 }
