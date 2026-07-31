@@ -3,18 +3,23 @@ package eu.dnetlib.iis.wf.metadataextraction.crossref;
 import static eu.dnetlib.iis.common.spark.SparkSessionSupport.runWithSparkSession;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.functions;
+
+import scala.Tuple2;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -72,16 +77,19 @@ public class JsonReferenceParserJob {
             // Read JSON input (gzip compressed, one JSON record per line)
             Dataset<Row> jsonDf = spark.read().json(params.inputPath);
 
-            // Group by id and collect all ref structs into a list
-            Dataset<Row> groupedDf = jsonDf.groupBy("id")
-                    .agg(functions.collect_list("ref").as("refs"));
-
-            // Transform grouped rows into ExtractedDocumentMetadata Avro records
             String extractedBy = params.extractedBy != null ? params.extractedBy : DEFAULT_EXTRACTED_BY;
-            CRFBibReferenceParser referenceParser = initReferenceParser();
 
-            JavaRDD<ExtractedDocumentMetadata> resultRdd = groupedDf.toJavaRDD()
-                    .map(new GroupedRowToDocumentMapper(extractedBy, referenceParser));
+            // Per-row parse: map each (id, ref) JSON record into a (documentId, ReferenceMetadata)
+            // tuple. The expensive CERMINE parsing happens here - before any shuffle - on the
+            // input partitions, fully parallel and decoupled from group sizes / key skew.
+            JavaPairRDD<String, ReferenceMetadata> parsedByDocIdRdd = jsonDf.toJavaRDD()
+                    .flatMap(new RowToReferenceMapper())
+                    .mapToPair(t -> new Tuple2<>(t._1(), t._2()));
+
+            // Group only the compact ReferenceMetadata objects by document id
+            JavaRDD<ExtractedDocumentMetadata> resultRdd = parsedByDocIdRdd
+                    .groupByKey()
+                    .map(new GroupedReferencesToDocumentMapper(extractedBy));
 
             resultRdd.cache();
 
@@ -117,46 +125,33 @@ public class JsonReferenceParserJob {
     // ----------------------------- INNER CLASSES -----------------------------
 
     /**
-     * Spark function that maps a grouped row (id, [ref1, ref2, ...]) to
-     * an {@link ExtractedDocumentMetadata} Avro record.
+     * Spark function that maps a single JSON row (id + ref struct) into
+     * a (documentId, ReferenceMetadata) tuple.
+     * <p>
+     * The expensive CERMINE reference parsing is performed here - per input row,
+     * before any shuffle - so it runs fully parallel on the input partitions and
+     * is decoupled from group sizes and key skew.
      */
-    private static class GroupedRowToDocumentMapper
-            implements Function<Row, ExtractedDocumentMetadata> {
+    private static class RowToReferenceMapper
+            implements FlatMapFunction<Row, Tuple2<String, ReferenceMetadata>> {
 
         private static final long serialVersionUID = 1L;
 
-        private final String extractedBy;
-
         private final transient CRFBibReferenceParser referenceParser;
 
-        GroupedRowToDocumentMapper(String extractedBy, CRFBibReferenceParser referenceParser) {
-            this.extractedBy = extractedBy;
-            this.referenceParser = referenceParser;
+        RowToReferenceMapper() {
+            this.referenceParser = null;
         }
 
         @Override
-        public ExtractedDocumentMetadata call(Row row) throws Exception {
+        public Iterator<Tuple2<String, ReferenceMetadata>> call(Row row) throws Exception {
             String id = row.getString(row.fieldIndex("id"));
-            List<Row> refs = row.getList(row.fieldIndex("refs"));
-
-            List<ReferenceMetadata> referenceMetadatas = new ArrayList<>();
-            if (refs != null) {
-                for (Row refRow : refs) {
-                    ReferenceMetadata refMeta = buildReferenceMetadata(refRow);
-                    referenceMetadatas.add(refMeta);
-                }
+            if (row.isNullAt(row.fieldIndex("ref"))) {
+                return Collections.<Tuple2<String, ReferenceMetadata>>emptyList().iterator();
             }
-
-            ExtractedDocumentMetadata.Builder builder = ExtractedDocumentMetadata.newBuilder();
-            builder.setId(id);
-            builder.setExtractedBy(extractedBy);
-            builder.setText("");
-
-            if (!referenceMetadatas.isEmpty()) {
-                builder.setReferences(referenceMetadatas);
-            }
-
-            return builder.build();
+            Row refRow = row.getStruct(row.fieldIndex("ref"));
+            ReferenceMetadata refMeta = buildReferenceMetadata(refRow);
+            return Collections.singletonList(new Tuple2<>(id, refMeta)).iterator();
         }
 
         /**
@@ -473,6 +468,48 @@ public class JsonReferenceParserJob {
             } catch (IllegalArgumentException e) {
                 return null;
             }
+        }
+    }
+
+    // ----------------------------- INNER TYPES -----------------------------
+
+    /**
+     * Spark function that maps a grouped (documentId, [references...]) tuple to
+     * an {@link ExtractedDocumentMetadata} Avro record.
+     */
+    private static class GroupedReferencesToDocumentMapper
+            implements Function<Tuple2<String, Iterable<ReferenceMetadata>>, ExtractedDocumentMetadata> {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String extractedBy;
+
+        GroupedReferencesToDocumentMapper(String extractedBy) {
+            this.extractedBy = extractedBy;
+        }
+
+        @Override
+        public ExtractedDocumentMetadata call(Tuple2<String, Iterable<ReferenceMetadata>> t) throws Exception {
+            String id = t._1();
+            Iterable<ReferenceMetadata> refs = t._2();
+
+            List<ReferenceMetadata> referenceMetadatas = new ArrayList<>();
+            if (refs != null) {
+                for (ReferenceMetadata ref : refs) {
+                    referenceMetadatas.add(ref);
+                }
+            }
+
+            ExtractedDocumentMetadata.Builder builder = ExtractedDocumentMetadata.newBuilder();
+            builder.setId(id);
+            builder.setExtractedBy(extractedBy);
+            builder.setText("");
+
+            if (!referenceMetadatas.isEmpty()) {
+                builder.setReferences(referenceMetadatas);
+            }
+
+            return builder.build();
         }
     }
 
