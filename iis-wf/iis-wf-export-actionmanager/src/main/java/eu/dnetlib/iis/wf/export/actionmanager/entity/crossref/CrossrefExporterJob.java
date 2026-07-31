@@ -24,6 +24,8 @@ import com.beust.jcommander.Parameters;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Author;
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
+import eu.dnetlib.dhp.schema.oaf.Field;
+import eu.dnetlib.dhp.schema.oaf.Instance;
 import eu.dnetlib.dhp.schema.oaf.Publication;
 import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.dhp.schema.oaf.Relation;
@@ -62,6 +64,8 @@ public class CrossrefExporterJob {
     private static final String NUMERIC_PREFIX = InfoSpaceConstants.ROW_PREFIX_RESULT;
 
     private static final Qualifier RESULT_TYPE_PUBLICATION = buildResultTypePublication();
+
+    private static final Qualifier INSTANCE_TYPE_PUBLICATION = buildInstanceTypePublication();
 
     private static final Qualifier MAIN_TITLE_QUALIFIER = buildMainTitleQualifier();
 
@@ -223,8 +227,18 @@ public class CrossrefExporterJob {
                 dateProp.setValue(formattedDate);
                 dateProp.setQualifier(RELEVANT_DATE_QUALIFIER);
                 publication.setRelevantdate(Collections.singletonList(dateProp));
+
+                // date of acceptance (year) propagated with the same formatted value
+                Field<String> doaField = new Field<>();
+                doaField.setValue(formattedDate);
+                publication.setDateofacceptance(doaField);
             }
         }
+
+        // instance type
+        Instance instance = new Instance();
+        instance.setInstancetype(INSTANCE_TYPE_PUBLICATION);
+        publication.setInstance(Collections.singletonList(instance));
 
         publication.setLastupdatetimestamp(System.currentTimeMillis());
 
@@ -283,6 +297,12 @@ public class CrossrefExporterJob {
                 InfoSpaceConstants.SEMANTIC_SCHEME_DNET_RESULT_TYPOLOGIES);
     }
 
+    private static Qualifier buildInstanceTypePublication() {
+        return buildQualifier(
+                "0000", "UNKNOWN",
+                "dnet:publication_resource", "dnet:publication_resource");
+    }
+
     private static Qualifier buildMainTitleQualifier() {
         return buildQualifier(
                 "main title", "main title",
@@ -308,7 +328,7 @@ public class CrossrefExporterJob {
         DataInfo dataInfo = new DataInfo();
         dataInfo.setInvisible(true);
         dataInfo.setInferred(true);
-        dataInfo.setTrust("0.9");
+        dataInfo.setTrust("0.7");
         dataInfo.setInferenceprovenance(INFERENCE_PROVENANCE);
         dataInfo.setProvenanceaction(buildProvenanceQualifier());
         return dataInfo;
@@ -317,7 +337,7 @@ public class CrossrefExporterJob {
     private static DataInfo buildRelationDataInfo() {
         DataInfo dataInfo = new DataInfo();
         dataInfo.setInferred(true);
-        dataInfo.setTrust("0.9");
+        dataInfo.setTrust("0.7");
         dataInfo.setInferenceprovenance(INFERENCE_PROVENANCE);
         dataInfo.setProvenanceaction(buildProvenanceQualifier());
         return dataInfo;
