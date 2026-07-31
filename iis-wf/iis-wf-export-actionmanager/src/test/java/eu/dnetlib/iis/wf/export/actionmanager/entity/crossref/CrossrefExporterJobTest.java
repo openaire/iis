@@ -123,9 +123,16 @@ public class CrossrefExporterJobTest {
         assertEquals("publication", pub0.getResulttype().getClassname());
         assertTrue(pub0.getDataInfo().getInvisible());
         assertTrue(pub0.getDataInfo().getInferred());
-        assertEquals("0.9", pub0.getDataInfo().getTrust());
+        assertEquals("0.7", pub0.getDataInfo().getTrust());
         assertEquals("iis::mutecitation_export", pub0.getDataInfo().getInferenceprovenance());
         assertEquals("iis", pub0.getDataInfo().getProvenanceaction().getClassid());
+
+        // instance type
+        assertEquals(1, pub0.getInstance().size());
+        assertEquals("0000", pub0.getInstance().get(0).getInstancetype().getClassid());
+        assertEquals("UNKNOWN", pub0.getInstance().get(0).getInstancetype().getClassname());
+        assertEquals("dnet:publication_resource", pub0.getInstance().get(0).getInstancetype().getSchemeid());
+        assertEquals("dnet:publication_resource", pub0.getInstance().get(0).getInstancetype().getSchemename());
 
         // title
         assertEquals(1, pub0.getTitle().size());
@@ -144,6 +151,10 @@ public class CrossrefExporterJobTest {
         assertEquals("2020-01-01", pub0.getRelevantdate().get(0).getValue());
         assertEquals("created", pub0.getRelevantdate().get(0).getQualifier().getClassid());
 
+        // date of acceptance (year)
+        assertNotNull(pub0.getDateofacceptance());
+        assertEquals("2020-01-01", pub0.getDateofacceptance().getValue());
+
         // --- Verify second entity (pub1, ref 2: "Machine Learning") ---
         AtomicAction<Publication> entity1 = findEntityByTitle(capturedEntityActions, "Machine Learning");
         assertNotNull(entity1, "expected entity for 'Machine Learning'");
@@ -152,6 +163,9 @@ public class CrossrefExporterJobTest {
         assertEquals("Bob Wilson", pub1.getAuthor().get(0).getFullname());
         assertEquals(Integer.valueOf(1), pub1.getAuthor().get(0).getRank());
         assertEquals("2019-01-01", pub1.getRelevantdate().get(0).getValue());
+        assertEquals("2019-01-01", pub1.getDateofacceptance().getValue());
+        assertEquals(1, pub1.getInstance().size());
+        assertEquals("0000", pub1.getInstance().get(0).getInstancetype().getClassid());
 
         // --- Verify third entity (pub4, ref 1: "Deep Learning") with authors and YYYY-MM-DD year ---
         AtomicAction<Publication> entity2 = findEntityByTitle(capturedEntityActions, "Deep Learning");
@@ -166,6 +180,7 @@ public class CrossrefExporterJobTest {
         assertEquals(Integer.valueOf(3), pub2.getAuthor().get(2).getRank());
         // YYYY-MM-DD preserved as-is
         assertEquals("2020-06-15", pub2.getRelevantdate().get(0).getValue());
+        assertEquals("2020-06-15", pub2.getDateofacceptance().getValue());
 
         // --- Verify fourth entity (pub5: "Quantum Computing") ---
         AtomicAction<Publication> entity3 = findEntityByTitle(capturedEntityActions, "Quantum Computing");
@@ -175,12 +190,15 @@ public class CrossrefExporterJobTest {
         assertEquals("Eve Adams", pub3.getAuthor().get(0).getFullname());
         assertEquals(Integer.valueOf(1), pub3.getAuthor().get(0).getRank());
         assertEquals("2023-01-01", pub3.getRelevantdate().get(0).getValue());
+        assertEquals("2023-01-01", pub3.getDateofacceptance().getValue());
 
         // --- Verify that "Network Analysis" (invalid year) was exported (eligible) but without relevantdate ---
         AtomicAction<Publication> entityNetworkAnalysis = findEntityByTitle(capturedEntityActions, "Network Analysis");
         assertNotNull(entityNetworkAnalysis, "expected entity for 'Network Analysis'");
         assertNull(entityNetworkAnalysis.getPayload().getRelevantdate(),
                 "Network Analysis should have no relevantdate (invalid year)");
+        assertNull(entityNetworkAnalysis.getPayload().getDateofacceptance(),
+                "Network Analysis should have no dateofacceptance (invalid year)");
 
         // --- Verify ineligible references were NOT exported ---
         assertNull(findEntityByTitle(capturedEntityActions, "No Authors Ref"),
@@ -210,7 +228,7 @@ public class CrossrefExporterJobTest {
             assertEquals("relationship", rel.getSubRelType());
             assertEquals("Cites", rel.getRelClass());
             assertTrue(rel.getDataInfo().getInferred());
-            assertEquals("0.9", rel.getDataInfo().getTrust());
+            assertEquals("0.7", rel.getDataInfo().getTrust());
             assertEquals("iis::mutecitation_export", rel.getDataInfo().getInferenceprovenance());
             assertEquals("iis", rel.getDataInfo().getProvenanceaction().getClassid());
 
