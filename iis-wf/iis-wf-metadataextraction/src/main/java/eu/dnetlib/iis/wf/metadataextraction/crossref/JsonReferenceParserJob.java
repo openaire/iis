@@ -32,10 +32,10 @@ import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.Range;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
-import pl.edu.icm.cermine.bibref.CRFBibReferenceParser;
-import pl.edu.icm.cermine.bibref.model.BibEntry;
-import pl.edu.icm.cermine.bibref.model.BibEntryFieldType;
-import pl.edu.icm.cermine.exception.AnalysisException;
+import eu.dnetlib.iis.wf.metadataextraction.parser.ParsedReference;
+import eu.dnetlib.iis.wf.metadataextraction.parser.ParsedReferenceFiller;
+import eu.dnetlib.iis.wf.metadataextraction.parser.ReferenceTextParser;
+import eu.dnetlib.iis.wf.metadataextraction.parser.ReferenceTextParserFactory;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
@@ -56,6 +56,12 @@ public class JsonReferenceParserJob {
     private static SparkAvroSaver avroSaver = new SparkAvroSaver();
 
     private static final String DEFAULT_EXTRACTED_BY = "crossrefBibrefParser";
+
+    private static final String DEFAULT_REFERENCE_PARSER = ReferenceTextParserFactory.PARSER_CERMINE;
+
+    private static final int DEFAULT_GROBID_CONNECTION_TIMEOUT = 30000;
+
+    private static final int DEFAULT_GROBID_READ_TIMEOUT = 60000;
 
     private static final String COUNTER_PROCESSED_DOCUMENTS = "processing.crossref.referenceParser.documents";
 
@@ -78,12 +84,19 @@ public class JsonReferenceParserJob {
             Dataset<Row> jsonDf = spark.read().json(params.inputPath);
 
             String extractedBy = params.extractedBy != null ? params.extractedBy : DEFAULT_EXTRACTED_BY;
+            String referenceParserType = params.referenceParser != null
+                    ? params.referenceParser : DEFAULT_REFERENCE_PARSER;
+            int grobidConnectionTimeout = params.grobidConnectionTimeout != null
+                    ? params.grobidConnectionTimeout : DEFAULT_GROBID_CONNECTION_TIMEOUT;
+            int grobidReadTimeout = params.grobidReadTimeout != null
+                    ? params.grobidReadTimeout : DEFAULT_GROBID_READ_TIMEOUT;
 
             // Per-row parse: map each (id, ref) JSON record into a (documentId, ReferenceMetadata)
-            // tuple. The expensive CERMINE parsing happens here - before any shuffle - on the
-            // input partitions, fully parallel and decoupled from group sizes / key skew.
+            // tuple. The reference parsing (CERMINE or Grobid) happens here - before any shuffle -
+            // on the input partitions, fully parallel and decoupled from group sizes / key skew.
             JavaPairRDD<String, ReferenceMetadata> parsedByDocIdRdd = jsonDf.toJavaRDD()
-                    .flatMap(new RowToReferenceMapper())
+                    .flatMap(new RowToReferenceMapper(referenceParserType, params.grobidServerUrl,
+                            grobidConnectionTimeout, grobidReadTimeout))
                     .mapToPair(t -> new Tuple2<>(t._1(), t._2()));
 
             // Group only the compact ReferenceMetadata objects by document id
@@ -109,26 +122,13 @@ public class JsonReferenceParserJob {
         });
     }
 
-    // ----------------------------- PRIVATE -----------------------------
-
-    /**
-     * Initializes the CERMINE CRF-based reference parser.
-     */
-    private static CRFBibReferenceParser initReferenceParser() {
-        try {
-            return CRFBibReferenceParser.getInstance();
-        } catch (AnalysisException e) {
-            throw new RuntimeException("Unable to initialize CRF BibReference parser", e);
-        }
-    }
-
     // ----------------------------- INNER CLASSES -----------------------------
 
     /**
      * Spark function that maps a single JSON row (id + ref struct) into
      * a (documentId, ReferenceMetadata) tuple.
      * <p>
-     * The expensive CERMINE reference parsing is performed here - per input row,
+     * The reference parsing (CERMINE or Grobid) is performed here - per input row,
      * before any shuffle - so it runs fully parallel on the input partitions and
      * is decoupled from group sizes and key skew.
      */
@@ -137,10 +137,22 @@ public class JsonReferenceParserJob {
 
         private static final long serialVersionUID = 1L;
 
-        private final transient CRFBibReferenceParser referenceParser;
+        private final String referenceParserType;
 
-        RowToReferenceMapper() {
-            this.referenceParser = null;
+        private final String grobidServerUrl;
+
+        private final int grobidConnectionTimeout;
+
+        private final int grobidReadTimeout;
+
+        private transient ReferenceTextParser referenceParser;
+
+        RowToReferenceMapper(String referenceParserType, String grobidServerUrl,
+                int grobidConnectionTimeout, int grobidReadTimeout) {
+            this.referenceParserType = referenceParserType;
+            this.grobidServerUrl = grobidServerUrl;
+            this.grobidConnectionTimeout = grobidConnectionTimeout;
+            this.grobidReadTimeout = grobidReadTimeout;
         }
 
         @Override
@@ -155,14 +167,15 @@ public class JsonReferenceParserJob {
         }
 
         /**
-         * Returns the reference parser, re-initializing it if needed
+         * Returns the reference text parser, initializing it lazily on first use
          * (handles deserialization where the transient field is null).
          */
-        private CRFBibReferenceParser getReferenceParser() {
-            if (referenceParser != null) {
-                return referenceParser;
+        private ReferenceTextParser getReferenceParser() {
+            if (referenceParser == null) {
+                referenceParser = ReferenceTextParserFactory.create(referenceParserType,
+                        grobidServerUrl, grobidConnectionTimeout, grobidReadTimeout);
             }
-            return initReferenceParser();
+            return referenceParser;
         }
 
         /**
@@ -257,14 +270,14 @@ public class JsonReferenceParserJob {
                 basicBuilder.setExternalIds(externalIds);
             }
 
-            // --- Parse unstructured text with CERMINE to fill remaining fields ---
+            // --- Parse unstructured text (CERMINE or Grobid) to fill remaining fields ---
             if (StringUtils.isNotBlank(unstructured)) {
                 try {
-                    BibEntry bibEntry = getReferenceParser().parseBibReference(unstructured);
-                    if (bibEntry != null) {
-                        applyParsedFields(basicBuilder, bibEntry);
+                    ParsedReference parsed = getReferenceParser().parse(unstructured);
+                    if (parsed != null) {
+                        ParsedReferenceFiller.applyParsedFields(basicBuilder, parsed);
                     }
-                } catch (AnalysisException e) {
+                } catch (Exception e) {
                     log.warn("Unable to parse unstructured reference text: " +
                             StringUtils.abbreviate(unstructured, 200), e);
                 }
@@ -280,177 +293,6 @@ public class JsonReferenceParserJob {
 
             // position is explicitly left unset (unknown ordering)
             return refBuilder.build();
-        }
-
-        /**
-         * Applies fields parsed from the raw unstructured text via CERMINE,
-         * but only for fields that have NOT already been set from the JSON mapping.
-         */
-        private void applyParsedFields(ReferenceBasicMetadata.Builder basicBuilder, BibEntry bibEntry) {
-
-            // title - only if not already set from ref#article-title
-            if (basicBuilder.getTitle() == null) {
-                String parsedTitle = bibEntry.getFirstFieldValue(BibEntryFieldType.TITLE);
-                if (StringUtils.isNotBlank(parsedTitle)) {
-                    basicBuilder.setTitle(parsedTitle);
-                }
-            }
-
-            // authors - never explicitly set from JSON mapping
-            List<CharSequence> authors = new ArrayList<>();
-            List<String> parsedAuthors = bibEntry.getAllFieldValues(BibEntryFieldType.AUTHOR);
-            if (parsedAuthors != null) {
-                for (String author : parsedAuthors) {
-                    if (StringUtils.isNotBlank(author)) {
-                        authors.add(author);
-                    }
-                }
-            }
-            if (!authors.isEmpty()) {
-                basicBuilder.setAuthors(authors);
-            }
-
-            // pages - only if not already set from ref#first-page
-            if (basicBuilder.getPages() == null) {
-                // FIXME make sure this is the way to get pages! Check the CERMINE code in metadataextraction
-                // this needs to be fixed, rely on NlmToDocumentWithBasicMetadataConverter#convertBibEntry()
-                // check also the way other fields are being extracted!
-                String parsedPages = bibEntry.getFirstFieldValue(BibEntryFieldType.PAGES);
-                if (StringUtils.isNotBlank(parsedPages)) {
-                    Range pagesRange = parsePagesRange(parsedPages);
-                    if (pagesRange != null) {
-                        basicBuilder.setPages(pagesRange);
-                    }
-                }
-            }
-
-            // journal - only if not already set from ref#journal-title
-            if (basicBuilder.getJournal() == null) {
-                String parsedJournal = bibEntry.getFirstFieldValue(BibEntryFieldType.JOURNAL);
-                if (StringUtils.isNotBlank(parsedJournal)) {
-                    basicBuilder.setJournal(parsedJournal);
-                }
-            }
-
-            // source - never explicitly set from JSON mapping
-            String parsedSource = bibEntry.getFirstFieldValue(BibEntryFieldType.JOURNAL);
-            if (StringUtils.isBlank(parsedSource)) {
-                parsedSource = bibEntry.getFirstFieldValue(BibEntryFieldType.TITLE);
-            }
-            if (StringUtils.isNotBlank(parsedSource) && basicBuilder.getSource() == null) {
-                basicBuilder.setSource(parsedSource);
-            }
-
-            // volume - only if not already set from ref#volume
-            if (basicBuilder.getVolume() == null) {
-                String parsedVolume = bibEntry.getFirstFieldValue(BibEntryFieldType.VOLUME);
-                if (StringUtils.isNotBlank(parsedVolume)) {
-                    basicBuilder.setVolume(parsedVolume);
-                }
-            }
-
-            // year - only if not already set from ref#year
-            if (basicBuilder.getYear() == null) {
-                String parsedYear = bibEntry.getFirstFieldValue(BibEntryFieldType.YEAR);
-                if (StringUtils.isNotBlank(parsedYear)) {
-                    basicBuilder.setYear(parsedYear);
-                }
-            }
-
-            // edition - only if not already set from ref#edition
-            if (basicBuilder.getEdition() == null) {
-                String parsedEdition = bibEntry.getFirstFieldValue(BibEntryFieldType.EDITION);
-                if (StringUtils.isNotBlank(parsedEdition)) {
-                    basicBuilder.setEdition(parsedEdition);
-                }
-            }
-
-            // publisher - never explicitly set from JSON mapping
-            String parsedPublisher = bibEntry.getFirstFieldValue(BibEntryFieldType.PUBLISHER);
-            if (StringUtils.isNotBlank(parsedPublisher)) {
-                basicBuilder.setPublisher(parsedPublisher);
-            }
-
-            // location - never explicitly set from JSON mapping
-            String parsedLocation = bibEntry.getFirstFieldValue(BibEntryFieldType.LOCATION);
-            if (StringUtils.isNotBlank(parsedLocation)) {
-                basicBuilder.setLocation(parsedLocation);
-            }
-
-            // series - only if not already set from ref#series-title
-            if (basicBuilder.getSeries() == null) {
-                String parsedSeries = bibEntry.getFirstFieldValue(BibEntryFieldType.SERIES);
-                if (StringUtils.isNotBlank(parsedSeries)) {
-                    basicBuilder.setSeries(parsedSeries);
-                }
-            }
-
-            // issue - only if not already set from ref#issue
-            if (basicBuilder.getIssue() == null) {
-                String parsedIssue = bibEntry.getFirstFieldValue(BibEntryFieldType.NUMBER);
-                if (StringUtils.isNotBlank(parsedIssue)) {
-                    basicBuilder.setIssue(parsedIssue);
-                }
-            }
-
-            // url - never explicitly set from JSON mapping
-            String parsedUrl = bibEntry.getFirstFieldValue(BibEntryFieldType.URL);
-            if (StringUtils.isNotBlank(parsedUrl)) {
-                basicBuilder.setUrl(parsedUrl);
-            }
-
-            // externalIds - only fill in identifiers not already mapped from JSON
-            Map<CharSequence, CharSequence> existingExtIds = basicBuilder.getExternalIds();
-            if (existingExtIds == null) {
-                existingExtIds = new HashMap<>();
-            }
-
-            String parsedDoi = bibEntry.getFirstFieldValue(BibEntryFieldType.DOI);
-            if (StringUtils.isNotBlank(parsedDoi) && !existingExtIds.containsKey("doi")) {
-                existingExtIds.put("doi", parsedDoi);
-            }
-
-            String parsedIsbn = bibEntry.getFirstFieldValue(BibEntryFieldType.ISBN);
-            if (StringUtils.isNotBlank(parsedIsbn) && !existingExtIds.containsKey("ISBN")) {
-                existingExtIds.put("ISBN", parsedIsbn);
-            }
-
-            String parsedIssn = bibEntry.getFirstFieldValue(BibEntryFieldType.ISSN);
-            if (StringUtils.isNotBlank(parsedIssn) && !existingExtIds.containsKey("ISSN")) {
-                existingExtIds.put("ISSN", parsedIssn);
-            }
-
-            if (!existingExtIds.isEmpty()) {
-                basicBuilder.setExternalIds(existingExtIds);
-            }
-        }
-
-        /**
-         * Parses a page range string (e.g. "149-187" or "149") into a {@link Range} object.
-         */
-        private static Range parsePagesRange(String pagesStr) {
-            if (StringUtils.isBlank(pagesStr)) {
-                return null;
-            }
-            String trimmed = pagesStr.trim();
-            String[] parts = trimmed.split("[-–—]+");
-            if (parts.length == 1) {
-                String single = parts[0].trim();
-                if (StringUtils.isNotBlank(single)) {
-                    return Range.newBuilder().setStart(single).build();
-                }
-            } else if (parts.length >= 2) {
-                String start = parts[0].trim();
-                String end = parts[parts.length - 1].trim();
-                if (StringUtils.isNotBlank(start)) {
-                    Range.Builder rangeBuilder = Range.newBuilder().setStart(start);
-                    if (StringUtils.isNotBlank(end)) {
-                        rangeBuilder.setEnd(end);
-                    }
-                    return rangeBuilder.build();
-                }
-            }
-            return null;
         }
 
         /**
@@ -536,5 +378,21 @@ public class JsonReferenceParserJob {
         @Parameter(names = "-extractedBy", required = false,
                 description = "value to set in ExtractedDocumentMetadata#extractedBy field")
         private String extractedBy;
+
+        @Parameter(names = "-referenceParser", required = false,
+                description = "reference text parser to use: 'cermine' (default) or 'grobid'")
+        private String referenceParser;
+
+        @Parameter(names = "-grobidServerUrl", required = false,
+                description = "Grobid server location, required when -referenceParser is set to 'grobid'")
+        private String grobidServerUrl;
+
+        @Parameter(names = "-grobidConnectionTimeout", required = false,
+                description = "Grobid connection timeout in ms")
+        private Integer grobidConnectionTimeout;
+
+        @Parameter(names = "-grobidReadTimeout", required = false,
+                description = "Grobid read timeout in ms")
+        private Integer grobidReadTimeout;
     }
 }
