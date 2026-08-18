@@ -1,8 +1,9 @@
 package pl.edu.icm.coansys.citations;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.spark.api.java.JavaPairRDD;
@@ -54,32 +55,21 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
         
         return citIdDocPairs
                 .join(citations)
-                .combineByKey(
-                        docAndCit -> {
-                            PriorityQueue<EntityWithSimilarity> topK = new PriorityQueue<>(
-                                    Comparator.comparingDouble(EntityWithSimilarity::getSimilarity)
-                                            .thenComparing(e -> e.getEntity().id()));
-                            topK.add(new EntityWithSimilarity(docAndCit._1,
-                                    calculateTokenSimilarity(docAndCit._2, docAndCit._1)));
-                            return new Tuple2<MatchableEntity, PriorityQueue<EntityWithSimilarity>>(docAndCit._2, topK);
-                        },
-                        (acc, docAndCit) -> {
-                            addToTopK(acc._2, new EntityWithSimilarity(docAndCit._1,
-                                    calculateTokenSimilarity(acc._1, docAndCit._1)));
-                            return acc;
-                        },
-                        (acc1, acc2) -> {
-                            for (EntityWithSimilarity item : acc2._2) {
-                                addToTopK(acc1._2, item);
-                            }
-                            return acc1;
-                        }
+                .mapToPair(t -> new Tuple2<>(t._1,
+                        new EntityWithSimilarity(t._2._1,
+                                calculateTokenSimilarity(t._2._2, t._2._1))))
+                .aggregateByKey(
+                        new ArrayList<EntityWithSimilarity>(),
+                        (list, es) -> { addToTopK(list, es); return list; },
+                        (list1, list2) -> { list2.forEach(es -> addToTopK(list1, es)); return list1; }
                 )
-                .flatMapToPair(entry ->
-                        entry._2._2.stream()
-                                .map(x -> new Tuple2<MatchableEntity, MatchableEntity>(entry._2._1, x.getEntity()))
-                                .iterator()
-                );
+                .join(citations)
+                .flatMapToPair(t -> {
+                        MatchableEntity citation = t._2._2;
+                        return t._2._1.stream()
+                                .map(es -> new Tuple2<MatchableEntity, MatchableEntity>(citation, es.getEntity()))
+                                .iterator();
+                });
     }
     
     
@@ -92,10 +82,20 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
     
     //------------------------ PRIVATE --------------------------
     
-    private void addToTopK(PriorityQueue<EntityWithSimilarity> heap, EntityWithSimilarity candidate) {
-        heap.add(candidate);
-        if (heap.size() > sameCitationsLimit) {
-            heap.poll();
+    private void addToTopK(List<EntityWithSimilarity> list, EntityWithSimilarity candidate) {
+        if (list.size() < sameCitationsLimit) {
+            list.add(candidate);
+            return;
+        }
+        EntityWithSimilarityComparator comparator = new EntityWithSimilarityComparator();
+        int worstIdx = 0;
+        for (int i = 1; i < list.size(); i++) {
+            if (comparator.compare(list.get(i), list.get(worstIdx)) > 0) {
+                worstIdx = i;
+            }
+        }
+        if (comparator.compare(candidate, list.get(worstIdx)) < 0) {
+            list.set(worstIdx, candidate);
         }
     }
     
@@ -136,4 +136,17 @@ public class CitationAttacherWithMatchedLimiter implements Serializable {
         
     }
     
+    private static class EntityWithSimilarityComparator implements Comparator<EntityWithSimilarity>, Serializable {
+        
+        private static final long serialVersionUID = 1L;
+        
+        @Override
+        public int compare(EntityWithSimilarity o1, EntityWithSimilarity o2) {
+            int similarityCompare = -Double.compare(o1.getSimilarity(), o2.getSimilarity());
+            if (similarityCompare == 0) {
+                return o1.getEntity().id().compareTo(o2.getEntity().id());
+            }
+            return similarityCompare;
+        }
+    }
 }
