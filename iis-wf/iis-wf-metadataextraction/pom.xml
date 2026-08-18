@@ -136,9 +136,13 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
+		<!-- httpmime is managed as 'provided' in the parent pom (available on the cluster),
+		     but MultipartEntityBuilder used by GrobidClient is NOT part of the Spark/Hadoop
+		     runtime classpath, so it must be packaged into the uber-jar (compile scope). -->
 		<dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+            <scope>compile</scope>
         </dependency>
 
 		<!-- Spark dependencies -->

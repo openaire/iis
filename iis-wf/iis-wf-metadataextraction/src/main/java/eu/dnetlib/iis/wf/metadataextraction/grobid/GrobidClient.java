@@ -80,6 +80,18 @@ public class GrobidClient implements Closeable {
     public String processPdfByteBuffer(ByteBuffer pdfByteBuffer) throws IOException, TransientException, InterruptedException {
         return processPdfByteBuffer(pdfByteBuffer, 0);
     }
+
+    /**
+     * Parses a raw bibliographic citation string by relying on an external Grobid service.
+     * @param citation raw citation string
+     * @return The TEI XML result (containing a single {@code biblStruct}) as a string
+     * @throws IOException If an error occurs during processing
+     * @throws TransientException if temporary error occurred
+     * @throws InterruptedException when interrupted while waiting during retry
+     */
+    public String processCitation(String citation) throws IOException, TransientException, InterruptedException {
+        return processCitation(citation, 0);
+    }
     
     @Override
     public void close() throws IOException {
@@ -140,6 +152,50 @@ public class GrobidClient implements Closeable {
             } catch (SocketTimeoutException e) {
                 throw new TransientException("Socket timeout exceeded when communicating with the grobid server!", e);
             }
+        }
+    }
+
+    private String processCitation(String citation, int retryCount) throws IOException, TransientException, InterruptedException {
+        HttpPost httpPost = new HttpPost(grobidUrl + "/api/processCitation");
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.addTextBody("citations", citation, ContentType.TEXT_PLAIN);
+
+        HttpEntity multipart = builder.build();
+        httpPost.setEntity(multipart);
+
+        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            if (statusCode == HttpURLConnection.HTTP_OK) {
+                HttpEntity responseEntity = response.getEntity();
+                if (responseEntity != null) {
+                    return EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
+                } else {
+                    throw new IOException("No response entity received from Grobid");
+                }
+            } else if (statusCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+                // throwing IOException to indicate permanent issue
+                String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                throw new IOException("Grobid request failed with status code " + statusCode + ": " + error);
+            } else {
+                // throwing TransientException to indicate transient nature of the failure
+                // those are usually 502, 503 and 504 HTTP error codes but it is possible other kind of failures may occur
+                String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                String message = "Grobid request failed with status code " + statusCode + ": " + error;
+                if (retryCount >= maxRetriesCount) {
+                    throw new TransientException(message);
+                } else {
+                    retryCount++;
+                    logger.warn(message);
+                    logger.warn("retrying for the " + retryCount + " time after waiting " + throttleSleepTime + " ms...");
+                    Thread.sleep(throttleSleepTime);
+                    return processCitation(citation, retryCount);
+                }
+            }
+        } catch (SocketTimeoutException e) {
+            throw new TransientException("Socket timeout exceeded when communicating with the grobid server!", e);
         }
     }
 }
