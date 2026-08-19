@@ -156,4 +156,31 @@ class GrobidTeiBiblStructParserTest {
         assertNotNull(authors);
         assertEquals(0, authors.size());
     }
+
+    @Test
+    @DisplayName("Parses a bare biblStruct root element (as returned by the 0.8.2 server)")
+    void testParseBareBiblStructRoot() throws Exception {
+        // given - exact structure returned by grobid.openaire-cloud.icm.edu.pl (0.8.2)
+        String tei = ""
+                + "<biblStruct >"
+                + "        <monogr>"
+                + "                <title/>"
+                + "                <author>"
+                + "                        <persName><forename type=\"first\">K</forename><forename type=\"middle\">G</forename><surname>Kürn</surname></persName>"
+                + "                </author>"
+                + "                <imprint>"
+                + "                        <date type=\"published\" when=\"1955\">1955</date>"
+                + "                </imprint>"
+                + "        </monogr>"
+                + "</biblStruct>";
+
+        // when
+        ParsedReference parsed = GrobidTeiBiblStructParser.parse(tei);
+
+        // then
+        assertNotNull(parsed);
+        assertEquals("K G Kürn", parsed.getAuthors().get(0));
+        assertEquals("1955", parsed.getYear());
+        assertEquals(1, parsed.getAuthors().size());
+    }
 }
