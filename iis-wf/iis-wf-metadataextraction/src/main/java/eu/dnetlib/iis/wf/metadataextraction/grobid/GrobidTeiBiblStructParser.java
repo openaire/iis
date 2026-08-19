@@ -36,7 +36,14 @@ public final class GrobidTeiBiblStructParser {
      */
     public static ParsedReference parse(String teiXml) throws Exception {
         Document document = parseXml(teiXml);
-        Element biblStruct = firstElementByLocalName(document.getDocumentElement(), "biblStruct");
+        Element root = document.getDocumentElement();
+        // Grobid may return the biblStruct wrapped in a TEI document or as a bare root element
+        Element biblStruct = null;
+        if (root != null && "biblStruct".equals(nodeName(root))) {
+            biblStruct = root;
+        } else {
+            biblStruct = firstElementByLocalName(root, "biblStruct");
+        }
         if (biblStruct == null) {
             return null;
         }
@@ -53,13 +60,15 @@ public final class GrobidTeiBiblStructParser {
         }
         parsed.setTitle(title);
 
-        // authors
+        // authors - under analytic for journal articles, under monogr for books/theses
         List<String> authors = new ArrayList<>();
-        if (analytic != null) {
-            for (Element author : childrenByLocalName(analytic, "author")) {
-                String name = buildAuthorName(author);
-                if (isNotBlank(name)) {
-                    authors.add(name);
+        for (Element container : new Element[]{analytic, monogr}) {
+            if (container != null) {
+                for (Element author : childrenByLocalName(container, "author")) {
+                    String name = buildAuthorName(author);
+                    if (isNotBlank(name)) {
+                        authors.add(name);
+                    }
                 }
             }
         }

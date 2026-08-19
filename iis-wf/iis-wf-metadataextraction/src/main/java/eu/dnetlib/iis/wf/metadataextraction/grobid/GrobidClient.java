@@ -7,13 +7,18 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.zookeeper.server.ByteBufferInputStream;
 import org.slf4j.Logger;
@@ -136,7 +141,7 @@ public class GrobidClient implements Closeable {
                 } else {
                     // throwing TransientException to indicate transient nature of the failure
                     // those are usually 502, 503 and 504 HTTP error codes but it is possible other kind of failures may occur
-                    String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                    String error = response.getEntity() != null ? EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8) : null;
                     String message = "Grobid request failed with status code " + statusCode + ": " + error;
                     if (retryCount >= maxRetriesCount) {
                         throw new TransientException(message);
@@ -158,11 +163,11 @@ public class GrobidClient implements Closeable {
     private String processCitation(String citation, int retryCount) throws IOException, TransientException, InterruptedException {
         HttpPost httpPost = new HttpPost(grobidUrl + "/api/processCitation");
 
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.addTextBody("citations", citation, ContentType.TEXT_PLAIN);
-
-        HttpEntity multipart = builder.build();
-        httpPost.setEntity(multipart);
+        // NOTE: this Grobid deployment (0.8.2) serves /api/processCitation as
+        // application/x-www-form-urlencoded; multipart/form-data is rejected with 415.
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("citations", citation));
+        httpPost.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
 
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
 
@@ -179,10 +184,14 @@ public class GrobidClient implements Closeable {
                 // throwing IOException to indicate permanent issue
                 String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
                 throw new IOException("Grobid request failed with status code " + statusCode + ": " + error);
+            } else if (statusCode >= 400 && statusCode < 500) {
+                // client error - permanent, no point in retrying
+                String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                throw new IOException("Grobid request failed with status code " + statusCode + ": " + error);
             } else {
                 // throwing TransientException to indicate transient nature of the failure
                 // those are usually 502, 503 and 504 HTTP error codes but it is possible other kind of failures may occur
-                String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+                String error = response.getEntity() != null ? EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8) : null;
                 String message = "Grobid request failed with status code " + statusCode + ": " + error;
                 if (retryCount >= maxRetriesCount) {
                     throw new TransientException(message);
