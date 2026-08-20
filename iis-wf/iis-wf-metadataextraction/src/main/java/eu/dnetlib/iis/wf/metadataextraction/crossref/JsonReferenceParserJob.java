@@ -3,7 +3,6 @@ package eu.dnetlib.iis.wf.metadataextraction.crossref;
 import static eu.dnetlib.iis.common.spark.SparkSessionSupport.runWithSparkSession;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,8 +13,8 @@ import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
@@ -63,6 +62,8 @@ public class JsonReferenceParserJob {
 
     private static final int DEFAULT_GROBID_READ_TIMEOUT = 60000;
 
+    private static final int DEFAULT_GROBID_BATCH_SIZE = 32;
+
     private static final String COUNTER_PROCESSED_DOCUMENTS = "processing.crossref.referenceParser.documents";
 
     private static final String COUNTER_PROCESSED_REFERENCES = "processing.crossref.referenceParser.references";
@@ -90,14 +91,19 @@ public class JsonReferenceParserJob {
                     ? params.grobidConnectionTimeout : DEFAULT_GROBID_CONNECTION_TIMEOUT;
             int grobidReadTimeout = params.grobidReadTimeout != null
                     ? params.grobidReadTimeout : DEFAULT_GROBID_READ_TIMEOUT;
+            int grobidBatchSize = params.grobidBatchSize != null
+                    ? params.grobidBatchSize : DEFAULT_GROBID_BATCH_SIZE;
 
-            // Per-row parse: map each (id, ref) JSON record into a (documentId, ReferenceMetadata)
-            // tuple. The reference parsing (CERMINE or Grobid) happens here - before any shuffle -
-            // on the input partitions, fully parallel and decoupled from group sizes / key skew.
+            // Partition-level parse: map each input partition of (id, ref) JSON records into
+            // (documentId, ReferenceMetadata) tuples. The reference parsing (CERMINE or Grobid)
+            // happens here - before any shuffle - on the input partitions, fully parallel and
+            // decoupled from group sizes / key skew. For Grobid, citations are sent to the server
+            // in batches of grobidBatchSize per HTTP request so the number of in-flight requests
+            // stays proportional to the number of running tasks (i.e. the Grobid engine capacity).
             JavaPairRDD<String, ReferenceMetadata> parsedByDocIdRdd = jsonDf.toJavaRDD()
-                    .flatMap(new RowToReferenceMapper(referenceParserType, params.grobidServerUrl,
-                            grobidConnectionTimeout, grobidReadTimeout))
-                    .mapToPair(t -> new Tuple2<>(t._1(), t._2()));
+                    .mapPartitionsToPair(new RowPartitionToReferenceMapper(referenceParserType,
+                            params.grobidServerUrl, grobidConnectionTimeout, grobidReadTimeout,
+                            grobidBatchSize));
 
             // Group only the compact ReferenceMetadata objects by document id
             JavaRDD<ExtractedDocumentMetadata> resultRdd = parsedByDocIdRdd
@@ -125,17 +131,23 @@ public class JsonReferenceParserJob {
     // ----------------------------- INNER CLASSES -----------------------------
 
     /**
-     * Spark function that maps a single JSON row (id + ref struct) into
-     * a (documentId, ReferenceMetadata) tuple.
+     * Spark function that maps an input partition of JSON rows (id + ref struct)
+     * into (documentId, ReferenceMetadata) tuples.
      * <p>
-     * The reference parsing (CERMINE or Grobid) is performed here - per input row,
-     * before any shuffle - so it runs fully parallel on the input partitions and
-     * is decoupled from group sizes and key skew.
+     * The reference parsing (CERMINE or Grobid) is performed here - before any
+     * shuffle - on the input partitions, fully parallel and decoupled from group
+     * sizes and key skew. For the Grobid parser, citations are accumulated and
+     * sent to the server in batches of {@link #batchSize} per HTTP request
+     * (/api/processCitationList), keeping the number of in-flight requests
+     * proportional to the number of concurrently running tasks rather than to
+     * the number of rows, i.e. matched to the Grobid engine capacity.
      */
-    private static class RowToReferenceMapper
-            implements FlatMapFunction<Row, Tuple2<String, ReferenceMetadata>> {
+    private static class RowPartitionToReferenceMapper
+            implements PairFlatMapFunction<Iterator<Row>, String, ReferenceMetadata> {
 
         private static final long serialVersionUID = 1L;
+
+        private static final int DEFAULT_BATCH_SIZE = 32;
 
         private final String referenceParserType;
 
@@ -145,25 +157,94 @@ public class JsonReferenceParserJob {
 
         private final int grobidReadTimeout;
 
+        private final int batchSize;
+
         private transient ReferenceTextParser referenceParser;
 
-        RowToReferenceMapper(String referenceParserType, String grobidServerUrl,
-                int grobidConnectionTimeout, int grobidReadTimeout) {
+        RowPartitionToReferenceMapper(String referenceParserType, String grobidServerUrl,
+                int grobidConnectionTimeout, int grobidReadTimeout, int batchSize) {
             this.referenceParserType = referenceParserType;
             this.grobidServerUrl = grobidServerUrl;
             this.grobidConnectionTimeout = grobidConnectionTimeout;
             this.grobidReadTimeout = grobidReadTimeout;
+            this.batchSize = batchSize > 0 ? batchSize : DEFAULT_BATCH_SIZE;
         }
 
         @Override
-        public Iterator<Tuple2<String, ReferenceMetadata>> call(Row row) throws Exception {
-            String id = row.getString(row.fieldIndex("id"));
-            if (row.isNullAt(row.fieldIndex("ref"))) {
-                return Collections.<Tuple2<String, ReferenceMetadata>>emptyList().iterator();
+        public Iterator<Tuple2<String, ReferenceMetadata>> call(Iterator<Row> rows) throws Exception {
+            List<Tuple2<String, ReferenceMetadata>> result = new ArrayList<>();
+            List<PendingReference> pending = new ArrayList<>(batchSize);
+
+            while (rows.hasNext()) {
+                Row row = rows.next();
+                String id = row.getString(row.fieldIndex("id"));
+                if (row.isNullAt(row.fieldIndex("ref"))) {
+                    continue;
+                }
+                Row refRow = row.getStruct(row.fieldIndex("ref"));
+                String unstructured = getString(refRow, "unstructured");
+                if (StringUtils.isBlank(unstructured)) {
+                    // no text to parse - map only the explicitly defined JSON fields
+                    ReferenceBasicMetadata basicMetadata = mapExplicitFields(refRow).build();
+                    result.add(new Tuple2<>(id, buildReferenceMetadata(refRow, basicMetadata)));
+                } else {
+                    pending.add(new PendingReference(id, refRow, unstructured));
+                    if (pending.size() >= batchSize) {
+                        flushPendingBatch(pending, result);
+                    }
+                }
             }
-            Row refRow = row.getStruct(row.fieldIndex("ref"));
-            ReferenceMetadata refMeta = buildReferenceMetadata(refRow);
-            return Collections.singletonList(new Tuple2<>(id, refMeta)).iterator();
+            flushPendingBatch(pending, result);
+            return result.iterator();
+        }
+
+        /**
+         * Parses the raw text of all pending references (as a single parser batch)
+         * and appends the resulting (id, ReferenceMetadata) tuples.
+         */
+        private void flushPendingBatch(List<PendingReference> pending,
+                List<Tuple2<String, ReferenceMetadata>> result) throws Exception {
+            if (pending.isEmpty()) {
+                return;
+            }
+            try {
+                List<String> texts = new ArrayList<>(pending.size());
+                for (PendingReference pendingRef : pending) {
+                    texts.add(pendingRef.unstructured);
+                }
+                List<ParsedReference> parsedList = getReferenceParser().parse(texts);
+                for (int i = 0; i < pending.size(); i++) {
+                    PendingReference pendingRef = pending.get(i);
+                    ParsedReference parsed = parsedList != null && i < parsedList.size() ? parsedList.get(i) : null;
+                    ReferenceBasicMetadata.Builder basicBuilder = mapExplicitFields(pendingRef.refRow);
+                    if (parsed != null) {
+                        ParsedReferenceFiller.applyParsedFields(basicBuilder, parsed);
+                    }
+                    result.add(new Tuple2<>(pendingRef.id,
+                            buildReferenceMetadata(pendingRef.refRow, basicBuilder.build())));
+                }
+            } catch (Exception e) {
+                // batch-level failure (e.g. one malformed citation) - fall back to
+                // per-citation parsing so a single bad reference does not sink the batch
+                log.warn("Batch reference parsing failed (" + pending.size()
+                        + " citations); falling back to per-citation parsing", e);
+                for (PendingReference pendingRef : pending) {
+                    ReferenceBasicMetadata.Builder basicBuilder = mapExplicitFields(pendingRef.refRow);
+                    try {
+                        ParsedReference parsed = getReferenceParser().parse(pendingRef.unstructured);
+                        if (parsed != null) {
+                            ParsedReferenceFiller.applyParsedFields(basicBuilder, parsed);
+                        }
+                    } catch (Exception ex) {
+                        log.warn("Unable to parse unstructured reference text: " +
+                                StringUtils.abbreviate(pendingRef.unstructured, 200), ex);
+                    }
+                    result.add(new Tuple2<>(pendingRef.id,
+                            buildReferenceMetadata(pendingRef.refRow, basicBuilder.build())));
+                }
+            } finally {
+                pending.clear();
+            }
         }
 
         /**
@@ -179,16 +260,14 @@ public class JsonReferenceParserJob {
         }
 
         /**
-         * Builds a {@link ReferenceMetadata} from a single JSON ref struct row.
-         * Directly mapped fields take precedence; the raw unstructured text is
-         * parsed with CERMINE to fill in remaining fields.
+         * Maps the explicitly defined JSON fields of a ref struct row into a
+         * {@link ReferenceBasicMetadata} builder. Fields not covered here are
+         * filled in later from the parsed unstructured text.
          */
-        private ReferenceMetadata buildReferenceMetadata(Row refRow) {
+        private static ReferenceBasicMetadata.Builder mapExplicitFields(Row refRow) {
             ReferenceBasicMetadata.Builder basicBuilder = ReferenceBasicMetadata.newBuilder();
-            ReferenceMetadata.Builder refBuilder = ReferenceMetadata.newBuilder();
 
             // --- Extract fields from JSON ref struct (only if non-blank) ---
-            String unstructured = getString(refRow, "unstructured");
             String articleTitle = getString(refRow, "article-title");
             String edition = getString(refRow, "edition");
             String firstPage = getString(refRow, "first-page");
@@ -270,23 +349,21 @@ public class JsonReferenceParserJob {
                 basicBuilder.setExternalIds(externalIds);
             }
 
-            // --- Parse unstructured text (CERMINE or Grobid) to fill remaining fields ---
-            if (StringUtils.isNotBlank(unstructured)) {
-                try {
-                    ParsedReference parsed = getReferenceParser().parse(unstructured);
-                    if (parsed != null) {
-                        ParsedReferenceFiller.applyParsedFields(basicBuilder, parsed);
-                    }
-                } catch (Exception e) {
-                    log.warn("Unable to parse unstructured reference text: " +
-                            StringUtils.abbreviate(unstructured, 200), e);
-                }
-            }
+            return basicBuilder;
+        }
+
+        /**
+         * Builds a {@link ReferenceMetadata} from a ref struct row and its
+         * already-populated {@link ReferenceBasicMetadata}.
+         */
+        private static ReferenceMetadata buildReferenceMetadata(Row refRow, ReferenceBasicMetadata basicMetadata) {
+            ReferenceMetadata.Builder refBuilder = ReferenceMetadata.newBuilder();
 
             // --- Build ReferenceMetadata ---
-            refBuilder.setBasicMetadata(basicBuilder.build());
+            refBuilder.setBasicMetadata(basicMetadata);
 
             // ref#unstructured -> references[]#text
+            String unstructured = getString(refRow, "unstructured");
             if (StringUtils.isNotBlank(unstructured)) {
                 refBuilder.setText(unstructured);
             }
@@ -310,6 +387,25 @@ public class JsonReferenceParserJob {
             } catch (IllegalArgumentException e) {
                 return null;
             }
+        }
+    }
+
+    /**
+     * Reference awaiting parsing - keeps the id, the raw ref row and the
+     * unstructured text together so a parsed result can be mapped back by index.
+     */
+    private static class PendingReference {
+
+        private final String id;
+
+        private final Row refRow;
+
+        private final String unstructured;
+
+        PendingReference(String id, Row refRow, String unstructured) {
+            this.id = id;
+            this.refRow = refRow;
+            this.unstructured = unstructured;
         }
     }
 
@@ -394,5 +490,9 @@ public class JsonReferenceParserJob {
         @Parameter(names = "-grobidReadTimeout", required = false,
                 description = "Grobid read timeout in ms")
         private Integer grobidReadTimeout;
+
+        @Parameter(names = "-grobidBatchSize", required = false,
+                description = "number of citations sent to Grobid per /api/processCitationList request (default 32)")
+        private Integer grobidBatchSize;
     }
 }

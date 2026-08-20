@@ -49,7 +49,32 @@ public final class GrobidTeiBiblStructParser {
         if (biblStruct == null) {
             return null;
         }
+        return parseBiblStruct(biblStruct);
+    }
 
+    /**
+     * Parses a TEI response containing a {@code <listBibl>} with one
+     * {@code <biblStruct>} per citation (as returned by the Grobid
+     * {@code /api/processCitationList} endpoint), returning one
+     * {@link ParsedReference} per biblStruct, in the same order as the input.
+     *
+     * @param teiXml TEI XML returned by Grobid citation list processing
+     * @return parsed fields in document order (may be empty)
+     */
+    public static List<ParsedReference> parseList(String teiXml) throws Exception {
+        Document document = parseXml(teiXml);
+        Element root = document.getDocumentElement();
+        List<ParsedReference> result = new ArrayList<>();
+        for (Element biblStruct : allElementsByLocalName(root, "biblStruct")) {
+            result.add(parseBiblStruct(biblStruct));
+        }
+        return result;
+    }
+
+    /**
+     * Parses a single {@code <biblStruct>} element into {@link ParsedReference} fields.
+     */
+    private static ParsedReference parseBiblStruct(Element biblStruct) {
         ParsedReference parsed = new ParsedReference();
 
         Element analytic = firstChildByLocalName(biblStruct, "analytic");

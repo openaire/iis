@@ -229,4 +229,31 @@ class GrobidTeiBiblStructParserTest {
         assertNotNull(parsed);
         assertEquals("2014", parsed.getYear());
     }
+
+    @Test
+    @DisplayName("Parses a listBibl response with multiple biblStructs, preserving order")
+    void testParseList() throws Exception {
+        // given - TEI envelope as returned by /api/processCitationList (0.8.2)
+        String tei = ""
+                + "<TEI xmlns=\"http://www.tei-c.org/ns/1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+                + "<teiHeader/><text><front/><body/><back><div><listBibl>"
+                + "<biblStruct><monogr><title level=\"j\">Journal A</title>"
+                + "<imprint><date type=\"published\" when=\"2010\">2010</date></imprint></monogr></biblStruct>"
+                + "<biblStruct><monogr><title level=\"j\">Journal B</title>"
+                + "<author><persName><forename type=\"first\">A</forename><surname>Author</surname></persName></author>"
+                + "<imprint><date type=\"published\" when=\"2014-01-15\">2014-01-15</date></imprint></monogr></biblStruct>"
+                + "</listBibl></div></back></text></TEI>";
+
+        // when
+        List<ParsedReference> parsed = GrobidTeiBiblStructParser.parseList(tei);
+
+        // then
+        assertNotNull(parsed);
+        assertEquals(2, parsed.size());
+        assertEquals("Journal A", parsed.get(0).getJournal());
+        assertEquals("2010", parsed.get(0).getYear());
+        assertEquals("Journal B", parsed.get(1).getJournal());
+        assertEquals("A Author", parsed.get(1).getAuthors().get(0));
+        assertEquals("2014", parsed.get(1).getYear(), "year extracted from YYYY-MM-DD");
+    }
 }
