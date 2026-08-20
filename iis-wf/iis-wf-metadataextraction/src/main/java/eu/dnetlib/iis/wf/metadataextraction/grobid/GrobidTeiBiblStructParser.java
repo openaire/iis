@@ -3,6 +3,8 @@ package eu.dnetlib.iis.wf.metadataextraction.grobid;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -187,11 +189,24 @@ public final class GrobidTeiBiblStructParser {
         if (date == null) {
             return null;
         }
-        String when = date.getAttribute("when");
-        if (isNotBlank(when)) {
-            return when.trim();
+        String raw = date.getAttribute("when");
+        if (isBlank(raw)) {
+            raw = date.getTextContent();
         }
-        return date.getTextContent().trim();
+        return extractYear(raw);
+    }
+
+    private static final Pattern YEAR_PREFIX_PATTERN = Pattern.compile("^(\\d{4})(?:-|$)");
+
+    /**
+     * Extracts the leading 4-digit year from a date that may be in YYYY, YYYY-MM or YYYY-MM-DD format.
+     */
+    private static String extractYear(String value) {
+        if (isBlank(value)) {
+            return null;
+        }
+        Matcher matcher = YEAR_PREFIX_PATTERN.matcher(value.trim());
+        return matcher.find() ? matcher.group(1) : null;
     }
 
     private static String ptrTarget(Element biblStruct) {
