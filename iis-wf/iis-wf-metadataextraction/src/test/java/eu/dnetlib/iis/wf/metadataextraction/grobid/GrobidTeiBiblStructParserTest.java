@@ -183,4 +183,50 @@ class GrobidTeiBiblStructParserTest {
         assertEquals("1955", parsed.getYear());
         assertEquals(1, parsed.getAuthors().size());
     }
+
+    @Test
+    @DisplayName("Extracts only the year from YYYY-MM and YYYY-MM-DD dates")
+    void testParseYearFromFullDates() throws Exception {
+        // given
+        String tei = ""
+                + "<TEI>"
+                + "  <biblStruct>"
+                + "    <monogr>"
+                + "      <title level=\"j\">Some Journal</title>"
+                + "      <imprint>"
+                + "        <date type=\"published\" when=\"2014-01\">2014-01</date>"
+                + "      </imprint>"
+                + "    </monogr>"
+                + "  </biblStruct>"
+                + "</TEI>";
+
+        // when
+        ParsedReference parsed = GrobidTeiBiblStructParser.parse(tei);
+
+        // then - YYYY-MM -> year only
+        assertNotNull(parsed);
+        assertEquals("2014", parsed.getYear());
+    }
+
+    @Test
+    @DisplayName("Extracts only the year from a YYYY-MM-DD date")
+    void testParseYearFromFullDateWithDay() throws Exception {
+        // given
+        String tei = ""
+                + "<biblStruct>"
+                + "  <monogr>"
+                + "    <title level=\"j\">Some Journal</title>"
+                + "    <imprint>"
+                + "      <date type=\"published\" when=\"2014-01-15\">2014-01-15</date>"
+                + "    </imprint>"
+                + "  </monogr>"
+                + "</biblStruct>";
+
+        // when
+        ParsedReference parsed = GrobidTeiBiblStructParser.parse(tei);
+
+        // then - YYYY-MM-DD -> year only
+        assertNotNull(parsed);
+        assertEquals("2014", parsed.getYear());
+    }
 }
