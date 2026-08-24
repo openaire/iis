@@ -256,4 +256,20 @@ class GrobidTeiBiblStructParserTest {
         assertEquals("A Author", parsed.get(1).getAuthors().get(0));
         assertEquals("2014", parsed.get(1).getYear(), "year extracted from YYYY-MM-DD");
     }
+
+    @Test
+    @DisplayName("Ignores a leading UTF-8 BOM in the response (fixes 'Content is not allowed in prolog')")
+    void testParseIgnoresLeadingBom() throws Exception {
+        // given - TEI prefixed with a UTF-8 BOM character
+        String tei = "\uFEFF" + "<biblStruct><monogr><title level=\"j\">Bom Journal</title>"
+                + "<imprint><date type=\"published\" when=\"2012\">2012</date></imprint></monogr></biblStruct>";
+
+        // when
+        ParsedReference parsed = GrobidTeiBiblStructParser.parse(tei);
+
+        // then
+        assertNotNull(parsed);
+        assertEquals("Bom Journal", parsed.getJournal());
+        assertEquals("2012", parsed.getYear());
+    }
 }

@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -96,7 +97,8 @@ public class GrobidClient implements Closeable {
     /**
      * Parses a raw bibliographic citation string by relying on an external Grobid service.
      * @param citation raw citation string
-     * @return The TEI XML result (containing a single {@code biblStruct}) as a string
+     * @return The TEI XML result (containing a single {@code biblStruct}) as a string,
+     *         or an empty string when Grobid could not produce a biblStruct (HTTP 204)
      * @throws IOException If an error occurs during processing
      * @throws TransientException if temporary error occurred
      * @throws InterruptedException when interrupted while waiting during retry
@@ -123,6 +125,11 @@ public class GrobidClient implements Closeable {
 
     private String processCitationList(List<String> citations, int retryCount) throws IOException, TransientException, InterruptedException {
         HttpPost httpPost = new HttpPost(grobidUrl + "/api/processCitationList");
+
+        // /api/processCitationList exposes two POST variants differing only by the
+        // produced media type (TEI XML vs. BibTeX); request XML explicitly, otherwise
+        // the server may return BibTeX text which fails XML parsing.
+        httpPost.setHeader(HttpHeaders.ACCEPT, "application/xml");
 
         List<NameValuePair> params = new ArrayList<>(citations.size());
         for (String citation : citations) {
@@ -235,6 +242,9 @@ public class GrobidClient implements Closeable {
                     } else {
                         throw new IOException("No response entity received from Grobid");
                     }
+                } else if (statusCode == HttpURLConnection.HTTP_NO_CONTENT) {
+                    // process completed, but no content could be extracted - empty result
+                    return "";
                 } else if (statusCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                     // throwing IOException to indicate permanent issue
                     String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
@@ -264,6 +274,9 @@ public class GrobidClient implements Closeable {
     private String processCitation(String citation, int retryCount) throws IOException, TransientException, InterruptedException {
         HttpPost httpPost = new HttpPost(grobidUrl + "/api/processCitation");
 
+        // request XML output explicitly (the endpoint also offers a BibTeX variant)
+        httpPost.setHeader(HttpHeaders.ACCEPT, "application/xml");
+
         // NOTE: this Grobid deployment (0.8.2) serves /api/processCitation as
         // application/x-www-form-urlencoded; multipart/form-data is rejected with 415.
         List<NameValuePair> params = new ArrayList<>();
@@ -281,6 +294,10 @@ public class GrobidClient implements Closeable {
                 } else {
                     throw new IOException("No response entity received from Grobid");
                 }
+            } else if (statusCode == HttpURLConnection.HTTP_NO_CONTENT) {
+                // process completed, but no biblStruct could be produced - this is
+                // an empty (not an erroneous) result, so no retry should be attempted
+                return "";
             } else if (isPermanentFailure(statusCode)) {
                 // throwing IOException to indicate permanent issue (client errors and 500)
                 String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);

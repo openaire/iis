@@ -62,7 +62,7 @@ public class JsonReferenceParserJob {
 
     private static final int DEFAULT_GROBID_READ_TIMEOUT = 60000;
 
-    private static final int DEFAULT_GROBID_BATCH_SIZE = 32;
+    private static final int DEFAULT_GROBID_BATCH_SIZE = 25;
 
     private static final String COUNTER_PROCESSED_DOCUMENTS = "processing.crossref.referenceParser.documents";
 
@@ -147,7 +147,15 @@ public class JsonReferenceParserJob {
 
         private static final long serialVersionUID = 1L;
 
-        private static final int DEFAULT_BATCH_SIZE = 32;
+        private static final int DEFAULT_BATCH_SIZE = 25;
+
+        /**
+         * Upper bound on the cumulative citation length (in characters) sent in a
+         * single /api/processCitationList request. Keeps batches within the Grobid
+         * citation model batch/sequence limits so oversized batches are not rejected
+         * (which would otherwise force an expensive per-citation fallback).
+         */
+        private static final int DEFAULT_MAX_BATCH_CHARS = 8000;
 
         private final String referenceParserType;
 
@@ -174,6 +182,7 @@ public class JsonReferenceParserJob {
         public Iterator<Tuple2<String, ReferenceMetadata>> call(Iterator<Row> rows) throws Exception {
             List<Tuple2<String, ReferenceMetadata>> result = new ArrayList<>();
             List<PendingReference> pending = new ArrayList<>(batchSize);
+            int pendingChars = 0;
 
             while (rows.hasNext()) {
                 Row row = rows.next();
@@ -189,8 +198,10 @@ public class JsonReferenceParserJob {
                     result.add(new Tuple2<>(id, buildReferenceMetadata(refRow, basicMetadata)));
                 } else {
                     pending.add(new PendingReference(id, refRow, unstructured));
-                    if (pending.size() >= batchSize) {
+                    pendingChars += unstructured.length();
+                    if (pending.size() >= batchSize || pendingChars >= DEFAULT_MAX_BATCH_CHARS) {
                         flushPendingBatch(pending, result);
+                        pendingChars = 0;
                     }
                 }
             }

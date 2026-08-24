@@ -154,7 +154,14 @@ public final class GrobidTeiBiblStructParser {
     private static Document parseXml(String xml) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
-        InputSource is = new InputSource(new StringReader(xml));
+        // Grobid (or an intermediary/proxy) may prefix the response with a UTF-8 BOM or
+        // leading whitespace, which SAX would otherwise reject with
+        // "Content is not allowed in prolog".
+        String normalized = xml != null ? xml.trim() : "";
+        if (!normalized.isEmpty() && normalized.charAt(0) == '\uFEFF') {
+            normalized = normalized.substring(1).trim();
+        }
+        InputSource is = new InputSource(new StringReader(normalized));
         return factory.newDocumentBuilder().parse(is);
     }
 
