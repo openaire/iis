@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eu.dnetlib.iis.wf.metadataextraction.grobid.GrobidClient;
 import eu.dnetlib.iis.wf.metadataextraction.grobid.GrobidTeiBiblStructParser;
@@ -16,6 +18,8 @@ import eu.dnetlib.iis.wf.metadataextraction.grobid.GrobidTeiBiblStructParser;
  * @author mhorst
  */
 public class GrobidReferenceTextParser implements ReferenceTextParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(GrobidReferenceTextParser.class);
 
     private final String grobidServerUrl;
 
@@ -71,7 +75,16 @@ public class GrobidReferenceTextParser implements ReferenceTextParser {
         if (!nonBlank.isEmpty()) {
             String teiXml = getGrobidClient().processCitationList(nonBlank);
             if (StringUtils.isNotBlank(teiXml)) {
-                List<ParsedReference> parsedList = GrobidTeiBiblStructParser.parseList(teiXml);
+                List<ParsedReference> parsedList;
+                try {
+                    parsedList = GrobidTeiBiblStructParser.parseList(teiXml);
+                } catch (Exception e) {
+                    // log what the server actually returned (leading junk is usually
+                    // a BOM / non-XML body) and rethrow so the caller can fall back
+                    logger.warn("Unable to parse Grobid citation-list response ({} citations); "
+                            + "response snippet: {}", nonBlank.size(), StringUtils.abbreviate(teiXml, 300), e);
+                    throw e;
+                }
                 int parsedIdx = 0;
                 for (int i = 0; i < toParse.size(); i++) {
                     if (toParse.get(i) == null) {
