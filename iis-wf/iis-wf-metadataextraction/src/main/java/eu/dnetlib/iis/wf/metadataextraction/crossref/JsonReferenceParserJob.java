@@ -237,8 +237,13 @@ public class JsonReferenceParserJob {
             } catch (Exception e) {
                 // batch-level failure (e.g. one malformed citation) - fall back to
                 // per-citation parsing so a single bad reference does not sink the batch
-                log.warn("Batch reference parsing failed (" + pending.size()
-                        + " citations); falling back to per-citation parsing", e);
+                int totalChars = 0;
+                for (PendingReference pendingRef : pending) {
+                    totalChars += pendingRef.unstructured.length();
+                }
+                log.warn("Batch reference parsing failed (" + pending.size() + " citations, " + totalChars
+                        + " chars); falling back to per-citation parsing. First citation: "
+                        + StringUtils.abbreviate(pending.get(0).unstructured, 200), e);
                 for (PendingReference pendingRef : pending) {
                     ReferenceBasicMetadata.Builder basicBuilder = mapExplicitFields(pendingRef.refRow);
                     try {

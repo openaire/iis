@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -153,13 +154,17 @@ public class GrobidClient implements Closeable {
                 return "";
             } else if (isPermanentFailure(statusCode)) {
                 // throwing IOException to indicate permanent issue (client errors and 500)
-                String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-                throw new IOException("Grobid request failed with status code " + statusCode + ": " + error);
+                String responseBodyDescription = describeResponseBody(response);
+                logRequestFailureDetails(citations, statusCode, response, responseBodyDescription);
+                throw new IOException("Grobid /api/processCitationList request failed with status code "
+                        + statusCode + " for a batch of " + citations.size() + " citations: "
+                        + responseBodyDescription);
             } else {
                 // throwing TransientException to indicate transient nature of the failure
                 // those are usually 502, 503 and 504 HTTP error codes but it is possible other kind of failures may occur
-                String error = response.getEntity() != null ? EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8) : null;
-                String message = "Grobid request failed with status code " + statusCode + ": " + error;
+                String message = "Grobid /api/processCitationList request failed with status code "
+                        + statusCode + " for a batch of " + citations.size() + " citations: "
+                        + describeResponseBody(response);
                 if (retryCount >= maxRetriesCount) {
                     throw new TransientException(message);
                 } else {
@@ -204,6 +209,66 @@ public class GrobidClient implements Closeable {
         long base = Math.min(throttleSleepTime << (retryCount - 1), MAX_RETRY_SLEEP_MILLIS);
         long jitter = ThreadLocalRandom.current().nextLong(base / 2 + 1);
         return Math.max(1L, base - jitter);
+    }
+
+    /**
+     * Returns a human-readable description of the response body for error
+     * messages: the (truncated) body text, or an explicit marker when the body
+     * is missing or empty (Grobid 500 responses carry no body at all).
+     */
+    private String describeResponseBody(CloseableHttpResponse response) {
+        HttpEntity entity = response.getEntity();
+        if (entity == null) {
+            return "(no response entity)";
+        }
+        String body;
+        try {
+            body = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            logger.warn("Unable to read Grobid error response body", e);
+            return "(unable to read response body)";
+        }
+        if (StringUtils.isBlank(body)) {
+            return "(empty response body)";
+        }
+        return StringUtils.abbreviate(body.trim(), 500);
+    }
+
+    /**
+     * Logs everything needed to reproduce a failed /api/processCitationList request
+     * manually (e.g. with curl): the endpoint, the full citation payload (one per
+     * line) and the full response headers. Grobid 500 responses carry no body, so
+     * the request payload is the only way to reproduce the failure.
+     */
+    private void logRequestFailureDetails(List<String> citations, int statusCode,
+            CloseableHttpResponse response, String responseBodyDescription) {
+        StringBuilder message = new StringBuilder();
+        message.append("Grobid /api/processCitationList failed with status ").append(statusCode)
+                .append(" (response body: ").append(responseBodyDescription).append(")\n")
+                .append("Reproduce with: curl -sS -X POST -H 'Accept: application/xml' ")
+                .append("--data-urlencode 'citations=<reference>' ... ").append(grobidUrl)
+                .append("/api/processCitationList\n")
+                .append("Full request payload (").append(citations.size()).append(" citations):\n");
+        for (int i = 0; i < citations.size(); i++) {
+            message.append("  [").append(i).append("] ").append(citations.get(i)).append('\n');
+        }
+        message.append("Response headers:\n").append(describeResponseHeaders(response));
+        logger.warn(message.toString());
+    }
+
+    /**
+     * Returns a one-line-per-header description of the response headers.
+     */
+    private String describeResponseHeaders(CloseableHttpResponse response) {
+        Header[] headers = response.getAllHeaders();
+        if (headers == null || headers.length == 0) {
+            return "  (no response headers)";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Header header : headers) {
+            sb.append("  ").append(header.getName()).append(": ").append(header.getValue()).append('\n');
+        }
+        return sb.toString().trim();
     }
 
     @Override
@@ -300,13 +365,13 @@ public class GrobidClient implements Closeable {
                 return "";
             } else if (isPermanentFailure(statusCode)) {
                 // throwing IOException to indicate permanent issue (client errors and 500)
-                String error = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-                throw new IOException("Grobid request failed with status code " + statusCode + ": " + error);
+                throw new IOException("Grobid /api/processCitation request failed with status code "
+                        + statusCode + ": " + describeResponseBody(response));
             } else {
                 // throwing TransientException to indicate transient nature of the failure
                 // those are usually 502, 503 and 504 HTTP error codes but it is possible other kind of failures may occur
-                String error = response.getEntity() != null ? EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8) : null;
-                String message = "Grobid request failed with status code " + statusCode + ": " + error;
+                String message = "Grobid /api/processCitation request failed with status code "
+                        + statusCode + ": " + describeResponseBody(response);
                 if (retryCount >= maxRetriesCount) {
                     throw new TransientException(message);
                 } else {
