@@ -3,8 +3,6 @@ package eu.dnetlib.iis.wf.metadataextraction.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * Strategy responsible for parsing a raw bibliographic reference text into
  * structured {@link ParsedReference} fields.
@@ -37,7 +35,7 @@ public interface ReferenceTextParser {
     default List<ParsedReference> parse(List<String> texts) throws Exception {
         List<ParsedReference> result = new ArrayList<>(texts.size());
         for (String text : texts) {
-            if (StringUtils.isBlank(text)) {
+            if (ReferenceTextUtils.isBlank(text)) {
                 result.add(null);
             } else {
                 result.add(parse(text));

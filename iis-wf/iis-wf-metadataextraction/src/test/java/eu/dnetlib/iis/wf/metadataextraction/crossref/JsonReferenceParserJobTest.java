@@ -336,6 +336,45 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         assertEquals("myCustomParser", results.get(0).getExtractedBy().toString());
     }
 
+    @Test
+    @DisplayName("Invisible-only unstructured text is not parsed (mapped from explicit fields only)")
+    void testInvisibleOnlyUnstructuredIsSkipped() throws Exception {
+        // given - unstructured containing only Unicode invisible/space chars (NBSP,
+        // zero-width space, BOM) which would otherwise be sent to Grobid as an
+        // empty citation and rejected with HTTP 500
+        Path workingDir = createTempDir("jsonRefParserTest_invisible");
+        Path inputDir = workingDir.resolve("input");
+        Path outputDir = workingDir.resolve("output");
+        Path outputReportDir = workingDir.resolve("output_report");
+
+        String jsonLines = ""
+                + "{\"id\":\"inv1\",\"ref\":{"
+                + "\"unstructured\":\"\u00A0\u200B\uFEFF\","
+                + "\"article-title\":\"Title Only\","
+                + "\"journal-title\":\"Some Journal\""
+                + "}}\n";
+
+        writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
+
+        // when
+        JsonReferenceParserJob.main(new String[]{
+                "-sharedSparkSession",
+                "-inputPath", inputDir.toString(),
+                "-outputPath", outputDir.toString(),
+                "-outputReportPath", outputReportDir.toString()
+        });
+
+        // then - the record is produced without exception, with explicit fields only
+        List<ExtractedDocumentMetadata> results = new AvroDatasetReader(spark())
+                .read(outputDir.toString(), ExtractedDocumentMetadata.SCHEMA$, ExtractedDocumentMetadata.class)
+                .collectAsList();
+
+        assertEquals(1, results.size());
+        ReferenceBasicMetadata basic = results.get(0).getReferences().get(0).getBasicMetadata();
+        assertEquals("Title Only", basic.getTitle().toString());
+        assertEquals("Some Journal", basic.getJournal().toString());
+    }
+
     // ---------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------

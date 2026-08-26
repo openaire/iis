@@ -35,6 +35,7 @@ import eu.dnetlib.iis.wf.metadataextraction.parser.ParsedReference;
 import eu.dnetlib.iis.wf.metadataextraction.parser.ParsedReferenceFiller;
 import eu.dnetlib.iis.wf.metadataextraction.parser.ReferenceTextParser;
 import eu.dnetlib.iis.wf.metadataextraction.parser.ReferenceTextParserFactory;
+import eu.dnetlib.iis.wf.metadataextraction.parser.ReferenceTextUtils;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
@@ -192,7 +193,7 @@ public class JsonReferenceParserJob {
                 }
                 Row refRow = row.getStruct(row.fieldIndex("ref"));
                 String unstructured = getString(refRow, "unstructured");
-                if (StringUtils.isBlank(unstructured)) {
+                if (ReferenceTextUtils.isBlank(unstructured)) {
                     // no text to parse - map only the explicitly defined JSON fields
                     ReferenceBasicMetadata basicMetadata = mapExplicitFields(refRow).build();
                     result.add(new Tuple2<>(id, buildReferenceMetadata(refRow, basicMetadata)));

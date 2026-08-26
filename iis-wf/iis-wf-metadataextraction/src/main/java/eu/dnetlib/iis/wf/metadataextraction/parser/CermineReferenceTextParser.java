@@ -1,7 +1,5 @@
 package eu.dnetlib.iis.wf.metadataextraction.parser;
 
-import org.apache.commons.lang3.StringUtils;
-
 import pl.edu.icm.cermine.bibref.CRFBibReferenceParser;
 import pl.edu.icm.cermine.bibref.model.BibEntry;
 import pl.edu.icm.cermine.bibref.model.BibEntryFieldType;
@@ -19,7 +17,7 @@ public class CermineReferenceTextParser implements ReferenceTextParser {
 
     @Override
     public ParsedReference parse(String text) throws AnalysisException {
-        if (StringUtils.isBlank(text)) {
+        if (ReferenceTextUtils.isBlank(text)) {
             return null;
         }
         BibEntry bibEntry = getReferenceParser().parseBibReference(text);
