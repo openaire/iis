@@ -21,7 +21,7 @@
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-common</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -122,6 +122,102 @@
                                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                             <mainClass>eu.dnetlib.iis.wf.export.actionmanager.sequencefile.SequenceFileExporterJob</mainClass>
                                         </transformer>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                            <resource>META-INF/spring.handlers</resource>
+                                        </transformer>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                            <resource>META-INF/spring.schemas</resource>
+                                        </transformer>
+                                    </transformers>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!--
+                Builds a test uber JAR containing everything from the production uber JAR plus:
+                  - SparkSequenceFileTestConsumer (src/main/java — no test-only deps)
+                  - SparkAvroTestProducer, TestsIOUtils and other test utilities from
+                    the iis-common test-jar
+                  - JUnit Jupiter (required at runtime by TestsIOUtils assertions)
+                  - JSON fixtures from src/test/resources
+                Used exclusively by the Airflow integration test DAG running in Kubernetes.
+                Build command: mvn clean package -Pshade-test-uber-jar -DskipTests
+            -->
+            <id>shade-test-uber-jar</id>
+            <dependencies>
+                <!-- Promote iis-common test-jar to compile scope so the shade plugin
+                     includes SparkAvroTestProducer, TestsIOUtils, etc. -->
+                <dependency>
+                    <groupId>eu.dnetlib.iis</groupId>
+                    <artifactId>iis-common</artifactId>
+                    <version>${project.version}</version>
+                    <type>test-jar</type>
+                    <scope>compile</scope>
+                </dependency>
+                <!-- JUnit Jupiter is required by TestsIOUtils (Assertions.assertEquals etc.)
+                     at runtime inside the Spark driver pod. -->
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <!-- Bundle the JSON input fixtures (reused from Oozie tests) so
+                         that SparkAvroTestProducer can load them via ClassPathResourceProvider. -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>add-test-resources-for-test-uber-jar</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>add-resource</goal>
+                                </goals>
+                                <configuration>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/src/test/resources</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.5.1</version>
+                        <executions>
+                            <execution>
+                                <id>shade-test-uber-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                                    <shadedClassifierName>test-uber</shadedClassifierName>
+                                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-test-pom.xml</dependencyReducedPomLocation>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                    <transformers>
                                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                         <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                             <resource>META-INF/spring.handlers</resource>
