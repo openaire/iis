@@ -109,4 +109,83 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<!--
+			Builds the deployable uber JAR containing the whole primary workflow plus all its
+			dependencies (export-actionmanager, report, import, ingest, referenceextraction, ...).
+			It is the single artifact referenced by the Airflow/Kubernetes uber export DAG; the
+			Spark entry points (SequenceFileExporterJob, SoftwareExporterJob, PatentExporterJob,
+			CitationRelationExporterJob) as well as the report PushMetricsProcess and hadoop tools
+			are all resolved from this JAR, so no single manifest main class is set.
+			Build command: mvn clean package -Pshade-uber-jar -DskipTests
+		-->
+		<profile>
+			<id>shade-uber-jar</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>3.5.1</version>
+						<executions>
+							<execution>
+								<id>shade-uber-jar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+								<configuration>
+									<shadedArtifactAttached>true</shadedArtifactAttached>
+									<shadedClassifierName>uber</shadedClassifierName>
+									<filters>
+										<filter>
+											<artifact>*:*</artifact>
+											<excludes>
+												<exclude>META-INF/*.SF</exclude>
+												<exclude>META-INF/*.DSA</exclude>
+												<exclude>META-INF/*.RSA</exclude>
+												<!-- AWS SDK v2 service models (~1.6 GB raw); never used by the iis jobs,
+												     the cluster provides AWS via hadoop-aws bundles. -->
+												<exclude>models/*.json</exclude>
+											</excludes>
+										</filter>
+										<!-- AWS SDK bundles/artifacts are provided by the cluster (hadoop-aws transitive deps),
+										     excluding them removes ~2.5 GB raw of AWS v1 + v2 classes from the uber JAR. -->
+										<filter>
+											<artifact>software.amazon.awssdk:*</artifact>
+											<excludes>
+												<exclude>**</exclude>
+											</excludes>
+										</filter>
+										<filter>
+											<artifact>com.amazonaws:*</artifact>
+											<excludes>
+												<exclude>**</exclude>
+											</excludes>
+										</filter>
+										<filter>
+											<artifact>software.amazon.s3.analyticsaccelerator:*</artifact>
+											<excludes>
+												<exclude>**</exclude>
+											</excludes>
+										</filter>
+									</filters>
+									<transformers>
+										<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+										<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+											<resource>META-INF/spring.handlers</resource>
+										</transformer>
+										<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+											<resource>META-INF/spring.schemas</resource>
+										</transformer>
+									</transformers>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
