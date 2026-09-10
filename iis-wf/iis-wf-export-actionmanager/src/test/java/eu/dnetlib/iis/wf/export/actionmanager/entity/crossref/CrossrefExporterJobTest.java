@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
+import eu.dnetlib.dhp.schema.oaf.Journal;
 import eu.dnetlib.dhp.schema.oaf.Publication;
 import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.dhp.schema.oaf.Relation;
@@ -34,6 +35,7 @@ import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.IteratorUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.metadataextraction.schemas.Range;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
@@ -156,17 +158,7 @@ public class CrossrefExporterJobTest {
 
         // each pid carries the same dataInfo as the exported payload
         for (StructuredProperty pid : pids) {
-            DataInfo pidDataInfo = pid.getDataInfo();
-            assertNotNull(pidDataInfo, "pid dataInfo should be set");
-            assertTrue(pidDataInfo.getInferred());
-            assertEquals("0.7", pidDataInfo.getTrust());
-            assertEquals("iis::mutecitation_export", pidDataInfo.getInferenceprovenance());
-            Qualifier provenanceAction = pidDataInfo.getProvenanceaction();
-            assertNotNull(provenanceAction);
-            assertEquals("iis", provenanceAction.getClassid());
-            assertEquals("iis", provenanceAction.getClassname());
-            assertEquals("dnet:provenanceActions", provenanceAction.getSchemeid());
-            assertEquals("dnet:provenanceActions", provenanceAction.getSchemename());
+            assertProvenanceDataInfo(pid.getDataInfo(), "pid");
         }
 
         // pids are attached to the already instantiated instance, no instance multiplication
@@ -193,6 +185,13 @@ public class CrossrefExporterJobTest {
         assertNotNull(pub0.getDateofacceptance());
         assertEquals("2020-01-01", pub0.getDateofacceptance().getValue());
 
+        // journal - volume and page range of the reference
+        assertNotNull(pub0.getJournal(), "expected journal for reference carrying volume and pages");
+        assertEquals("10", pub0.getJournal().getVol());
+        assertEquals("1", pub0.getJournal().getSp());
+        assertEquals("15", pub0.getJournal().getEp());
+        assertProvenanceDataInfo(pub0.getJournal().getDataInfo(), "journal");
+
         // --- Verify second entity (pub1, ref 2: "Machine Learning") ---
         AtomicAction<Publication> entity1 = findEntityByTitle(capturedEntityActions, "Machine Learning");
         assertNotNull(entity1, "expected entity for 'Machine Learning'");
@@ -206,6 +205,9 @@ public class CrossrefExporterJobTest {
         assertEquals("0000", pub1.getInstance().get(0).getInstancetype().getClassid());
         assertNull(pub1.getInstance().get(0).getPid(),
                 "reference without external identifiers should have no pids");
+        assertEquals("5", pub1.getJournal().getVol());
+        assertEquals("55", pub1.getJournal().getSp());
+        assertEquals("78", pub1.getJournal().getEp());
 
         // --- Verify third entity (pub4, ref 1: "Deep Learning") with authors and YYYY-MM-DD year ---
         AtomicAction<Publication> entity2 = findEntityByTitle(capturedEntityActions, "Deep Learning");
@@ -221,6 +223,8 @@ public class CrossrefExporterJobTest {
         // YYYY-MM-DD preserved as-is
         assertEquals("2020-06-15", pub2.getRelevantdate().get(0).getValue());
         assertEquals("2020-06-15", pub2.getDateofacceptance().getValue());
+        assertNull(pub2.getJournal(),
+                "reference without volume and pages should have no journal");
 
         // --- Verify fourth entity (pub5: "Quantum Computing") ---
         AtomicAction<Publication> entity3 = findEntityByTitle(capturedEntityActions, "Quantum Computing");
@@ -367,10 +371,133 @@ public class CrossrefExporterJobTest {
     // Helpers
     // ---------------------------------------------------------------
 
+    @Test
+    @DisplayName("Volume and page range are translated into journal vol/sp/ep")
+    public void volumeAndPagesAreTranslatedIntoJournal() throws IOException {
+
+        // given - references covering the full mapping and its partial variants
+        ExtractedDocumentMetadata doc = ExtractedDocumentMetadata.newBuilder()
+                .setId("journalDoc1")
+                .setReferences(Arrays.asList(
+                        refWithJournal("Volume And Pages", "42", "101", "120"),
+                        refWithJournal("Volume Only", "7", null, null),
+                        refWithJournal("Start Page Only", null, "55", null),
+                        refWithJournal("End Page Only", null, null, "99"),
+                        refWithJournal("No Volume No Pages", null, null, null),
+                        refWithJournal("Blank Volume And Pages", "   ", "  ", "")))
+                .setText("")
+                .setExtractedBy("crossrefBibrefParser")
+                .build();
+
+        AvroTestUtils.createLocalAvroDataStore(Collections.singletonList(doc), inputPath);
+
+        // execute
+        executor.execute(buildJob());
+
+        // then
+        List<AtomicAction<Publication>> capturedEntityActions = IteratorUtils
+                .toList(SequenceFileTextValueReader.fromFile(outputEntityPath),
+                        text -> AtomicActionDeserializationUtils.deserializeAction(text.toString()));
+        assertEquals(6, capturedEntityActions.size());
+
+        // volume and both page bounds
+        Journal journal = findJournal(capturedEntityActions, "Volume And Pages");
+        assertNotNull(journal, "expected journal for reference with volume and page range");
+        assertEquals("42", journal.getVol());
+        assertEquals("101", journal.getSp());
+        assertEquals("120", journal.getEp());
+        assertProvenanceDataInfo(journal.getDataInfo(), "journal");
+
+        // volume only
+        Journal volumeOnly = findJournal(capturedEntityActions, "Volume Only");
+        assertNotNull(volumeOnly);
+        assertEquals("7", volumeOnly.getVol());
+        assertNull(volumeOnly.getSp());
+        assertNull(volumeOnly.getEp());
+
+        // start page only
+        Journal startOnly = findJournal(capturedEntityActions, "Start Page Only");
+        assertNotNull(startOnly);
+        assertNull(startOnly.getVol());
+        assertEquals("55", startOnly.getSp());
+        assertNull(startOnly.getEp());
+
+        // end page only
+        Journal endOnly = findJournal(capturedEntityActions, "End Page Only");
+        assertNotNull(endOnly);
+        assertNull(endOnly.getVol());
+        assertNull(endOnly.getSp());
+        assertEquals("99", endOnly.getEp());
+
+        // nothing to export - no journal object at all
+        assertNull(findJournal(capturedEntityActions, "No Volume No Pages"),
+                "reference without volume and pages should have no journal");
+
+        // blank values are treated as absent
+        assertNull(findJournal(capturedEntityActions, "Blank Volume And Pages"),
+                "blank volume and pages should produce no journal");
+    }
+
+    // ---------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------
+
+    private static ReferenceMetadata refWithJournal(String title, String volume, String startPage, String endPage) {
+        Range.Builder pages = null;
+        if (startPage != null || endPage != null) {
+            pages = Range.newBuilder();
+            if (startPage != null) {
+                pages.setStart(startPage);
+            }
+            if (endPage != null) {
+                pages.setEnd(endPage);
+            }
+        }
+        ReferenceBasicMetadata.Builder basic = ReferenceBasicMetadata.newBuilder()
+                .setTitle(title)
+                .setAuthors(Arrays.<CharSequence>asList("Author " + title));
+        if (volume != null) {
+            basic.setVolume(volume);
+        }
+        if (pages != null) {
+            basic.setPages(pages.build());
+        }
+        return ReferenceMetadata.newBuilder()
+                .setBasicMetadata(basic.build())
+                .setText(title + " text.")
+                .build();
+    }
+
+    private static Journal findJournal(List<AtomicAction<Publication>> actions, String title) {
+        AtomicAction<Publication> action = findEntityByTitle(actions, title);
+        assertNotNull(action, "expected entity for '" + title + "'");
+        return action.getPayload().getJournal();
+    }
+
     private static String describePids(List<StructuredProperty> pids) {
         return pids.stream()
                 .map(pid -> pid.getQualifier().getClassid() + "=" + pid.getValue())
                 .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Asserts the provenance dataInfo shared by the exported relations, instance
+     * pids and journal objects.
+     */
+    private static void assertProvenanceDataInfo(DataInfo dataInfo, String context) {
+        assertNotNull(dataInfo, context + " dataInfo should be set");
+        assertTrue(dataInfo.getInferred(), context + " should be inferred");
+        assertEquals("0.7", dataInfo.getTrust(), context + " trust");
+        assertEquals("iis::mutecitation_export", dataInfo.getInferenceprovenance(),
+                context + " inferenceprovenance");
+        Qualifier provenanceAction = dataInfo.getProvenanceaction();
+        assertNotNull(provenanceAction, context + " provenanceaction should be set");
+        assertEquals("iis", provenanceAction.getClassid(), context + " provenanceaction classid");
+        assertEquals("iis", provenanceAction.getClassname(), context + " provenanceaction classname");
+        assertEquals("dnet:provenanceActions", provenanceAction.getSchemeid(),
+                context + " provenanceaction schemeid");
+        assertEquals("dnet:provenanceActions", provenanceAction.getSchemename(),
+                context + " provenanceaction schemename");
     }
 
     private static AtomicAction<Publication> findEntityByTitle(
