@@ -29,6 +29,7 @@ import eu.dnetlib.dhp.schema.oaf.Author;
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Field;
 import eu.dnetlib.dhp.schema.oaf.Instance;
+import eu.dnetlib.dhp.schema.oaf.Journal;
 import eu.dnetlib.dhp.schema.oaf.Publication;
 import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.dhp.schema.oaf.Relation;
@@ -77,8 +78,8 @@ public class CrossrefExporterJob {
     private static final DataInfo OAF_ENTITY_DATAINFO = buildEntityDataInfo();
 
     /**
-     * DataInfo shared by the exported relations and by every pid attached to the
-     * exported instances.
+     * DataInfo shared by the exported relations, instances pids and the journal
+     * information attached to the exported publications.
      */
     private static final DataInfo OAF_PROVENANCE_DATAINFO = buildProvenanceDataInfo();
 
@@ -242,6 +243,12 @@ public class CrossrefExporterJob {
             }
         }
 
+        // journal - volume and page range of the reference
+        Journal journal = buildJournal(basic);
+        if (journal != null) {
+            publication.setJournal(journal);
+        }
+
         // instance type
         Instance instance = new Instance();
         instance.setInstancetype(INSTANCE_TYPE_PUBLICATION);
@@ -257,6 +264,37 @@ public class CrossrefExporterJob {
         publication.setLastupdatetimestamp(System.currentTimeMillis());
 
         return publication;
+    }
+
+    /**
+     * Builds the journal information out of the reference volume and page range:
+     * volume becomes journal#vol, pages#start becomes journal#sp and pages#end
+     * becomes journal#ep. The journal carries the same provenance dataInfo as the
+     * rest of the exported payload.
+     *
+     * @param basic reference basic metadata
+     * @return journal, or null when the reference carries none of those fields
+     */
+    private static Journal buildJournal(ReferenceBasicMetadata basic) {
+        String volume = trimToNull(basic.getVolume());
+        String startPage = basic.getPages() != null ? trimToNull(basic.getPages().getStart()) : null;
+        String endPage = basic.getPages() != null ? trimToNull(basic.getPages().getEnd()) : null;
+        if (volume == null && startPage == null && endPage == null) {
+            return null;
+        }
+        Journal journal = new Journal();
+        journal.setVol(volume);
+        journal.setSp(startPage);
+        journal.setEp(endPage);
+        journal.setDataInfo(OAF_PROVENANCE_DATAINFO);
+        return journal;
+    }
+
+    /**
+     * Trims the given Avro string field, returning null when it holds no content.
+     */
+    private static String trimToNull(CharSequence value) {
+        return value != null ? StringUtils.trimToNull(value.toString()) : null;
     }
 
     /**
