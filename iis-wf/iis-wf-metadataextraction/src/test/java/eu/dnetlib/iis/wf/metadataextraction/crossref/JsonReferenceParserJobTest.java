@@ -11,7 +11,9 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -373,6 +375,70 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         ReferenceBasicMetadata basic = results.get(0).getReferences().get(0).getBasicMetadata();
         assertEquals("Title Only", basic.getTitle().toString());
         assertEquals("Some Journal", basic.getJournal().toString());
+        assertNull(results.get(0).getReferences().get(0).getText(),
+                "invisible-only text should not be stored as reference text");
+    }
+
+    @Test
+    @DisplayName("Too short unstructured text is not parsed (mapped from explicit fields only)")
+    void testTooShortUnstructuredIsOmitted() throws Exception {
+        // given - a reference carrying only a dot, which cannot yield any
+        // bibliographic data and would otherwise be sent for parsing
+        Path workingDir = createTempDir("jsonRefParserTest_tooShort");
+        Path inputDir = workingDir.resolve("input");
+        Path outputDir = workingDir.resolve("output");
+        Path outputReportDir = workingDir.resolve("output_report");
+
+        String jsonLines = ""
+                + "{\"id\":\"short1\",\"ref\":{"
+                + "\"unstructured\":\".\","
+                + "\"article-title\":\"Title Only\","
+                + "\"journal-title\":\"Some Journal\""
+                + "}}\n"
+                + "{\"id\":\"short2\",\"ref\":{"
+                + "\"unstructured\":\"..\","
+                + "\"article-title\":\"Another Title\""
+                + "}}\n";
+
+        writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
+
+        // when
+        JsonReferenceParserJob.main(new String[]{
+                "-sharedSparkSession",
+                "-inputPath", inputDir.toString(),
+                "-outputPath", outputDir.toString(),
+                "-outputReportPath", outputReportDir.toString()
+        });
+
+        // then - records are produced without parsing the meaningless text,
+        // so only the explicitly defined JSON fields are mapped
+        List<ExtractedDocumentMetadata> results = new AvroDatasetReader(spark())
+                .read(outputDir.toString(), ExtractedDocumentMetadata.SCHEMA$, ExtractedDocumentMetadata.class)
+                .collectAsList();
+
+        assertEquals(2, results.size());
+
+        Map<String, ExtractedDocumentMetadata> byId = new HashMap<>();
+        for (ExtractedDocumentMetadata doc : results) {
+            byId.put(doc.getId().toString(), doc);
+        }
+
+        ReferenceBasicMetadata dotBasic = byId.get("short1").getReferences().get(0).getBasicMetadata();
+        assertEquals("Title Only", dotBasic.getTitle().toString());
+        assertEquals("Some Journal", dotBasic.getJournal().toString());
+        assertNull(dotBasic.getAuthors(), "authors should not be extracted from '.'");
+        assertNull(dotBasic.getYear(), "year should not be extracted from '.'");
+        assertNull(dotBasic.getVolume(), "volume should not be extracted from '.'");
+        assertNull(dotBasic.getSource(), "source should not be extracted from '.'");
+        assertNull(byId.get("short1").getReferences().get(0).getText(),
+                "'.' should not be stored as reference text");
+
+        ReferenceBasicMetadata dotsBasic = byId.get("short2").getReferences().get(0).getBasicMetadata();
+        assertEquals("Another Title", dotsBasic.getTitle().toString());
+        assertNull(dotsBasic.getAuthors(), "authors should not be extracted from '..'");
+        assertNull(dotsBasic.getSource(), "source should not be extracted from '..'");
+        assertNull(byId.get("short2").getReferences().get(0).getText(),
+                "'..' should not be stored as reference text");
     }
 
     // ---------------------------------------------------------------

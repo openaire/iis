@@ -17,7 +17,7 @@ public class CermineReferenceTextParser implements ReferenceTextParser {
 
     @Override
     public ParsedReference parse(String text) throws AnalysisException {
-        if (ReferenceTextUtils.isBlank(text)) {
+        if (ReferenceTextUtils.isOmitted(text)) {
             return null;
         }
         BibEntry bibEntry = getReferenceParser().parseBibReference(text);

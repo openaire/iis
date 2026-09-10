@@ -7,7 +7,27 @@ package eu.dnetlib.iis.wf.metadataextraction.parser;
  */
 public final class ReferenceTextUtils {
 
+    /**
+     * Minimum number of meaningful characters a raw reference text must contain to be
+     * worth parsing. Shorter texts (e.g. a single dot) cannot yield any bibliographic
+     * data, so they are omitted from processing.
+     */
+    public static final int MIN_REFERENCE_LENGTH = 3;
+
     private ReferenceTextUtils() {
+    }
+
+    /**
+     * Returns true when the given text is meant to be omitted from parsing, either
+     * because it is blank or because it is too short to carry any bibliographic
+     * information (fewer than {@value #MIN_REFERENCE_LENGTH} meaningful characters,
+     * e.g. a lone dot).
+     *
+     * @param text text to check
+     * @return true when the text should not be sent to a reference parser
+     */
+    public static boolean isOmitted(String text) {
+        return !hasAtLeastMeaningfulChars(text, MIN_REFERENCE_LENGTH);
     }
 
     /**
@@ -25,20 +45,39 @@ public final class ReferenceTextUtils {
      * @return true when the text is effectively blank
      */
     public static boolean isBlank(String text) {
+        return !hasAtLeastMeaningfulChars(text, 1);
+    }
+
+    /**
+     * Counts meaningful characters (i.e. excluding whitespace and Unicode
+     * invisible/space-only characters) but stops as soon as {@code required} of
+     * them have been found.
+     * <p>
+     * This keeps the common case cheap: a typical reference proves it is not
+     * blank/too short within its first few characters, so the scan is bounded by
+     * the position of the last needed character rather than by the length of the
+     * text. Only texts made of whitespace/invisible characters (typically very
+     * short) are scanned in full.
+     *
+     * @param text text to inspect
+     * @param required number of meaningful characters to look for
+     * @return true when the text holds at least {@code required} meaningful characters
+     */
+    private static boolean hasAtLeastMeaningfulChars(String text, int required) {
         if (text == null) {
-            return true;
-        }
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (Character.isWhitespace(c)) {
-                continue;
-            }
-            if (isInvisibleChar(c)) {
-                continue;
-            }
             return false;
         }
-        return true;
+        int found = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (Character.isWhitespace(c) || isInvisibleChar(c)) {
+                continue;
+            }
+            if (++found >= required) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

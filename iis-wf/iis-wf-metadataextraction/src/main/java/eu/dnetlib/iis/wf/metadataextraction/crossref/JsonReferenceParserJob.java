@@ -193,8 +193,9 @@ public class JsonReferenceParserJob {
                 }
                 Row refRow = row.getStruct(row.fieldIndex("ref"));
                 String unstructured = getString(refRow, "unstructured");
-                if (ReferenceTextUtils.isBlank(unstructured)) {
-                    // no text to parse - map only the explicitly defined JSON fields
+                if (ReferenceTextUtils.isOmitted(unstructured)) {
+                    // nothing to parse (blank or too short to carry any bibliographic
+                    // data) - map only the explicitly defined JSON fields
                     ReferenceBasicMetadata basicMetadata = mapExplicitFields(refRow).build();
                     result.add(new Tuple2<>(id, buildReferenceMetadata(refRow, basicMetadata)));
                 } else {
@@ -380,8 +381,10 @@ public class JsonReferenceParserJob {
             refBuilder.setBasicMetadata(basicMetadata);
 
             // ref#unstructured -> references[]#text
+            // Omitted texts (blank or too short to carry any bibliographic data) are
+            // not worth keeping - nothing could ever be extracted from them.
             String unstructured = getString(refRow, "unstructured");
-            if (StringUtils.isNotBlank(unstructured)) {
+            if (!ReferenceTextUtils.isOmitted(unstructured)) {
                 refBuilder.setText(unstructured);
             }
 

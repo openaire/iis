@@ -41,4 +41,28 @@ class ReferenceTextUtilsTest {
         assertFalse(ReferenceTextUtils.isBlank("The Significance of Selective Food"));
         assertFalse(ReferenceTextUtils.isBlank(" \u00A0Philpott\u00A0 "));  // NBSP around real text
     }
+
+    @Test
+    @DisplayName("Omits texts shorter than the minimum reference length")
+    void testOmittedTooShort() {
+        assertTrue(ReferenceTextUtils.isOmitted(null));
+        assertTrue(ReferenceTextUtils.isOmitted(""));
+        assertTrue(ReferenceTextUtils.isOmitted("."));
+        assertTrue(ReferenceTextUtils.isOmitted(".."));
+        assertTrue(ReferenceTextUtils.isOmitted(" . "));                      // dot surrounded by whitespace
+        assertTrue(ReferenceTextUtils.isOmitted(" \u00A0.\u00A0 "));        // dot surrounded by NBSP
+        assertTrue(ReferenceTextUtils.isOmitted("a"));
+        assertTrue(ReferenceTextUtils.isOmitted("ab"));
+        assertTrue(ReferenceTextUtils.isOmitted("  a  b  "));                // 2 meaningful chars
+    }
+
+    @Test
+    @DisplayName("Does not omit texts reaching the minimum reference length")
+    void testNotOmittedWhenLongEnough() {
+        assertFalse(ReferenceTextUtils.isOmitted("abc"));
+        assertFalse(ReferenceTextUtils.isOmitted("N/A"));
+        assertFalse(ReferenceTextUtils.isOmitted("  .x.  "));                // 3 meaningful chars
+        assertFalse(ReferenceTextUtils.isOmitted("Philpott, W.H."));
+        assertFalse(ReferenceTextUtils.isOmitted("The Significance of Selective Food"));
+    }
 }

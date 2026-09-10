@@ -42,7 +42,7 @@ public class GrobidReferenceTextParser implements ReferenceTextParser {
 
     @Override
     public ParsedReference parse(String text) throws Exception {
-        if (ReferenceTextUtils.isBlank(text)) {
+        if (ReferenceTextUtils.isOmitted(text)) {
             return null;
         }
         String teiXml = getGrobidClient().processCitation(text);
@@ -58,10 +58,10 @@ public class GrobidReferenceTextParser implements ReferenceTextParser {
             return Collections.emptyList();
         }
 
-        // Keep the original alignment: blank texts yield null entries.
+        // Keep the original alignment: omitted texts (blank or too short) yield null entries.
         List<String> toParse = new ArrayList<>(texts.size());
         for (String text : texts) {
-            toParse.add(ReferenceTextUtils.isBlank(text) ? null : text);
+            toParse.add(ReferenceTextUtils.isOmitted(text) ? null : text);
         }
         List<String> nonBlank = new ArrayList<>(toParse.size());
         for (String text : toParse) {
