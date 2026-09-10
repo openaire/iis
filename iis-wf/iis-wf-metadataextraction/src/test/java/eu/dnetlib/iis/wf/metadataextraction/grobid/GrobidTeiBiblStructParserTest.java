@@ -64,7 +64,7 @@ class GrobidTeiBiblStructParserTest {
         assertEquals("2001", parsed.getYear());
         assertEquals("American Psychological Association", parsed.getPublisher());
         assertEquals("Washington, DC", parsed.getLocation());
-        assertEquals("10.1037//1089-2680.5.4.323", parsed.getDoi());
+        assertEquals("10.1037//1089-2680.5.4.323", parsed.getExternalIds().get("doi"));
     }
 
     @Test
@@ -128,9 +128,40 @@ class GrobidTeiBiblStructParserTest {
         assertEquals("Springer", parsed.getPublisher());
         assertEquals("Berlin", parsed.getLocation());
         assertEquals("Lecture Notes in Computer Science", parsed.getSeries());
-        assertEquals("978-3-540-00000-0", parsed.getIsbn());
-        assertEquals("0302-9743", parsed.getIssn());
+        assertEquals("978-3-540-00000-0", parsed.getExternalIds().get("ISBN"));
+        assertEquals("0302-9743", parsed.getExternalIds().get("ISSN"));
         assertEquals("https://example.com/handbook", parsed.getUrl());
+    }
+
+    @Test
+    @DisplayName("Keeps arbitrary identifier types reported by Grobid")
+    void testParseArbitraryIdentifierTypes() throws Exception {
+        // given - identifiers beyond DOI/ISBN/ISSN must not be dropped
+        String tei = ""
+                + "<TEI>"
+                + "  <biblStruct>"
+                + "    <monogr>"
+                + "      <title level=\"a\" type=\"main\">A preprint</title>"
+                + "      <idno type=\"DOI\">10.1000/preprint</idno>"
+                + "      <idno type=\"arXiv\">2101.00001</idno>"
+                + "      <idno type=\"pubmed\">12345678</idno>"
+                + "      <idno type=\"\">ignored-without-type</idno>"
+                + "      <idno type=\"ISSN\">   "
+                + "      </idno>"
+                + "    </monogr>"
+                + "  </biblStruct>"
+                + "</TEI>";
+
+        // when
+        ParsedReference parsed = GrobidTeiBiblStructParser.parse(tei);
+
+        // then - every typed, non-blank identifier is retained, DOI lowercased
+        assertNotNull(parsed);
+        assertEquals(3, parsed.getExternalIds().size());
+        assertEquals("10.1000/preprint", parsed.getExternalIds().get("doi"));
+        assertEquals("2101.00001", parsed.getExternalIds().get("arXiv"));
+        assertEquals("12345678", parsed.getExternalIds().get("pubmed"));
+        assertNull(parsed.getExternalIds().get("ISSN"), "blank identifier value should be skipped");
     }
 
     @Test

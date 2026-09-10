@@ -37,9 +37,9 @@ public class CermineReferenceTextParser implements ReferenceTextParser {
         parsed.setSeries(bibEntry.getFirstFieldValue(BibEntryFieldType.SERIES));
         parsed.setIssue(bibEntry.getFirstFieldValue(BibEntryFieldType.NUMBER));
         parsed.setUrl(bibEntry.getFirstFieldValue(BibEntryFieldType.URL));
-        parsed.setDoi(bibEntry.getFirstFieldValue(BibEntryFieldType.DOI));
-        parsed.setIsbn(bibEntry.getFirstFieldValue(BibEntryFieldType.ISBN));
-        parsed.setIssn(bibEntry.getFirstFieldValue(BibEntryFieldType.ISSN));
+        parsed.addExternalId("DOI", bibEntry.getFirstFieldValue(BibEntryFieldType.DOI));
+        parsed.addExternalId("ISBN", bibEntry.getFirstFieldValue(BibEntryFieldType.ISBN));
+        parsed.addExternalId("ISSN", bibEntry.getFirstFieldValue(BibEntryFieldType.ISSN));
         return parsed;
     }
 

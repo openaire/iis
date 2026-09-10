@@ -8,7 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -17,8 +21,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Publication;
+import eu.dnetlib.dhp.schema.oaf.Qualifier;
 import eu.dnetlib.dhp.schema.oaf.Relation;
+import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
 import eu.dnetlib.iis.common.ClassPathResourceProvider;
 import eu.dnetlib.iis.common.SlowTest;
 import eu.dnetlib.iis.common.java.io.SequenceFileTextValueReader;
@@ -27,6 +34,8 @@ import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.common.utils.IteratorUtils;
 import eu.dnetlib.iis.common.utils.JsonAvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
+import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
 import eu.dnetlib.iis.wf.export.actionmanager.AtomicActionDeserializationUtils;
 import pl.edu.icm.sparkutils.test.SparkJob;
 import pl.edu.icm.sparkutils.test.SparkJobBuilder;
@@ -134,6 +143,35 @@ public class CrossrefExporterJobTest {
         assertEquals("dnet:publication_resource", pub0.getInstance().get(0).getInstancetype().getSchemeid());
         assertEquals("dnet:publication_resource", pub0.getInstance().get(0).getInstancetype().getSchemename());
 
+        // pids - external identifiers translated into instance pids, sorted by identifier type
+        List<StructuredProperty> pids = pub0.getInstance().get(0).getPid();
+        assertNotNull(pids, "expected pids for reference carrying external identifiers");
+        assertEquals(2, pids.size());
+
+        // qualifier classid comes from the identifier type, value from the identifier value
+        assertEquals("1234-5678", pids.get(0).getValue());
+        assertEquals("ISSN", pids.get(0).getQualifier().getClassid());
+        assertEquals("10.1000/ai2020", pids.get(1).getValue());
+        assertEquals("doi", pids.get(1).getQualifier().getClassid());
+
+        // each pid carries the same dataInfo as the exported payload
+        for (StructuredProperty pid : pids) {
+            DataInfo pidDataInfo = pid.getDataInfo();
+            assertNotNull(pidDataInfo, "pid dataInfo should be set");
+            assertTrue(pidDataInfo.getInferred());
+            assertEquals("0.7", pidDataInfo.getTrust());
+            assertEquals("iis::mutecitation_export", pidDataInfo.getInferenceprovenance());
+            Qualifier provenanceAction = pidDataInfo.getProvenanceaction();
+            assertNotNull(provenanceAction);
+            assertEquals("iis", provenanceAction.getClassid());
+            assertEquals("iis", provenanceAction.getClassname());
+            assertEquals("dnet:provenanceActions", provenanceAction.getSchemeid());
+            assertEquals("dnet:provenanceActions", provenanceAction.getSchemename());
+        }
+
+        // pids are attached to the already instantiated instance, no instance multiplication
+        assertEquals(1, pub0.getInstance().size());
+
         // title
         assertEquals(1, pub0.getTitle().size());
         assertEquals("Introduction to AI", pub0.getTitle().get(0).getValue());
@@ -166,6 +204,8 @@ public class CrossrefExporterJobTest {
         assertEquals("2019-01-01", pub1.getDateofacceptance().getValue());
         assertEquals(1, pub1.getInstance().size());
         assertEquals("0000", pub1.getInstance().get(0).getInstancetype().getClassid());
+        assertNull(pub1.getInstance().get(0).getPid(),
+                "reference without external identifiers should have no pids");
 
         // --- Verify third entity (pub4, ref 1: "Deep Learning") with authors and YYYY-MM-DD year ---
         AtomicAction<Publication> entity2 = findEntityByTitle(capturedEntityActions, "Deep Learning");
@@ -248,6 +288,90 @@ public class CrossrefExporterJobTest {
     // ---------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------
+
+    @Test
+    @DisplayName("External identifiers are translated into instance pids, arbitrary types included")
+    public void pidsAreTranslatedFromExternalIdentifiers() throws IOException {
+
+        // given - a record with arbitrary identifier types, blank entries and a
+        // reference carrying no identifiers at all
+        Map<CharSequence, CharSequence> externalIds = new HashMap<>();
+        externalIds.put("ISBN", "978-0-000-00000-0");
+        externalIds.put("arXiv", "2101.00001");
+        externalIds.put("doi", "10.1000/pidtest");
+        externalIds.put("blankValue", "   ");
+        externalIds.put("", "blank-type");
+
+        ReferenceBasicMetadata refWithIds = ReferenceBasicMetadata.newBuilder()
+                .setTitle("Reference With Identifiers")
+                .setAuthors(Arrays.<CharSequence>asList("Author One"))
+                .setExternalIds(externalIds)
+                .build();
+        ReferenceBasicMetadata refWithoutIds = ReferenceBasicMetadata.newBuilder()
+                .setTitle("Reference Without Identifiers")
+                .setAuthors(Arrays.<CharSequence>asList("Author Two"))
+                .build();
+
+        ExtractedDocumentMetadata doc = ExtractedDocumentMetadata.newBuilder()
+                .setId("pidDoc1")
+                .setReferences(Arrays.asList(
+                        ReferenceMetadata.newBuilder()
+                                .setBasicMetadata(refWithIds)
+                                .setText("Reference With Identifiers text.")
+                                .build(),
+                        ReferenceMetadata.newBuilder()
+                                .setBasicMetadata(refWithoutIds)
+                                .setText("Reference Without Identifiers text.")
+                                .build()))
+                .setText("")
+                .setExtractedBy("crossrefBibrefParser")
+                .build();
+
+        AvroTestUtils.createLocalAvroDataStore(Collections.singletonList(doc), inputPath);
+
+        // execute
+        executor.execute(buildJob());
+
+        // then
+        List<AtomicAction<Publication>> capturedEntityActions = IteratorUtils
+                .toList(SequenceFileTextValueReader.fromFile(outputEntityPath),
+                        text -> AtomicActionDeserializationUtils.deserializeAction(text.toString()));
+        assertEquals(2, capturedEntityActions.size());
+
+        // --- reference with identifiers: one pid per non-blank identifier, sorted by type ---
+        AtomicAction<Publication> withIds = findEntityByTitle(capturedEntityActions, "Reference With Identifiers");
+        assertNotNull(withIds, "expected entity for 'Reference With Identifiers'");
+        Publication pidPub = withIds.getPayload();
+        assertEquals(1, pidPub.getInstance().size());
+        List<StructuredProperty> pids = pidPub.getInstance().get(0).getPid();
+        assertNotNull(pids, "expected pids for reference with external identifiers");
+        assertEquals(3, pids.size(), "blank identifier type/value should be skipped, got: " + describePids(pids));
+
+        assertEquals("ISBN", pids.get(0).getQualifier().getClassid());
+        assertEquals("978-0-000-00000-0", pids.get(0).getValue());
+        assertEquals("arXiv", pids.get(1).getQualifier().getClassid());
+        assertEquals("2101.00001", pids.get(1).getValue());
+        assertEquals("doi", pids.get(2).getQualifier().getClassid());
+        assertEquals("10.1000/pidtest", pids.get(2).getValue());
+
+        // --- reference without identifiers: instance is still exported, just without pids ---
+        AtomicAction<Publication> withoutIds = findEntityByTitle(capturedEntityActions, "Reference Without Identifiers");
+        assertNotNull(withoutIds, "expected entity for 'Reference Without Identifiers'");
+        Publication noPidPub = withoutIds.getPayload();
+        assertEquals(1, noPidPub.getInstance().size());
+        assertNull(noPidPub.getInstance().get(0).getPid(),
+                "reference without external identifiers should have no pids");
+    }
+
+    // ---------------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------------
+
+    private static String describePids(List<StructuredProperty> pids) {
+        return pids.stream()
+                .map(pid -> pid.getQualifier().getClassid() + "=" + pid.getValue())
+                .collect(Collectors.joining(", "));
+    }
 
     private static AtomicAction<Publication> findEntityByTitle(
             List<AtomicAction<Publication>> actions, String title) {

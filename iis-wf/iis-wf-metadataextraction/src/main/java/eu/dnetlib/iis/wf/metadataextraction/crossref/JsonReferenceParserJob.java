@@ -3,8 +3,10 @@ package eu.dnetlib.iis.wf.metadataextraction.crossref;
 import static eu.dnetlib.iis.common.spark.SparkSessionSupport.runWithSparkSession;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +66,23 @@ public class JsonReferenceParserJob {
     private static final int DEFAULT_GROBID_READ_TIMEOUT = 60000;
 
     private static final int DEFAULT_GROBID_BATCH_SIZE = 25;
+
+    /**
+     * Mapping of the JSON record field names holding external identifiers to the
+     * identifier types stored in references[]#basicMetadata#externalIds. DOI is kept
+     * lowercase to match the convention used by the reference parsers
+     * ({@link ParsedReference#addExternalId(String, String)}), so identifiers coming
+     * from the JSON record and from the parsed text never collide under two keys.
+     */
+    private static final Map<String, String> EXTERNAL_ID_FIELDS = createExternalIdFields();
+
+    private static Map<String, String> createExternalIdFields() {
+        Map<String, String> fields = new LinkedHashMap<>();
+        fields.put("DOI", "doi");
+        fields.put("ISSN", "ISSN");
+        fields.put("ISBN", "ISBN");
+        return Collections.unmodifiableMap(fields);
+    }
 
     private static final String COUNTER_PROCESSED_DOCUMENTS = "processing.crossref.referenceParser.documents";
 
@@ -295,8 +314,6 @@ public class JsonReferenceParserJob {
             String year = getString(refRow, "year");
             String seriesTitle = getString(refRow, "series-title");
             String type = getString(refRow, "type");
-            String doi = getString(refRow, "DOI");
-            String issn = getString(refRow, "ISSN");
             String isbn = getString(refRow, "ISBN");
 
             // --- Map directly from JSON fields ---
@@ -350,18 +367,15 @@ public class JsonReferenceParserJob {
                 basicBuilder.setType("book");
             }
 
-            // ref#DOI -> references[]#basicMetadata#externalIds['doi']
-            // ref#ISSN -> references[]#basicMetadata#externalIds['ISSN']
-            // ref#ISBN -> references[]#basicMetadata#externalIds['ISBN']
+            // external identifiers (references[]#basicMetadata#externalIds) - driven by
+            // the field-to-identifier-type mapping, so further identifier fields can be
+            // supported by adding a single entry there
             Map<CharSequence, CharSequence> externalIds = new HashMap<>();
-            if (StringUtils.isNotBlank(doi)) {
-                externalIds.put("doi", doi);
-            }
-            if (StringUtils.isNotBlank(issn)) {
-                externalIds.put("ISSN", issn);
-            }
-            if (StringUtils.isNotBlank(isbn)) {
-                externalIds.put("ISBN", isbn);
+            for (Map.Entry<String, String> externalIdField : EXTERNAL_ID_FIELDS.entrySet()) {
+                String idValue = getString(refRow, externalIdField.getKey());
+                if (StringUtils.isNotBlank(idValue)) {
+                    externalIds.put(externalIdField.getValue(), idValue);
+                }
             }
             if (!externalIds.isEmpty()) {
                 basicBuilder.setExternalIds(externalIds);

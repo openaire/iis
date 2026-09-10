@@ -133,17 +133,10 @@ public final class GrobidTeiBiblStructParser {
         // url
         parsed.setUrl(ptrTarget(biblStruct));
 
-        // external identifiers
+        // external identifiers - keep every identifier type reported by Grobid
+        // (DOI, ISBN, ISSN, arXiv, ...) so no identifier is silently dropped
         for (Element idno : allElementsByLocalName(biblStruct, "idno")) {
-            String type = idno.getAttribute("type");
-            String value = idno.getTextContent().trim();
-            if ("DOI".equalsIgnoreCase(type)) {
-                parsed.setDoi(value);
-            } else if ("ISBN".equalsIgnoreCase(type)) {
-                parsed.setIsbn(value);
-            } else if ("ISSN".equalsIgnoreCase(type)) {
-                parsed.setIssn(value);
-            }
+            parsed.addExternalId(idno.getAttribute("type"), idno.getTextContent());
         }
 
         return parsed;
