@@ -136,29 +136,25 @@ public final class ParsedReferenceFiller {
             basicBuilder.setUrl(parsedUrl);
         }
 
-        // externalIds - only fill in identifiers not already mapped from JSON
-        Map<CharSequence, CharSequence> existingExtIds = basicBuilder.getExternalIds();
-        if (existingExtIds == null) {
-            existingExtIds = new HashMap<>();
-        }
-
-        String parsedDoi = parsed.getDoi();
-        if (StringUtils.isNotBlank(parsedDoi) && !existingExtIds.containsKey("doi")) {
-            existingExtIds.put("doi", parsedDoi);
-        }
-
-        String parsedIsbn = parsed.getIsbn();
-        if (StringUtils.isNotBlank(parsedIsbn) && !existingExtIds.containsKey("ISBN")) {
-            existingExtIds.put("ISBN", parsedIsbn);
-        }
-
-        String parsedIssn = parsed.getIssn();
-        if (StringUtils.isNotBlank(parsedIssn) && !existingExtIds.containsKey("ISSN")) {
-            existingExtIds.put("ISSN", parsedIssn);
-        }
-
-        if (!existingExtIds.isEmpty()) {
-            basicBuilder.setExternalIds(existingExtIds);
+        // externalIds - merge all parsed identifiers, without overwriting the ones
+        // already mapped from explicit JSON record fields
+        Map<String, String> parsedExternalIds = parsed.getExternalIds();
+        if (parsedExternalIds != null && !parsedExternalIds.isEmpty()) {
+            Map<CharSequence, CharSequence> existingExtIds = basicBuilder.getExternalIds();
+            if (existingExtIds == null) {
+                existingExtIds = new HashMap<>();
+            }
+            for (Map.Entry<String, String> parsedExternalId : parsedExternalIds.entrySet()) {
+                String idType = parsedExternalId.getKey();
+                String idValue = parsedExternalId.getValue();
+                if (StringUtils.isNotBlank(idType) && StringUtils.isNotBlank(idValue)
+                        && !existingExtIds.containsKey(idType)) {
+                    existingExtIds.put(idType, idValue);
+                }
+            }
+            if (!existingExtIds.isEmpty()) {
+                basicBuilder.setExternalIds(existingExtIds);
+            }
         }
     }
 

@@ -3,6 +3,9 @@ package eu.dnetlib.iis.wf.export.actionmanager.entity.crossref;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -73,7 +76,11 @@ public class CrossrefExporterJob {
 
     private static final DataInfo OAF_ENTITY_DATAINFO = buildEntityDataInfo();
 
-    private static final DataInfo OAF_RELATION_DATAINFO = buildRelationDataInfo();
+    /**
+     * DataInfo shared by the exported relations and by every pid attached to the
+     * exported instances.
+     */
+    private static final DataInfo OAF_PROVENANCE_DATAINFO = buildProvenanceDataInfo();
 
     private static final String COUNTER_INPUT_RECORDS = "export.crossref.input.records";
 
@@ -238,11 +245,51 @@ public class CrossrefExporterJob {
         // instance type
         Instance instance = new Instance();
         instance.setInstancetype(INSTANCE_TYPE_PUBLICATION);
+
+        // pids - external identifiers of the reference, attached to the very same
+        // (single) instance, so no instance multiplication is expected
+        List<StructuredProperty> pids = buildPids(basic.getExternalIds());
+        if (pids != null) {
+            instance.setPid(pids);
+        }
         publication.setInstance(Collections.singletonList(instance));
 
         publication.setLastupdatetimestamp(System.currentTimeMillis());
 
         return publication;
+    }
+
+    /**
+     * Translates reference external identifiers into instance pids:
+     * identifier type becomes the pid qualifier classid and identifier value
+     * becomes the pid value. Entries with a blank type or value are skipped and
+     * the result is sorted by identifier type so the output is deterministic.
+     *
+     * @param externalIds external identifiers keyed by identifier type
+     * @return pids, or null when there is nothing to export
+     */
+    private static List<StructuredProperty> buildPids(Map<CharSequence, CharSequence> externalIds) {
+        if (externalIds == null || externalIds.isEmpty()) {
+            return null;
+        }
+        SortedMap<String, String> sortedIds = new TreeMap<>();
+        for (Map.Entry<CharSequence, CharSequence> externalId : externalIds.entrySet()) {
+            if (StringUtils.isNotBlank(externalId.getKey()) && StringUtils.isNotBlank(externalId.getValue())) {
+                sortedIds.put(externalId.getKey().toString(), externalId.getValue().toString());
+            }
+        }
+        if (sortedIds.isEmpty()) {
+            return null;
+        }
+        List<StructuredProperty> pids = new ArrayList<>(sortedIds.size());
+        for (Map.Entry<String, String> pidEntry : sortedIds.entrySet()) {
+            StructuredProperty pid = new StructuredProperty();
+            pid.setValue(pidEntry.getValue());
+            pid.setQualifier(buildPidQualifier(pidEntry.getKey()));
+            pid.setDataInfo(OAF_PROVENANCE_DATAINFO);
+            pids.add(pid);
+        }
+        return pids;
     }
 
     /**
@@ -283,7 +330,7 @@ public class CrossrefExporterJob {
         relation.setRelType(OafConstants.REL_TYPE_RESULT_RESULT);
         relation.setSubRelType(OafConstants.SUBREL_TYPE_RELATIONSHIP);
         relation.setRelClass(OafConstants.REL_CLASS_CITES);
-        relation.setDataInfo(OAF_RELATION_DATAINFO);
+        relation.setDataInfo(OAF_PROVENANCE_DATAINFO);
         relation.setLastupdatetimestamp(System.currentTimeMillis());
         return relation;
     }
@@ -315,6 +362,15 @@ public class CrossrefExporterJob {
                 "dnet:dataCite_date", "dnet:dataCite_date");
     }
 
+    /**
+     * Builds a pid qualifier carrying the identifier type as its classid.
+     */
+    private static Qualifier buildPidQualifier(String identifierType) {
+        Qualifier qualifier = new Qualifier();
+        qualifier.setClassid(identifierType);
+        return qualifier;
+    }
+
     private static Qualifier buildQualifier(String classId, String className, String schemeId, String schemeName) {
         Qualifier qualifier = new Qualifier();
         qualifier.setClassid(classId);
@@ -334,7 +390,7 @@ public class CrossrefExporterJob {
         return dataInfo;
     }
 
-    private static DataInfo buildRelationDataInfo() {
+    private static DataInfo buildProvenanceDataInfo() {
         DataInfo dataInfo = new DataInfo();
         dataInfo.setInferred(true);
         dataInfo.setTrust("0.7");

@@ -1,7 +1,11 @@
 package eu.dnetlib.iis.wf.metadataextraction.parser;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Represents bibliographic reference fields parsed from a raw reference text
@@ -23,9 +27,12 @@ public class ParsedReference {
     private String series;
     private String issue;
     private String url;
-    private String doi;
-    private String isbn;
-    private String issn;
+
+    /**
+     * External identifiers parsed from the reference (e.g. DOI, ISBN, ISSN, arXiv),
+     * keyed by the identifier type as reported by the parser. Insertion ordered.
+     */
+    private Map<String, String> externalIds = new LinkedHashMap<>();
 
     public String getTitle() {
         return title;
@@ -123,27 +130,35 @@ public class ParsedReference {
         this.url = url;
     }
 
-    public String getDoi() {
-        return doi;
+    /**
+     * Returns the external identifiers parsed from the reference,
+     * keyed by identifier type. Never null.
+     */
+    public Map<String, String> getExternalIds() {
+        return externalIds;
     }
 
-    public void setDoi(String doi) {
-        this.doi = doi;
+    public void setExternalIds(Map<String, String> externalIds) {
+        this.externalIds = externalIds != null ? externalIds : new LinkedHashMap<>();
     }
 
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public String getIssn() {
-        return issn;
-    }
-
-    public void setIssn(String issn) {
-        this.issn = issn;
+    /**
+     * Registers an external identifier parsed from the reference, ignoring blank
+     * types and values. The identifier type is stored as reported by the parser,
+     * except for DOI which is normalized to the lowercase {@code doi} key used
+     * across the metadata extraction pipeline.
+     *
+     * @param type identifier type (e.g. DOI, ISBN, ISSN, arXiv)
+     * @param value identifier value
+     */
+    public void addExternalId(String type, String value) {
+        if (StringUtils.isBlank(type) || StringUtils.isBlank(value)) {
+            return;
+        }
+        String normalizedType = type.trim();
+        if ("doi".equalsIgnoreCase(normalizedType)) {
+            normalizedType = "doi";
+        }
+        externalIds.put(normalizedType, value.trim());
     }
 }
