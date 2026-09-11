@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.entity.crossref;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -128,8 +129,10 @@ public class CrossrefExporterJobTest {
         AtomicAction<Publication> entity0 = findEntityByTitle(capturedEntityActions, "Introduction to AI");
         assertNotNull(entity0, "expected entity for 'Introduction to AI'");
         Publication pub0 = entity0.getPayload();
-        assertTrue(pub0.getId().startsWith("50||mutecitation::"),
-                "id should start with '50||mutecitation::', got: " + pub0.getId());
+        assertTrue(pub0.getId().startsWith("50|mutecitation::"),
+                "id should start with '50|mutecitation::', got: " + pub0.getId());
+        assertFalse(pub0.getId().contains("||"),
+                "id should not contain a doubled prefix separator, got: " + pub0.getId());
         assertEquals("publication", pub0.getResulttype().getClassid());
         assertEquals("publication", pub0.getResulttype().getClassname());
         assertTrue(pub0.getDataInfo().getInvisible());
@@ -275,6 +278,10 @@ public class CrossrefExporterJobTest {
             assertEquals("0.7", rel.getDataInfo().getTrust());
             assertEquals("iis::mutecitation_export", rel.getDataInfo().getInferenceprovenance());
             assertEquals("iis", rel.getDataInfo().getProvenanceaction().getClassid());
+            assertTrue(rel.getTarget().startsWith("50|mutecitation::"),
+                    "relation target should start with '50|mutecitation::', got: " + rel.getTarget());
+            assertFalse(rel.getTarget().contains("||"),
+                    "relation target should not contain a doubled prefix separator, got: " + rel.getTarget());
 
             if ("pub1".equals(rel.getSource()) && introToAiId.equals(rel.getTarget())) {
                 foundIntroToAiRelation = true;

@@ -25,6 +25,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
 import eu.dnetlib.dhp.schema.action.AtomicAction;
+import eu.dnetlib.dhp.schema.common.ModelSupport;
 import eu.dnetlib.dhp.schema.oaf.Author;
 import eu.dnetlib.dhp.schema.oaf.DataInfo;
 import eu.dnetlib.dhp.schema.oaf.Field;
@@ -65,7 +66,15 @@ public class CrossrefExporterJob {
 
     private static final String PID_TYPE = "mutecitation_";
 
-    private static final String NUMERIC_PREFIX = InfoSpaceConstants.ROW_PREFIX_RESULT;
+    /**
+     * Numeric prefix of the generated OpenAIRE identifier (e.g. {@code 50} for publications).
+     * <p>
+     * {@link IdentifierFactory#idFromPid(String, String, String, boolean)} appends the
+     * {@link IdentifierFactory#ID_PREFIX_SEPARATOR} itself, so the prefix passed here must
+     * be numeric only - {@link InfoSpaceConstants#ROW_PREFIX_RESULT} already carries that
+     * separator and would result in a doubled one.
+     */
+    private static final String NUMERIC_PREFIX = ModelSupport.getIdPrefix(Publication.class);
 
     private static final Qualifier RESULT_TYPE_PUBLICATION = buildResultTypePublication();
 
