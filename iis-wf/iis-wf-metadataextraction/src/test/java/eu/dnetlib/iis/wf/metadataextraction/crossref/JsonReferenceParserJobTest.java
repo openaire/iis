@@ -1,31 +1,42 @@
 package eu.dnetlib.iis.wf.metadataextraction.crossref;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.hadoop.conf.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import eu.dnetlib.iis.audit.schemas.Fault;
+import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
 import eu.dnetlib.iis.common.java.io.DataStore;
 import eu.dnetlib.iis.common.java.io.HdfsTestUtils;
+import eu.dnetlib.iis.common.lock.HadoopFsLockManagerFactory;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.TestWithSharedSparkSession;
 import eu.dnetlib.iis.common.spark.avro.AvroDatasetReader;
+import eu.dnetlib.iis.common.utils.AvroTestUtils;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
 import eu.dnetlib.iis.metadataextraction.schemas.ReferenceMetadata;
@@ -57,6 +68,12 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
     private static final String COUNTER_DOCUMENTS = "processing.crossref.referenceParser.documents";
     
     private static final String COUNTER_REFERENCES = "processing.crossref.referenceParser.references";
+    
+    private static final String COUNTER_FROMCACHE = "processing.crossref.referenceParser.fromCache.total";
+    
+    private static final String COUNTER_PROCESSED_TOTAL = "processing.crossref.referenceParser.processed.total";
+    
+    private static final String COUNTER_PROCESSED_FAULT = "processing.crossref.referenceParser.processed.fault";
     
     private static final String DEFAULT_EXTRACTED_BY = "crossrefBibrefParser";
 
@@ -100,12 +117,7 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
 
         // when
-        JsonReferenceParserJob.main(new String[]{
-                "-sharedSparkSession",
-                "-inputPath", inputDir.toString(),
-                "-outputPath", outputDir.toString(),
-                "-outputReportPath", outputReportDir.toString()
-        });
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir));
 
         // then
         List<ExtractedDocumentMetadata> results = new AvroDatasetReader(spark())
@@ -177,11 +189,17 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         List<ReportEntry> report = new AvroDatasetReader(spark())
                 .read(outputReportDir.toString(), ReportEntry.SCHEMA$, ReportEntry.class)
                 .collectAsList();
-        assertEquals(2, report.size());
+        assertEquals(5, report.size());
         assertTrue(report.contains(
                 ReportEntryFactory.createCounterReportEntry(COUNTER_DOCUMENTS, 1)));
         assertTrue(report.contains(
                 ReportEntryFactory.createCounterReportEntry(COUNTER_REFERENCES, 2)));
+        assertTrue(report.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE, 0)));
+        assertTrue(report.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, 1)));
+        assertTrue(report.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, 0)));
     }
 
     @Test
@@ -202,12 +220,7 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
 
         // when
-        JsonReferenceParserJob.main(new String[]{
-                "-sharedSparkSession",
-                "-inputPath", inputDir.toString(),
-                "-outputPath", outputDir.toString(),
-                "-outputReportPath", outputReportDir.toString()
-        });
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir));
 
         // then
         List<ExtractedDocumentMetadata> results = new AvroDatasetReader(spark())
@@ -241,12 +254,7 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
 
         // when
-        JsonReferenceParserJob.main(new String[]{
-                "-sharedSparkSession",
-                "-inputPath", inputDir.toString(),
-                "-outputPath", outputDir.toString(),
-                "-outputReportPath", outputReportDir.toString()
-        });
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir));
 
         // then
         List<ExtractedDocumentMetadata> results = new AvroDatasetReader(spark())
@@ -278,12 +286,7 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
 
         // when
-        JsonReferenceParserJob.main(new String[]{
-                "-sharedSparkSession",
-                "-inputPath", inputDir.toString(),
-                "-outputPath", outputDir.toString(),
-                "-outputReportPath", outputReportDir.toString()
-        });
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir));
 
         // then
         List<ExtractedDocumentMetadata> results = new AvroDatasetReader(spark())
@@ -321,13 +324,8 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
 
         // when
-        JsonReferenceParserJob.main(new String[]{
-                "-sharedSparkSession",
-                "-inputPath", inputDir.toString(),
-                "-outputPath", outputDir.toString(),
-                "-outputReportPath", outputReportDir.toString(),
-                "-extractedBy", "myCustomParser"
-        });
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir,
+                "-extractedBy", "myCustomParser"));
 
         // then
         List<ExtractedDocumentMetadata> results = new AvroDatasetReader(spark())
@@ -359,12 +357,7 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
 
         // when
-        JsonReferenceParserJob.main(new String[]{
-                "-sharedSparkSession",
-                "-inputPath", inputDir.toString(),
-                "-outputPath", outputDir.toString(),
-                "-outputReportPath", outputReportDir.toString()
-        });
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir));
 
         // then - the record is produced without exception, with explicit fields only
         List<ExtractedDocumentMetadata> results = new AvroDatasetReader(spark())
@@ -403,12 +396,7 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
 
         // when
-        JsonReferenceParserJob.main(new String[]{
-                "-sharedSparkSession",
-                "-inputPath", inputDir.toString(),
-                "-outputPath", outputDir.toString(),
-                "-outputReportPath", outputReportDir.toString()
-        });
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir));
 
         // then - records are produced without parsing the meaningless text,
         // so only the explicitly defined JSON fields are mapped
@@ -441,9 +429,246 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
                 "'..' should not be stored as reference text");
     }
 
+    @Test
+    @DisplayName("Parsed documents are stored in cache and reused by a subsequent run")
+    void testCacheInitializationAndReuse() throws Exception {
+        // given
+        Path workingDir = createTempDir("jsonRefParserTest_cache");
+        Path inputDir = workingDir.resolve("input");
+        Path outputDir = workingDir.resolve("output");
+        Path output2Dir = workingDir.resolve("output2");
+        Path outputReportDir = workingDir.resolve("output_report");
+        Path outputReport2Dir = workingDir.resolve("output_report2");
+
+        String jsonLines = ""
+                + "{\"id\":\"cache1\",\"ref\":{"
+                + "\"unstructured\":\"Doe, J. (2019). Cached article. Some Journal, 1(1), 1-10.\","
+                + "\"article-title\":\"Cached article\","
+                + "\"journal-title\":\"Some Journal\""
+                + "}}\n";
+
+        writeGzippedJson(inputDir.resolve("records.json.gz"), jsonLines);
+
+        // when - the first run initializes the cache
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir));
+        // and the second run over the very same input relies on the cache contents only
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, output2Dir, outputReport2Dir));
+
+        // then - both runs produce the same output
+        List<ExtractedDocumentMetadata> firstRun = readDocuments(outputDir);
+        List<ExtractedDocumentMetadata> secondRun = readDocuments(output2Dir);
+        assertEquals(1, firstRun.size());
+        assertEquals(1, secondRun.size());
+        assertEquals("cache1", secondRun.get(0).getId().toString());
+        assertEquals(firstRun.get(0).getReferences(), secondRun.get(0).getReferences());
+
+        // and the parsed document is stored in the cache under the document id
+        String cacheId = getExistingCacheId(workingDir);
+        assertNotEquals(CacheMetadataManagingProcess.UNDEFINED, cacheId);
+        List<ExtractedDocumentMetadata> cachedDocuments = readDocuments(
+                CacheStorageUtils.getCacheLocation(hadoopPath(cacheRootDir(workingDir)), cacheId,
+                        CacheRecordType.data).toString());
+        assertEquals(1, cachedDocuments.size());
+        assertEquals("cache1", cachedDocuments.get(0).getId().toString());
+        assertTrue(isEmptyDataStore(CacheStorageUtils.getCacheLocation(hadoopPath(cacheRootDir(workingDir)), cacheId,
+                CacheRecordType.fault).toString()));
+
+        // and the second run reports the document as returned from the cache
+        List<ReportEntry> secondRunReport = readReport(outputReport2Dir);
+        assertTrue(secondRunReport.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE, 1)));
+        assertTrue(secondRunReport.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, 0)));
+        assertTrue(secondRunReport.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_DOCUMENTS, 1)));
+    }
+
+    @Test
+    @DisplayName("Incremental run over input subset parses only the documents which are not cached yet")
+    void testIncrementalRunOverInputSubset() throws Exception {
+        // given - the first subset is processed and cached before the second, wider subset is run
+        Path workingDir = createTempDir("jsonRefParserTest_incremental");
+        Path inputDir = workingDir.resolve("input");
+        Path input2Dir = workingDir.resolve("input2");
+        Path outputDir = workingDir.resolve("output");
+        Path output2Dir = workingDir.resolve("output2");
+        Path outputReportDir = workingDir.resolve("output_report");
+        Path outputReport2Dir = workingDir.resolve("output_report2");
+
+        writeGzippedJson(inputDir.resolve("records.json.gz"),
+                "{\"id\":\"inc1\",\"ref\":{\"unstructured\":\"First cached reference.\","
+                        + "\"article-title\":\"First\"}}\n");
+        writeGzippedJson(input2Dir.resolve("records.json.gz"),
+                "{\"id\":\"inc1\",\"ref\":{\"unstructured\":\"First cached reference.\","
+                        + "\"article-title\":\"First\"}}\n"
+                        + "{\"id\":\"inc2\",\"ref\":{\"unstructured\":\"Second reference.\","
+                        + "\"article-title\":\"Second\"}}\n");
+
+        // when
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir));
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, input2Dir, output2Dir, outputReport2Dir));
+
+        // then - the second run returns both the cached and the newly parsed document
+        List<String> secondRunIds = new ArrayList<>();
+        for (ExtractedDocumentMetadata document : readDocuments(output2Dir)) {
+            secondRunIds.add(document.getId().toString());
+        }
+        assertTrue(secondRunIds.contains("inc1"), "cached document should be returned");
+        assertTrue(secondRunIds.contains("inc2"), "newly parsed document should be returned");
+        assertEquals(2, secondRunIds.size());
+
+        // and the cache holds both documents
+        String cacheId = getExistingCacheId(workingDir);
+        List<ExtractedDocumentMetadata> cachedDocuments = readDocuments(
+                CacheStorageUtils.getCacheLocation(hadoopPath(cacheRootDir(workingDir)), cacheId,
+                        CacheRecordType.data).toString());
+        assertEquals(2, cachedDocuments.size());
+
+        // and the second run reports a single document returned from the cache
+        List<ReportEntry> secondRunReport = readReport(outputReport2Dir);
+        assertTrue(secondRunReport.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE, 1)));
+        assertTrue(secondRunReport.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, 1)));
+    }
+
+    @Test
+    @DisplayName("Fatal failure of a record is reported as a fault instead of interrupting the job")
+    void testMalformedRecordReportedAsFault() throws Exception {
+        // given - records whose 'ref' is not a structure at all: in the cacheless version
+        // such input would interrupt the whole job
+        Path workingDir = createTempDir("jsonRefParserTest_fault");
+        Path inputDir = workingDir.resolve("input");
+        Path outputDir = workingDir.resolve("output");
+        Path output2Dir = workingDir.resolve("output2");
+        Path outputReportDir = workingDir.resolve("output_report");
+        Path outputReport2Dir = workingDir.resolve("output_report2");
+
+        writeGzippedJson(inputDir.resolve("records.json.gz"),
+                "{\"id\":\"fault1\",\"ref\":\"not a struct\"}\n"
+                        + "{\"id\":\"fault2\",\"ref\":\"not a struct either\"}\n");
+
+        // when - the fatal failure of a single record must not interrupt the job
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, outputDir, outputReportDir));
+
+        // then - the job completes and no document is written at the output
+        assertTrue(isEmptyDataStore(outputDir.toString()), "no document should be produced");
+
+        // and each document is reported as a fault identified with its id
+        List<Fault> faults = readFaults(faultDir(outputDir));
+        assertEquals(2, faults.size());
+        List<String> faultIds = new ArrayList<>();
+        for (Fault fault : faults) {
+            faultIds.add(fault.getInputObjectId().toString());
+            assertNotNull(fault.getStackTrace());
+        }
+        assertTrue(faultIds.contains("fault1"));
+        assertTrue(faultIds.contains("fault2"));
+
+        // and the faults are stored in the cache so the documents are not retried
+        String cacheId = getExistingCacheId(workingDir);
+        assertEquals(2, readFaults(CacheStorageUtils.getCacheLocation(hadoopPath(cacheRootDir(workingDir)),
+                cacheId, CacheRecordType.fault).toString()).size());
+
+        // and the counters report the faults
+        List<ReportEntry> report = readReport(outputReportDir);
+        assertTrue(report.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_DOCUMENTS, 0)));
+        assertTrue(report.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_REFERENCES, 0)));
+        assertTrue(report.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, 2)));
+        assertTrue(report.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, 2)));
+        assertTrue(report.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE, 0)));
+
+        // when - the job is rerun over the very same input
+        JsonReferenceParserJob.main(buildJobArgs(workingDir, inputDir, output2Dir, outputReport2Dir));
+
+        // then - the cached faults are reused so nothing is processed and no new fault is written
+        List<ReportEntry> secondRunReport = readReport(outputReport2Dir);
+        assertTrue(secondRunReport.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE, 2)));
+        assertTrue(secondRunReport.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, 0)));
+        assertTrue(secondRunReport.contains(
+                ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, 0)));
+        assertTrue(isEmptyDataStore(faultDir(output2Dir).toString()),
+                "faults are not propagated from the cache to the output");
+        assertTrue(isEmptyDataStore(output2Dir.toString()));
+    }
+
     // ---------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------
+
+    /**
+     * Builds the job arguments with the mandatory cache coordinates and the fault output
+     * location derived from the output location. Extra arguments may be appended at the end.
+     */
+    private static String[] buildJobArgs(Path workingDir, Path inputDir, Path outputDir, Path outputReportDir,
+            String... extraArgs) {
+        List<String> args = new ArrayList<>(Arrays.asList(
+                "-sharedSparkSession",
+                "-inputPath", inputDir.toString(),
+                "-outputPath", outputDir.toString(),
+                "-outputFaultPath", faultDir(outputDir).toString(),
+                "-outputReportPath", outputReportDir.toString(),
+                "-cacheRootDir", cacheRootDir(workingDir).toString(),
+                "-lockManagerFactoryClassName", HadoopFsLockManagerFactory.class.getName(),
+                "-numberOfEmittedFiles", "1"));
+        args.addAll(Arrays.asList(extraArgs));
+        return args.toArray(new String[0]);
+    }
+
+    private static Path cacheRootDir(Path workingDir) {
+        return workingDir.resolve("cache");
+    }
+
+    private static Path faultDir(Path outputDir) {
+        return outputDir.resolveSibling(outputDir.getFileName() + "_fault");
+    }
+
+    private static org.apache.hadoop.fs.Path hadoopPath(Path path) {
+        return new org.apache.hadoop.fs.Path(path.toString());
+    }
+
+    private static String getExistingCacheId(Path workingDir) throws Exception {
+        return new CacheMetadataManagingProcess().getExistingCacheId(new Configuration(),
+                hadoopPath(cacheRootDir(workingDir)));
+    }
+
+    private List<ExtractedDocumentMetadata> readDocuments(Path path) {
+        return readDocuments(path.toString());
+    }
+
+    private List<ExtractedDocumentMetadata> readDocuments(String path) {
+        return new AvroDatasetReader(spark())
+                .read(path, ExtractedDocumentMetadata.SCHEMA$, ExtractedDocumentMetadata.class)
+                .collectAsList();
+    }
+
+    private List<Fault> readFaults(Path path) {
+        return readFaults(path.toString());
+    }
+
+    private List<Fault> readFaults(String path) {
+        return new AvroDatasetReader(spark()).read(path, Fault.SCHEMA$, Fault.class).collectAsList();
+    }
+
+    private List<ReportEntry> readReport(Path path) {
+        return new AvroDatasetReader(spark()).read(path.toString(), ReportEntry.SCHEMA$, ReportEntry.class)
+                .collectAsList();
+    }
+
+    /**
+     * Checks whether the datastore located at the given path holds no records. Reading is not
+     * done with Spark as an empty datastore cannot be turned into a Dataset.
+     */
+    private static boolean isEmptyDataStore(String path) throws IOException {
+        return AvroTestUtils.readLocalAvroDataStore(path).isEmpty();
+    }
 
     /**
      * Creates a temporary directory under a writable location (bypassing
