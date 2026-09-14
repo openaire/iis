@@ -2,6 +2,7 @@ package eu.dnetlib.iis.wf.metadataextraction.crossref;
 
 import static eu.dnetlib.iis.common.spark.SparkSessionSupport.runWithSparkSession;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,22 +12,34 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
 import scala.Tuple2;
+import scala.Tuple3;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
+import eu.dnetlib.iis.audit.schemas.Fault;
+import eu.dnetlib.iis.common.cache.CacheMetadataManagingProcess;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.CacheRecordType;
+import eu.dnetlib.iis.common.cache.CacheStorageUtils.OutputPaths;
+import eu.dnetlib.iis.common.fault.FaultUtils;
 import eu.dnetlib.iis.common.java.io.HdfsUtils;
+import eu.dnetlib.iis.common.lock.LockManager;
+import eu.dnetlib.iis.common.lock.LockManagerUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
@@ -38,6 +51,7 @@ import eu.dnetlib.iis.wf.metadataextraction.parser.ParsedReferenceFiller;
 import eu.dnetlib.iis.wf.metadataextraction.parser.ReferenceTextParser;
 import eu.dnetlib.iis.wf.metadataextraction.parser.ReferenceTextParserFactory;
 import eu.dnetlib.iis.wf.metadataextraction.parser.ReferenceTextUtils;
+import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 
 /**
@@ -48,6 +62,15 @@ import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
  * Records are grouped by the {@code id} field. Fields explicitly defined in the JSON record
  * are mapped directly to the target Avro model; the raw unstructured reference text is parsed
  * using CERMINE's {@link CRFBibReferenceParser} to populate fields not covered by the explicit mapping.
+ * <p>
+ * Because the reference parsing (especially with Grobid) is extremely resource consuming and
+ * may take days for the full set of records, the results are cached: for a given document
+ * ({@code id}) the parsing is executed only once, i.e. all the input records identified with an
+ * already cached id are skipped, which makes it possible to run the job incrementally on a
+ * subset of the input without losing the outcome of the previous runs.
+ * <p>
+ * Documents which failed with a fatal error are stored in the cache as {@link Fault} records so
+ * they are not retried (and the job is not interrupted) by the subsequent runs.
  *
  * @author mhorst
  */
@@ -56,6 +79,8 @@ public class JsonReferenceParserJob {
     private static final Logger log = Logger.getLogger(JsonReferenceParserJob.class);
 
     private static SparkAvroSaver avroSaver = new SparkAvroSaver();
+
+    private static SparkAvroLoader avroLoader = new SparkAvroLoader();
 
     private static final String DEFAULT_EXTRACTED_BY = "crossrefBibrefParser";
 
@@ -88,6 +113,12 @@ public class JsonReferenceParserJob {
 
     private static final String COUNTER_PROCESSED_REFERENCES = "processing.crossref.referenceParser.references";
 
+    private static final String COUNTER_FROMCACHE_TOTAL = "processing.crossref.referenceParser.fromCache.total";
+
+    private static final String COUNTER_PROCESSED_TOTAL = "processing.crossref.referenceParser.processed.total";
+
+    private static final String COUNTER_PROCESSED_FAULT = "processing.crossref.referenceParser.processed.fault";
+
     // ----------------------------- MAIN -----------------------------
 
     public static void main(String[] args) throws Exception {
@@ -98,11 +129,12 @@ public class JsonReferenceParserJob {
         SparkConf conf = new SparkConf();
         runWithSparkSession(conf, params.isSparkSessionShared, spark -> {
 
-            HdfsUtils.remove(spark.sparkContext().hadoopConfiguration(), params.outputPath);
-            HdfsUtils.remove(spark.sparkContext().hadoopConfiguration(), params.outputReportPath);
+            JavaSparkContext sc = new JavaSparkContext(spark.sparkContext());
+            Configuration hadoopConf = sc.hadoopConfiguration();
 
-            // Read JSON input (gzip compressed, one JSON record per line)
-            Dataset<Row> jsonDf = spark.read().json(params.inputPath);
+            HdfsUtils.remove(hadoopConf, params.getOutputPath());
+            HdfsUtils.remove(hadoopConf, params.getOutputFaultPath());
+            HdfsUtils.remove(hadoopConf, params.getOutputReportPath());
 
             String extractedBy = params.extractedBy != null ? params.extractedBy : DEFAULT_EXTRACTED_BY;
             String referenceParserType = params.referenceParser != null
@@ -114,45 +146,211 @@ public class JsonReferenceParserJob {
             int grobidBatchSize = params.grobidBatchSize != null
                     ? params.grobidBatchSize : DEFAULT_GROBID_BATCH_SIZE;
 
-            // Partition-level parse: map each input partition of (id, ref) JSON records into
-            // (documentId, ReferenceMetadata) tuples. The reference parsing (CERMINE or Grobid)
-            // happens here - before any shuffle - on the input partitions, fully parallel and
-            // decoupled from group sizes / key skew. For Grobid, citations are sent to the server
-            // in batches of grobidBatchSize per HTTP request so the number of in-flight requests
-            // stays proportional to the number of running tasks (i.e. the Grobid engine capacity).
-            JavaPairRDD<String, ReferenceMetadata> parsedByDocIdRdd = jsonDf.toJavaRDD()
+            LockManager lockManager = LockManagerUtils.instantiateLockManager(
+                    params.getLockManagerFactoryClassName(), hadoopConf);
+
+            final Path cacheRootDir = new Path(params.getCacheRootDir());
+            CacheMetadataManagingProcess cacheManager = new CacheMetadataManagingProcess();
+            String existingCacheId = cacheManager.getExistingCacheId(hadoopConf, cacheRootDir);
+
+            // ----------------------------- INPUT -----------------------------
+
+            Dataset<Row> jsonDf = spark.read().json(params.inputPath);
+
+            // each input JSON record is identified by the 'id' field which is also the
+            // ExtractedDocumentMetadata#id of the document the reference belongs to
+            JavaPairRDD<CharSequence, Row> inputRowsByDocId = jsonDf.toJavaRDD().flatMapToPair(row -> {
+                String documentId = extractDocumentId(row);
+                if (documentId == null) {
+                    log.warn("skipping input record without 'id' field");
+                    return Collections.<Tuple2<CharSequence, Row>>emptyList().iterator();
+                }
+                return Collections.singletonList(new Tuple2<CharSequence, Row>(documentId, row)).iterator();
+            });
+
+            // ----------------------------- CURRENT CACHE CONTENTS -----------------------------
+
+            // documents parsed by the previous runs and the documents which failed with a fatal
+            // error: none of them is subject to the extremely resource consuming parsing again
+            JavaRDD<ExtractedDocumentMetadata> cachedDocuments = CacheStorageUtils.getRddOrEmpty(sc, avroLoader,
+                    cacheRootDir, existingCacheId, CacheRecordType.data, ExtractedDocumentMetadata.class);
+            JavaRDD<Fault> cachedFaults = CacheStorageUtils.getRddOrEmpty(sc, avroLoader, cacheRootDir,
+                    existingCacheId, CacheRecordType.fault, Fault.class);
+
+            // ----------------------------- INPUT MATCHED WITH CACHE CONTENTS -----------------------------
+
+            // All the input records sharing the same id are grouped together with the cache
+            // contents in a single shuffle. This is enough to identify the documents which have to
+            // be parsed as well as to provide the cached documents for the output.
+            JavaPairRDD<CharSequence, Tuple3<Iterable<Row>, Iterable<ExtractedDocumentMetadata>, Iterable<Fault>>> inputGroupedWithCache =
+                    inputRowsByDocId.cogroup(
+                            cachedDocuments.mapToPair(
+                                    x -> new Tuple2<CharSequence, ExtractedDocumentMetadata>(x.getId(), x)),
+                            cachedFaults.mapToPair(
+                                    x -> new Tuple2<CharSequence, Fault>(x.getInputObjectId(), x)));
+
+            // documents present in this run's input and already cached: they are not parsed again
+            // and only their cached version is written at the output
+            JavaRDD<ExtractedDocumentMetadata> documentsReturnedFromCache = inputGroupedWithCache
+                    .filter(x -> x._2()._1().iterator().hasNext() && x._2()._2().iterator().hasNext())
+                    .map(x -> x._2()._2().iterator().next());
+
+            // documents to be processed: the ones having neither a cached document nor a cached fault
+            JavaRDD<Row> rowsToBeProcessed = inputGroupedWithCache
+                    .filter(x -> !x._2()._2().iterator().hasNext() && !x._2()._3().iterator().hasNext())
+                    .flatMap(x -> x._2()._1().iterator());
+
+            // (documents returned from cache, faults returned from cache) - the counter values are
+            // computed within a single action (fold is used instead of reduce as the cache may
+            // leave nothing to be counted)
+            Tuple2<Long, Long> cacheHitCounts = inputGroupedWithCache
+                    .map(x -> countCacheHits(x._2()))
+                    .fold(new Tuple2<>(0L, 0L),
+                            (a, b) -> new Tuple2<>(a._1() + b._1(), a._2() + b._2()));
+
+            // ----------------------------- PARSING -----------------------------
+
+            // Partition-level parse: map each partition of (id, ref) JSON records into
+            // (documentId, parsing result) tuples. The reference parsing (CERMINE or Grobid)
+            // happens here, fully parallel, before the parsed references are grouped by document
+            // id. For Grobid, citations are sent to the server in batches of grobidBatchSize per
+            // HTTP request so the number of in-flight requests stays proportional to the number
+            // of concurrently running tasks, i.e. matched to the Grobid engine capacity.
+            JavaPairRDD<CharSequence, ReferenceParsingResult> parsedByDocIdRdd = rowsToBeProcessed
                     .mapPartitionsToPair(new RowPartitionToReferenceMapper(referenceParserType,
                             params.grobidServerUrl, grobidConnectionTimeout, grobidReadTimeout,
                             grobidBatchSize));
 
-            // Group only the compact ReferenceMetadata objects by document id
-            JavaRDD<ExtractedDocumentMetadata> resultRdd = parsedByDocIdRdd
+            // Group only the compact parsing results by document id and build either the document
+            // or a fault from them
+            JavaPairRDD<CharSequence, DocumentParsingResult> parsedDocumentsAndFaults = parsedByDocIdRdd
                     .groupByKey()
-                    .map(new GroupedReferencesToDocumentMapper(extractedBy));
+                    .mapToPair(new GroupedReferencesToResultMapper(extractedBy));
+            // consumed for cache storage, output and counters: caching makes the parsing executed
+            // only once
+            parsedDocumentsAndFaults.cache();
 
-            resultRdd.cache();
+            JavaRDD<ExtractedDocumentMetadata> parsedDocuments = parsedDocumentsAndFaults
+                    .filter(x -> x._2.getDocument() != null)
+                    .values().map(DocumentParsingResult::getDocument);
+            JavaRDD<Fault> parsingFaults = parsedDocumentsAndFaults
+                    .filter(x -> x._2.getFault() != null)
+                    .values().map(DocumentParsingResult::getFault);
 
-            long documentCount = resultRdd.count();
-            long referenceCount = resultRdd
-                    .map(doc -> (long) (doc.getReferences() != null ? doc.getReferences().size() : 0))
-                    .reduce(Long::sum);
+            // (documents parsed in this run, faults reported in this run) - the single action
+            // materializing the parsing outcome
+            Tuple2<Long, Long> parsedCounts = parsedDocumentsAndFaults
+                    .map(x -> x._2.getDocument() != null ? new Tuple2<>(1L, 0L) : new Tuple2<>(0L, 1L))
+                    .fold(new Tuple2<>(0L, 0L),
+                            (a, b) -> new Tuple2<>(a._1() + b._1(), a._2() + b._2()));
 
-            JavaRDD<ReportEntry> reportRdd = spark.createDataset(
-                    java.util.Arrays.asList(
-                            ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_DOCUMENTS, documentCount),
-                            ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_REFERENCES, referenceCount)),
-                    org.apache.spark.sql.Encoders.kryo(ReportEntry.class)).javaRDD();
+            if (parsedCounts._1() + parsedCounts._2() > 0) {
+                // storing new cache entry composed of the previously cached documents and the ones
+                // processed in this run (both successful and faulted)
+                CacheStorageUtils.storeInCache(avroSaver, ExtractedDocumentMetadata.SCHEMA$,
+                        cachedDocuments.union(parsedDocuments), cachedFaults.union(parsingFaults), cacheRootDir,
+                        lockManager, cacheManager, hadoopConf, params.numberOfEmittedFiles);
+            }
 
-            avroSaver.saveJavaRDD(resultRdd, ExtractedDocumentMetadata.SCHEMA$, params.outputPath);
-            avroSaver.saveJavaRDD(reportRdd, ReportEntry.SCHEMA$, params.outputReportPath);
+            // ----------------------------- OUTPUT -----------------------------
+
+            JavaRDD<ExtractedDocumentMetadata> documentsToBeWritten = documentsReturnedFromCache
+                    .union(parsedDocuments);
+            documentsToBeWritten.cache();
+
+            // (documents, references) written at the output
+            Tuple2<Long, Long> outputCounts = documentsToBeWritten
+                    .map(doc -> new Tuple2<>(1L,
+                            (long) (doc.getReferences() != null ? doc.getReferences().size() : 0)))
+                    .fold(new Tuple2<>(0L, 0L),
+                            (a, b) -> new Tuple2<>(a._1() + b._1(), a._2() + b._2()));
+
+            storeInOutput(
+                    documentsToBeWritten,
+                    // notice: we do not propagate faults from cache, only new faults are written
+                    parsingFaults,
+                    generateReportEntries(sc, outputCounts._1(), outputCounts._2(),
+                            cacheHitCounts._1() + cacheHitCounts._2(),
+                            parsedCounts._1() + parsedCounts._2(), parsedCounts._2()),
+                    new OutputPaths(params), params.numberOfEmittedFiles);
         });
+    }
+
+    // ----------------------------- PRIVATE -----------------------------
+
+    /**
+     * Extracts the document identifier from an input JSON record.
+     *
+     * @return the value of the 'id' field or null when the record does not carry
+     *         a usable identifier
+     */
+    private static String extractDocumentId(Row row) {
+        String documentId = getString(row, "id");
+        return StringUtils.isNotBlank(documentId) ? documentId : null;
+    }
+
+    /**
+     * Counts the cache hits of a single document as a (cached documents, cached faults) tuple.
+     * Only the documents present in the current input are taken into account - cache entries
+     * pointing at documents which are not a part of this run's input are ignored.
+     */
+    private static Tuple2<Long, Long> countCacheHits(
+            Tuple3<Iterable<Row>, Iterable<ExtractedDocumentMetadata>, Iterable<Fault>> documentWithCache) {
+        if (!documentWithCache._1().iterator().hasNext()) {
+            // the document exists in the cache but not in the current input
+            return new Tuple2<>(0L, 0L);
+        }
+        if (documentWithCache._2().iterator().hasNext()) {
+            return new Tuple2<>(1L, 0L);
+        }
+        return documentWithCache._3().iterator().hasNext() ? new Tuple2<>(0L, 1L) : new Tuple2<>(0L, 0L);
+    }
+
+    /**
+     * Safely extracts a string value from a Row, returning null if the field
+     * is missing or contains a SQL null.
+     */
+    private static String getString(Row row, String fieldName) {
+        try {
+            int idx = row.fieldIndex(fieldName);
+            if (row.isNullAt(idx)) {
+                return null;
+            }
+            Object val = row.get(idx);
+            return val != null ? val.toString() : null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Writes the job outcome: parsed documents, faults reported by this run and the report entries.
+     */
+    private static void storeInOutput(JavaRDD<ExtractedDocumentMetadata> documents, JavaRDD<Fault> faults,
+            JavaRDD<ReportEntry> reports, OutputPaths outputPaths, int numberOfEmittedFiles) {
+        avroSaver.saveJavaRDD(documents.repartition(numberOfEmittedFiles), ExtractedDocumentMetadata.SCHEMA$,
+                outputPaths.getResult());
+        avroSaver.saveJavaRDD(faults.repartition(numberOfEmittedFiles), Fault.SCHEMA$, outputPaths.getFault());
+        avroSaver.saveJavaRDD(reports.repartition(1), ReportEntry.SCHEMA$, outputPaths.getReport());
+    }
+
+    private static JavaRDD<ReportEntry> generateReportEntries(JavaSparkContext sparkContext,
+            long documentsCount, long referencesCount, long fromCacheCount, long processedCount,
+            long processedFaultsCount) {
+        List<ReportEntry> reportEntries = new ArrayList<>();
+        reportEntries.add(ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_DOCUMENTS, documentsCount));
+        reportEntries.add(ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_REFERENCES, referencesCount));
+        reportEntries.add(ReportEntryFactory.createCounterReportEntry(COUNTER_FROMCACHE_TOTAL, fromCacheCount));
+        reportEntries.add(ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_TOTAL, processedCount));
+        reportEntries.add(ReportEntryFactory.createCounterReportEntry(COUNTER_PROCESSED_FAULT, processedFaultsCount));
+        return sparkContext.parallelize(reportEntries);
     }
 
     // ----------------------------- INNER CLASSES -----------------------------
 
     /**
      * Spark function that maps an input partition of JSON rows (id + ref struct)
-     * into (documentId, ReferenceMetadata) tuples.
+     * into (documentId, parsing result) tuples.
      * <p>
      * The reference parsing (CERMINE or Grobid) is performed here - before any
      * shuffle - on the input partitions, fully parallel and decoupled from group
@@ -161,9 +359,12 @@ public class JsonReferenceParserJob {
      * (/api/processCitationList), keeping the number of in-flight requests
      * proportional to the number of concurrently running tasks rather than to
      * the number of rows, i.e. matched to the Grobid engine capacity.
+     * <p>
+     * Any fatal failure is turned into a {@link ReferenceParsingResult} carrying a
+     * {@link Fault} instead of interrupting this long lasting job.
      */
     private static class RowPartitionToReferenceMapper
-            implements PairFlatMapFunction<Iterator<Row>, String, ReferenceMetadata> {
+            implements PairFlatMapFunction<Iterator<Row>, CharSequence, ReferenceParsingResult> {
 
         private static final long serialVersionUID = 1L;
 
@@ -199,43 +400,77 @@ public class JsonReferenceParserJob {
         }
 
         @Override
-        public Iterator<Tuple2<String, ReferenceMetadata>> call(Iterator<Row> rows) throws Exception {
-            List<Tuple2<String, ReferenceMetadata>> result = new ArrayList<>();
+        public Iterator<Tuple2<CharSequence, ReferenceParsingResult>> call(Iterator<Row> rows) throws Exception {
+            List<Tuple2<CharSequence, ReferenceParsingResult>> result = new ArrayList<>();
             List<PendingReference> pending = new ArrayList<>(batchSize);
             int pendingChars = 0;
 
-            while (rows.hasNext()) {
-                Row row = rows.next();
-                String id = row.getString(row.fieldIndex("id"));
-                if (row.isNullAt(row.fieldIndex("ref"))) {
-                    continue;
+            try {
+                while (rows.hasNext()) {
+                    Row row = rows.next();
+                    String id = extractDocumentId(row);
+                    if (id == null) {
+                        log.warn("skipping input record without 'id' field");
+                        continue;
+                    }
+                    try {
+                        if (row.isNullAt(row.fieldIndex("ref"))) {
+                            continue;
+                        }
+                        Row refRow = row.getStruct(row.fieldIndex("ref"));
+                        String unstructured = getString(refRow, "unstructured");
+                        if (ReferenceTextUtils.isOmitted(unstructured)) {
+                            // nothing to parse (blank or too short to carry any bibliographic
+                            // data) - map only the explicitly defined JSON fields
+                            ReferenceBasicMetadata basicMetadata = mapExplicitFields(refRow).build();
+                            result.add(new Tuple2<CharSequence, ReferenceParsingResult>(id,
+                                    ReferenceParsingResult.success(buildReferenceMetadata(refRow, basicMetadata))));
+                        } else {
+                            pending.add(new PendingReference(id, refRow, unstructured));
+                            pendingChars += unstructured.length();
+                            if (pending.size() >= batchSize || pendingChars >= DEFAULT_MAX_BATCH_CHARS) {
+                                flushPendingBatch(pending, result);
+                                pendingChars = 0;
+                            }
+                        }
+                    } catch (Throwable t) {
+                        // a single malformed record must not interrupt this long lasting job:
+                        // the fatal failure is reported as a Fault for the affected document
+                        // so it is not retried by the subsequent (incremental) runs either
+                        log.error("fatal failure while processing the input record of document " + id, t);
+                        result.add(new Tuple2<CharSequence, ReferenceParsingResult>(id,
+                                ReferenceParsingResult.failure(id, t)));
+                    }
                 }
-                Row refRow = row.getStruct(row.fieldIndex("ref"));
-                String unstructured = getString(refRow, "unstructured");
-                if (ReferenceTextUtils.isOmitted(unstructured)) {
-                    // nothing to parse (blank or too short to carry any bibliographic
-                    // data) - map only the explicitly defined JSON fields
-                    ReferenceBasicMetadata basicMetadata = mapExplicitFields(refRow).build();
-                    result.add(new Tuple2<>(id, buildReferenceMetadata(refRow, basicMetadata)));
-                } else {
-                    pending.add(new PendingReference(id, refRow, unstructured));
-                    pendingChars += unstructured.length();
-                    if (pending.size() >= batchSize || pendingChars >= DEFAULT_MAX_BATCH_CHARS) {
-                        flushPendingBatch(pending, result);
-                        pendingChars = 0;
+                flushPendingBatch(pending, result);
+            } catch (Throwable t) {
+                // catastrophic failure of the partition (e.g. the parser cannot be initialized
+                // at all): report a fault for every document that has not been processed
+                // instead of interrupting the job
+                log.error("fatal failure while parsing references, reporting faults for "
+                        + "the documents which could not be processed", t);
+                for (PendingReference pendingRef : pending) {
+                    result.add(new Tuple2<CharSequence, ReferenceParsingResult>(pendingRef.id,
+                            ReferenceParsingResult.failure(pendingRef.id, t)));
+                }
+                pending.clear();
+                while (rows.hasNext()) {
+                    String id = extractDocumentId(rows.next());
+                    if (id != null) {
+                        result.add(new Tuple2<CharSequence, ReferenceParsingResult>(id,
+                                ReferenceParsingResult.failure(id, t)));
                     }
                 }
             }
-            flushPendingBatch(pending, result);
             return result.iterator();
         }
 
         /**
          * Parses the raw text of all pending references (as a single parser batch)
-         * and appends the resulting (id, ReferenceMetadata) tuples.
+         * and appends the resulting (id, parsing result) tuples.
          */
         private void flushPendingBatch(List<PendingReference> pending,
-                List<Tuple2<String, ReferenceMetadata>> result) throws Exception {
+                List<Tuple2<CharSequence, ReferenceParsingResult>> result) throws Exception {
             if (pending.isEmpty()) {
                 return;
             }
@@ -252,8 +487,9 @@ public class JsonReferenceParserJob {
                     if (parsed != null) {
                         ParsedReferenceFiller.applyParsedFields(basicBuilder, parsed);
                     }
-                    result.add(new Tuple2<>(pendingRef.id,
-                            buildReferenceMetadata(pendingRef.refRow, basicBuilder.build())));
+                    result.add(new Tuple2<CharSequence, ReferenceParsingResult>(pendingRef.id,
+                            ReferenceParsingResult.success(
+                                    buildReferenceMetadata(pendingRef.refRow, basicBuilder.build()))));
                 }
             } catch (Exception e) {
                 // batch-level failure (e.g. one malformed citation) - fall back to
@@ -276,8 +512,9 @@ public class JsonReferenceParserJob {
                         log.warn("Unable to parse unstructured reference text: " +
                                 StringUtils.abbreviate(pendingRef.unstructured, 200), ex);
                     }
-                    result.add(new Tuple2<>(pendingRef.id,
-                            buildReferenceMetadata(pendingRef.refRow, basicBuilder.build())));
+                    result.add(new Tuple2<CharSequence, ReferenceParsingResult>(pendingRef.id,
+                            ReferenceParsingResult.success(
+                                    buildReferenceMetadata(pendingRef.refRow, basicBuilder.build()))));
                 }
             } finally {
                 pending.clear();
@@ -405,23 +642,6 @@ public class JsonReferenceParserJob {
             // position is explicitly left unset (unknown ordering)
             return refBuilder.build();
         }
-
-        /**
-         * Safely extracts a string value from a Row, returning null if the field
-         * is missing or contains a SQL null.
-         */
-        private static String getString(Row row, String fieldName) {
-            try {
-                int idx = row.fieldIndex(fieldName);
-                if (row.isNullAt(idx)) {
-                    return null;
-                }
-                Object val = row.get(idx);
-                return val != null ? val.toString() : null;
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-        }
     }
 
     /**
@@ -446,49 +666,151 @@ public class JsonReferenceParserJob {
     // ----------------------------- INNER TYPES -----------------------------
 
     /**
-     * Spark function that maps a grouped (documentId, [references...]) tuple to
-     * an {@link ExtractedDocumentMetadata} Avro record.
+     * Outcome of processing a single input JSON record: either a parsed reference or a
+     * fatal failure which prevented parsing it.
+     * <p>
+     * Failures are carried through the shuffle (so they can be aggregated per document)
+     * instead of interrupting the job.
      */
-    private static class GroupedReferencesToDocumentMapper
-            implements Function<Tuple2<String, Iterable<ReferenceMetadata>>, ExtractedDocumentMetadata> {
+    private static class ReferenceParsingResult implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        /** null when the reference could not be parsed */
+        private final ReferenceMetadata referenceMetadata;
+
+        /** null when the reference was parsed successfully */
+        private final Fault fault;
+
+        private ReferenceParsingResult(ReferenceMetadata referenceMetadata, Fault fault) {
+            this.referenceMetadata = referenceMetadata;
+            this.fault = fault;
+        }
+
+        static ReferenceParsingResult success(ReferenceMetadata referenceMetadata) {
+            return new ReferenceParsingResult(referenceMetadata, null);
+        }
+
+        static ReferenceParsingResult failure(String documentId, Throwable throwable) {
+            return new ReferenceParsingResult(null, FaultUtils.exceptionToFault(documentId, throwable, null));
+        }
+
+        ReferenceMetadata getReferenceMetadata() {
+            return referenceMetadata;
+        }
+
+        Fault getFault() {
+            return fault;
+        }
+    }
+
+    /**
+     * Outcome of processing a whole document (all the input records identified with the
+     * same {@link ExtractedDocumentMetadata#getId()}): either the parsed document or a
+     * fatal failure which prevented producing it.
+     */
+    private static class DocumentParsingResult implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        /** null when the document could not be produced */
+        private final ExtractedDocumentMetadata document;
+
+        /** null when the document was produced successfully */
+        private final Fault fault;
+
+        private DocumentParsingResult(ExtractedDocumentMetadata document, Fault fault) {
+            this.document = document;
+            this.fault = fault;
+        }
+
+        static DocumentParsingResult success(ExtractedDocumentMetadata document) {
+            return new DocumentParsingResult(document, null);
+        }
+
+        static DocumentParsingResult failure(Fault fault) {
+            return new DocumentParsingResult(null, fault);
+        }
+
+        ExtractedDocumentMetadata getDocument() {
+            return document;
+        }
+
+        Fault getFault() {
+            return fault;
+        }
+    }
+
+    /**
+     * Spark function that maps a grouped (documentId, [parsing results...]) tuple to
+     * either an {@link ExtractedDocumentMetadata} Avro record or a {@link Fault}.
+     * <p>
+     * A document is considered processed successfully as soon as at least one of its
+     * references was parsed - the references which failed with a fatal error are then
+     * simply skipped (the explicit JSON fields are still mapped for the recoverable
+     * failures already handled by {@link RowPartitionToReferenceMapper}).
+     * <p>
+     * A document whose references all failed with a fatal error is reported as a fault
+     * so the job is not interrupted and the document is not retried by the subsequent
+     * (incremental) runs.
+     */
+    private static class GroupedReferencesToResultMapper
+            implements PairFunction<Tuple2<CharSequence, Iterable<ReferenceParsingResult>>, CharSequence, DocumentParsingResult> {
 
         private static final long serialVersionUID = 1L;
 
         private final String extractedBy;
 
-        GroupedReferencesToDocumentMapper(String extractedBy) {
+        GroupedReferencesToResultMapper(String extractedBy) {
             this.extractedBy = extractedBy;
         }
 
         @Override
-        public ExtractedDocumentMetadata call(Tuple2<String, Iterable<ReferenceMetadata>> t) throws Exception {
-            String id = t._1();
-            Iterable<ReferenceMetadata> refs = t._2();
-
-            List<ReferenceMetadata> referenceMetadatas = new ArrayList<>();
-            if (refs != null) {
-                for (ReferenceMetadata ref : refs) {
-                    referenceMetadatas.add(ref);
+        public Tuple2<CharSequence, DocumentParsingResult> call(
+                Tuple2<CharSequence, Iterable<ReferenceParsingResult>> t) throws Exception {
+            CharSequence id = t._1();
+            try {
+                List<ReferenceMetadata> referenceMetadatas = new ArrayList<>();
+                Fault firstFault = null;
+                if (t._2() != null) {
+                    for (ReferenceParsingResult outcome : t._2()) {
+                        if (outcome.getReferenceMetadata() != null) {
+                            referenceMetadatas.add(outcome.getReferenceMetadata());
+                        } else if (firstFault == null) {
+                            firstFault = outcome.getFault();
+                        }
+                    }
                 }
-            }
 
-            ExtractedDocumentMetadata.Builder builder = ExtractedDocumentMetadata.newBuilder();
-            builder.setId(id);
-            builder.setExtractedBy(extractedBy);
-            builder.setText("");
+                if (referenceMetadatas.isEmpty()) {
+                    // nothing was parsed successfully for this document: the fatal failure is
+                    // recorded as a fault (a group always carries at least one outcome)
+                    return new Tuple2<CharSequence, DocumentParsingResult>(id,
+                            DocumentParsingResult.failure(firstFault));
+                }
 
-            if (!referenceMetadatas.isEmpty()) {
+                ExtractedDocumentMetadata.Builder builder = ExtractedDocumentMetadata.newBuilder();
+                builder.setId(id);
+                builder.setExtractedBy(extractedBy);
+                builder.setText("");
                 builder.setReferences(referenceMetadatas);
-            }
 
-            return builder.build();
+                return new Tuple2<CharSequence, DocumentParsingResult>(id,
+                        DocumentParsingResult.success(builder.build()));
+            } catch (Throwable e) {
+                // fatal failure while building the document: reported as a fault rather than
+                // interrupting the job
+                log.error("fatal failure while building ExtractedDocumentMetadata of document " + id, e);
+                return new Tuple2<CharSequence, DocumentParsingResult>(id,
+                        DocumentParsingResult.failure(FaultUtils.exceptionToFault(id, e, null)));
+            }
         }
     }
 
     // ----------------------------- PARAMETERS -----------------------------
 
     @Parameters(separators = "=")
-    private static class JsonReferenceParserJobParameters {
+    private static class JsonReferenceParserJobParameters extends CacheStorageUtils.CachedStorageJobParameters {
 
         @Parameter(names = "-sharedSparkSession")
         private Boolean isSparkSessionShared = Boolean.FALSE;
@@ -497,13 +819,9 @@ public class JsonReferenceParserJob {
                 description = "path to the input JSON datastore (gzip compressed packages, one JSON record per line)")
         private String inputPath;
 
-        @Parameter(names = "-outputPath", required = true,
-                description = "path to the output Avro datastore with ExtractedDocumentMetadata records")
-        private String outputPath;
-
-        @Parameter(names = "-outputReportPath", required = true,
-                description = "path to the output report")
-        private String outputReportPath;
+        @Parameter(names = "-numberOfEmittedFiles", required = true,
+                description = "number of files created at output and in cache")
+        private int numberOfEmittedFiles;
 
         @Parameter(names = "-extractedBy", required = false,
                 description = "value to set in ExtractedDocumentMetadata#extractedBy field")
