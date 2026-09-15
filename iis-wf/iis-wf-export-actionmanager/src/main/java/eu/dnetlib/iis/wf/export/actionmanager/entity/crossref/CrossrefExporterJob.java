@@ -262,11 +262,13 @@ public class CrossrefExporterJob {
         Instance instance = new Instance();
         instance.setInstancetype(INSTANCE_TYPE_PUBLICATION);
 
-        // pids - external identifiers of the reference, attached to the very same
-        // (single) instance, so no instance multiplication is expected
+        // pids - external identifiers of the reference, propagated to two places in the
+        // OAF model (publication level and instance level) with the very same content,
+        // including the dataInfo carried by every pid
         List<StructuredProperty> pids = buildPids(basic.getExternalIds());
         if (pids != null) {
-            instance.setPid(pids);
+            publication.setPid(pids);
+            instance.setPid(new ArrayList<>(pids));
         }
         publication.setInstance(Collections.singletonList(instance));
 

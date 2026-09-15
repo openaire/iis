@@ -148,20 +148,35 @@ public class CrossrefExporterJobTest {
         assertEquals("dnet:publication_resource", pub0.getInstance().get(0).getInstancetype().getSchemeid());
         assertEquals("dnet:publication_resource", pub0.getInstance().get(0).getInstancetype().getSchemename());
 
-        // pids - external identifiers translated into instance pids, sorted by identifier type
-        List<StructuredProperty> pids = pub0.getInstance().get(0).getPid();
-        assertNotNull(pids, "expected pids for reference carrying external identifiers");
-        assertEquals(2, pids.size());
+        // pids - external identifiers translated into pids, sorted by identifier type,
+        // stored both at the instance level and at the publication level
+        List<StructuredProperty> instancePids = pub0.getInstance().get(0).getPid();
+        assertNotNull(instancePids, "expected instance pids for reference carrying external identifiers");
+        assertEquals(2, instancePids.size());
 
         // qualifier classid comes from the identifier type, value from the identifier value
-        assertEquals("1234-5678", pids.get(0).getValue());
-        assertEquals("ISSN", pids.get(0).getQualifier().getClassid());
-        assertEquals("10.1000/ai2020", pids.get(1).getValue());
-        assertEquals("doi", pids.get(1).getQualifier().getClassid());
+        assertEquals("1234-5678", instancePids.get(0).getValue());
+        assertEquals("ISSN", instancePids.get(0).getQualifier().getClassid());
+        assertEquals("10.1000/ai2020", instancePids.get(1).getValue());
+        assertEquals("doi", instancePids.get(1).getQualifier().getClassid());
 
-        // each pid carries the same dataInfo as the exported payload
-        for (StructuredProperty pid : pids) {
-            assertProvenanceDataInfo(pid.getDataInfo(), "pid");
+        // the very same pids are propagated to the publication level
+        List<StructuredProperty> publicationPids = pub0.getPid();
+        assertNotNull(publicationPids, "expected publication level pids for reference carrying external identifiers");
+        assertEquals(2, publicationPids.size());
+        assertEquals("1234-5678", publicationPids.get(0).getValue());
+        assertEquals("ISSN", publicationPids.get(0).getQualifier().getClassid());
+        assertEquals("10.1000/ai2020", publicationPids.get(1).getValue());
+        assertEquals("doi", publicationPids.get(1).getQualifier().getClassid());
+        assertEquals(describePids(instancePids), describePids(publicationPids),
+                "publication level pids should mirror the instance pids");
+
+        // each pid carries the same dataInfo, in both places
+        for (StructuredProperty pid : instancePids) {
+            assertProvenanceDataInfo(pid.getDataInfo(), "instance pid");
+        }
+        for (StructuredProperty pid : publicationPids) {
+            assertProvenanceDataInfo(pid.getDataInfo(), "publication pid");
         }
 
         // pids are attached to the already instantiated instance, no instance multiplication
@@ -207,7 +222,9 @@ public class CrossrefExporterJobTest {
         assertEquals(1, pub1.getInstance().size());
         assertEquals("0000", pub1.getInstance().get(0).getInstancetype().getClassid());
         assertNull(pub1.getInstance().get(0).getPid(),
-                "reference without external identifiers should have no pids");
+                "reference without external identifiers should have no instance pids");
+        assertNull(pub1.getPid(),
+                "reference without external identifiers should have no publication level pids");
         assertEquals("5", pub1.getJournal().getVol());
         assertEquals("55", pub1.getJournal().getSp());
         assertEquals("78", pub1.getJournal().getEp());
@@ -355,7 +372,7 @@ public class CrossrefExporterJobTest {
         Publication pidPub = withIds.getPayload();
         assertEquals(1, pidPub.getInstance().size());
         List<StructuredProperty> pids = pidPub.getInstance().get(0).getPid();
-        assertNotNull(pids, "expected pids for reference with external identifiers");
+        assertNotNull(pids, "expected instance pids for reference with external identifiers");
         assertEquals(3, pids.size(), "blank identifier type/value should be skipped, got: " + describePids(pids));
 
         assertEquals("ISBN", pids.get(0).getQualifier().getClassid());
@@ -365,13 +382,25 @@ public class CrossrefExporterJobTest {
         assertEquals("doi", pids.get(2).getQualifier().getClassid());
         assertEquals("10.1000/pidtest", pids.get(2).getValue());
 
+        // the same pids, with the same dataInfo, are propagated to the publication level
+        List<StructuredProperty> publicationPids = pidPub.getPid();
+        assertNotNull(publicationPids, "expected publication level pids");
+        assertEquals(3, publicationPids.size());
+        assertEquals(describePids(pids), describePids(publicationPids),
+                "publication level pids should mirror the instance pids");
+        for (int i = 0; i < publicationPids.size(); i++) {
+            assertProvenanceDataInfo(publicationPids.get(i).getDataInfo(), "publication pid " + i);
+        }
+
         // --- reference without identifiers: instance is still exported, just without pids ---
         AtomicAction<Publication> withoutIds = findEntityByTitle(capturedEntityActions, "Reference Without Identifiers");
         assertNotNull(withoutIds, "expected entity for 'Reference Without Identifiers'");
         Publication noPidPub = withoutIds.getPayload();
         assertEquals(1, noPidPub.getInstance().size());
         assertNull(noPidPub.getInstance().get(0).getPid(),
-                "reference without external identifiers should have no pids");
+                "reference without external identifiers should have no instance pids");
+        assertNull(noPidPub.getPid(),
+                "reference without external identifiers should have no publication level pids");
     }
 
     // ---------------------------------------------------------------
