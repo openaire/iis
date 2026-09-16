@@ -33,6 +33,9 @@ public class SequenceFileExporterJobTest {
     private static final String FACTORY_MOCK =
             MockDocumentProjectActionBuilderFactory.class.getName();
 
+    private static final String FACTORY_NULL_MOCK =
+            MockNullReturningActionBuilderFactory.class.getName();
+
     private static final String FACTORY_REAL =
             "eu.dnetlib.iis.wf.export.actionmanager.module.DocumentToProjectActionBuilderModuleFactory";
 
@@ -133,6 +136,25 @@ public class SequenceFileExporterJobTest {
 
         // assert — all records filtered, no actions emitted
         assertEquals(0, readRelationActions(outputPath).size());
+    }
+
+    @Test
+    public void nullReturningBuilderModuleIsSkippedGracefully() throws Exception {
+        // given — one record whose builder returns null, one that yields an action
+        DocumentToProject nullResult = DocumentToProject.newBuilder()
+                .setDocumentId(MockNullReturningActionBuilderFactory.NULL_RECORD_DOCUMENT_ID)
+                .setProjectId("proj-null").setConfidenceLevel(0.9f).build();
+        DocumentToProject regular = DocumentToProject.newBuilder()
+                .setDocumentId("doc-ok").setProjectId("proj-ok").setConfidenceLevel(0.9f).build();
+        AvroTestUtils.createLocalAvroDataStore(List.of(nullResult, regular), inputPath);
+
+        // execute
+        executor.execute(buildJob(inputPath, outputPath, FACTORY_NULL_MOCK, SCHEMA_DOCUMENT_TO_PROJECT));
+
+        // assert — the null result is skipped without failing the job, the other record is still exported
+        List<AtomicAction<Relation>> actions = readRelationActions(outputPath);
+        assertEquals(1, actions.size());
+        assertEquals("doc-ok", actions.get(0).getPayload().getSource());
     }
 
     @Test

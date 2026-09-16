@@ -1,6 +1,7 @@
 package eu.dnetlib.iis.wf.export.actionmanager.sequencefile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -96,7 +97,11 @@ public class SequenceFileExporterJob {
                                 .stream(Spliterators.spliteratorUnknownSize(records, Spliterator.ORDERED), false)
                                 .flatMap(datum -> {
                                     try {
-                                        return module.build(datum).stream()
+                                        List<AtomicAction<Oaf>> actions = module.build(datum);
+                                        if (actions == null) {
+                                            return Stream.<Tuple2<Text, Text>>empty();
+                                        }
+                                        return actions.stream()
                                                 .map(action -> {
                                                     try {
                                                         return new Tuple2<>(new Text(""),
