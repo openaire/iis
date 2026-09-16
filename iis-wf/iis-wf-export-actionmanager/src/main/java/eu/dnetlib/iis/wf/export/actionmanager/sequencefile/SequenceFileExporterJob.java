@@ -76,6 +76,9 @@ public class SequenceFileExporterJob {
             // Read all records from the Avro datastore.
             JavaPairRDD<Text, Text> actionPairs = new SparkAvroLoader()
                     .loadJavaRDD(sc, params.inputPath, avroClass)
+                    // shifting from record granularity towards the partition scale 
+                    // in order handle lazy streaming of records (some modules might return no record for a given input)
+                    // and to initialize each executor task without going into the serialization requirement (some classes are not serializable)
                     .mapPartitionsToPair(records -> {
                         // Instantiate the factory and module once per executor partition,
                         // mirroring the Mapper#setup() / Mapper#map() lifecycle.
