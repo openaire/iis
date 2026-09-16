@@ -52,13 +52,20 @@ public class CitationRelationExporterJob {
             UserDefinedFunction isValidConfidenceLevel = udf((UDF1<Float, Boolean>) confidenceLevel ->
                             ConfidenceLevelUtils.isValidConfidenceLevel(confidenceLevel, confidenceLevelThreshold),
                     DataTypes.BooleanType);
-            Dataset<Relation> relations = processCitations(citations, isValidConfidenceLevel, collectedFromKey);
-            relations.cache();
+
+            // Cache only the lightweight (documentId, destinationDocumentId, confidenceLevel) rows.
+            // Building an SQL columnar cache of full OAF Relation objects OOMs on Spark 4 (huge complex
+            // object graphs expanded by DefaultCachedBatchSerializer). Relations are produced transiently
+            // during the output-write pass instead.
+            Dataset<Row> documentRelations = processDocumentRelations(citations, isValidConfidenceLevel);
+            documentRelations.cache();
+
+            Dataset<Relation> relations = relationsFromDocumentRelations(documentRelations, collectedFromKey);
 
             Dataset<Text> serializedActions = relationsToSerializedActions(relations);
             storeSerializedActions(spark, serializedActions, params.outputRelationPath);
 
-            Dataset<ReportEntry> reportEntries = relationsToReportEntries(spark, relations);
+            Dataset<ReportEntry> reportEntries = documentRelationsToReportEntries(spark, documentRelations);
             storeReportEntries(avroSaver, reportEntries, params.outputReportPath);
         });
     }

@@ -36,6 +36,15 @@ public class CitationRelationExporterUtils {
 
     public static Dataset<Relation> processCitations(Dataset<Row> citations, UserDefinedFunction isValidConfidenceLevel,
             final String collectedFromKey) {
+        return relationsFromDocumentRelations(processDocumentRelations(citations, isValidConfidenceLevel), collectedFromKey);
+    }
+
+    /**
+     * Groups valid citations into (documentId, destinationDocumentId, maxConfidenceLevel) rows without
+     * materializing the heavy OAF {@link Relation} objects. The result holds only three primitive columns,
+     * so it can be cached (columnar) cheaply and spilled safely on Spark 4.
+     */
+    public static Dataset<Row> processDocumentRelations(Dataset<Row> citations, UserDefinedFunction isValidConfidenceLevel) {
         return documentIdAndCitationEntry(citations)
                 .select(
                         col("documentId"),
@@ -46,9 +55,27 @@ public class CitationRelationExporterUtils {
                 .drop()
                 .where(isValidConfidenceLevel.apply(col("citationEntry.confidenceLevel")))
                 .groupBy(col("documentId"), col("destinationDocumentId"))
-                .agg(max(col("confidenceLevel")).as("confidenceLevel"))
-                .as(Encoders.bean(DocumentRelation.class))
+                .agg(max(col("confidenceLevel")).as("confidenceLevel"));
+    }
+
+    /**
+     * Maps grouped (documentId, destinationDocumentId, confidenceLevel) rows to OAF {@link Relation} objects.
+     */
+    public static Dataset<Relation> relationsFromDocumentRelations(Dataset<Row> documentRelations,
+            final String collectedFromKey) {
+        return documentRelations
+                .map(toDocumentRelationMapFn(), Encoders.bean(DocumentRelation.class))
                 .map(toRelationMapFn(collectedFromKey), Encoders.kryo(Relation.class));
+    }
+
+    private static MapFunction<Row, DocumentRelation> toDocumentRelationMapFn() {
+        return (MapFunction<Row, DocumentRelation>) row -> {
+            DocumentRelation documentRelation = new DocumentRelation();
+            documentRelation.setDocumentId(row.getString(row.fieldIndex("documentId")));
+            documentRelation.setDestinationDocumentId(row.getString(row.fieldIndex("destinationDocumentId")));
+            documentRelation.setConfidenceLevel(row.getFloat(row.fieldIndex("confidenceLevel")));
+            return documentRelation;
+        };
     }
 
     private static Dataset<Row> documentIdAndCitationEntry(Dataset<Row> citations) {
@@ -125,6 +152,22 @@ public class CitationRelationExporterUtils {
     public static Dataset<ReportEntry> relationsToReportEntries(SparkSession spark, Dataset<Relation> relations) {
         long totalRelationCount = totalRelationCount(relations);
         long uniqueCitesRelationCount = uniqueCitesRelationCount(relations);
+
+        return spark.createDataset(Arrays.asList(
+                ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_REFERENCES, totalRelationCount),
+                ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_CITES_DOCS, uniqueCitesRelationCount)
+        ), Encoders.kryo(ReportEntry.class));
+    }
+
+    /**
+     * Computes report entries from the lightweight grouped document relations, avoiding the need to
+     * materialize OAF {@link Relation} objects just for counting. Each grouped row corresponds to exactly
+     * one CITES relation whose source is the {@code documentId}.
+     */
+    public static Dataset<ReportEntry> documentRelationsToReportEntries(SparkSession spark,
+            Dataset<Row> documentRelations) {
+        long totalRelationCount = documentRelations.count();
+        long uniqueCitesRelationCount = documentRelations.select(col("documentId")).distinct().count();
 
         return spark.createDataset(Arrays.asList(
                 ReportEntryFactory.createCounterReportEntry(REPORT_ENTRY_KEY_REFERENCES, totalRelationCount),
