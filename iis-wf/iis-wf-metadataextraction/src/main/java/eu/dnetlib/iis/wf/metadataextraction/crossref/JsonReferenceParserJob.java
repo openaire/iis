@@ -3,13 +3,16 @@ package eu.dnetlib.iis.wf.metadataextraction.crossref;
 import static eu.dnetlib.iis.common.spark.SparkSessionSupport.runWithSparkSession;
 
 import java.io.Serializable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -401,76 +404,155 @@ public class JsonReferenceParserJob {
 
         @Override
         public Iterator<Tuple2<CharSequence, ReferenceParsingResult>> call(Iterator<Row> rows) throws Exception {
-            List<Tuple2<CharSequence, ReferenceParsingResult>> result = new ArrayList<>();
-            List<PendingReference> pending = new ArrayList<>(batchSize);
-            int pendingChars = 0;
+            return new LazyResultIterator(rows);
+        }
 
-            try {
-                while (rows.hasNext()) {
-                    Row row = rows.next();
-                    String id = extractDocumentId(row);
-                    if (id == null) {
-                        log.warn("skipping input record without 'id' field");
-                        continue;
-                    }
+        /**
+         * Lazily converts the input rows into (documentId, parsing result) tuples, keeping
+         * no more than a single reference batch in memory at a time.
+         * <p>
+         * The output of the whole partition must not be buffered: gzip input packages are
+         * not splittable, so a single package corresponds to a partition and may hold a very
+         * large number of references, which would otherwise exhaust the executor heap.
+         */
+        private class LazyResultIterator implements Iterator<Tuple2<CharSequence, ReferenceParsingResult>> {
+
+            private final Iterator<Row> rows;
+
+            /** Tuples produced by the most recently processed batch, awaiting consumption. */
+            private final Deque<Tuple2<CharSequence, ReferenceParsingResult>> ready = new ArrayDeque<>();
+
+            /** References awaiting parsing - never more than a single batch. */
+            private final List<PendingReference> pending = new ArrayList<>(batchSize);
+
+            private int pendingChars;
+
+            /** Set when the partition level processing broke down for all the remaining rows. */
+            private Throwable catastrophicFailure;
+
+            LazyResultIterator(Iterator<Row> rows) {
+                this.rows = rows;
+            }
+
+            @Override
+            public boolean hasNext() {
+                fill();
+                return !ready.isEmpty();
+            }
+
+            @Override
+            public Tuple2<CharSequence, ReferenceParsingResult> next() {
+                fill();
+                if (ready.isEmpty()) {
+                    throw new NoSuchElementException();
+                }
+                return ready.poll();
+            }
+
+            /**
+             * Processes input rows until at least one tuple is ready, so that both parsing and
+             * fault reporting stay lazy.
+             */
+            private void fill() {
+                if (catastrophicFailure != null) {
+                    reportFailureForNextDocument();
+                    return;
+                }
+                while (ready.isEmpty() && rows.hasNext()) {
                     try {
-                        if (row.isNullAt(row.fieldIndex("ref"))) {
-                            continue;
-                        }
-                        Row refRow = row.getStruct(row.fieldIndex("ref"));
-                        String unstructured = getString(refRow, "unstructured");
-                        if (ReferenceTextUtils.isOmitted(unstructured)) {
-                            // nothing to parse (blank or too short to carry any bibliographic
-                            // data) - map only the explicitly defined JSON fields
-                            ReferenceBasicMetadata basicMetadata = mapExplicitFields(refRow).build();
-                            result.add(new Tuple2<CharSequence, ReferenceParsingResult>(id,
-                                    ReferenceParsingResult.success(buildReferenceMetadata(refRow, basicMetadata))));
-                        } else {
-                            pending.add(new PendingReference(id, refRow, unstructured));
-                            pendingChars += unstructured.length();
-                            if (pending.size() >= batchSize || pendingChars >= DEFAULT_MAX_BATCH_CHARS) {
-                                flushPendingBatch(pending, result);
-                                pendingChars = 0;
-                            }
-                        }
+                        processNextRow();
                     } catch (Throwable t) {
-                        // a single malformed record must not interrupt this long lasting job:
-                        // the fatal failure is reported as a Fault for the affected document
-                        // so it is not retried by the subsequent (incremental) runs either
-                        log.error("fatal failure while processing the input record of document " + id, t);
-                        result.add(new Tuple2<CharSequence, ReferenceParsingResult>(id,
-                                ReferenceParsingResult.failure(id, t)));
+                        switchToCatastrophicFailure(t);
                     }
                 }
-                flushPendingBatch(pending, result);
-            } catch (Throwable t) {
-                // catastrophic failure of the partition (e.g. the parser cannot be initialized
-                // at all): report a fault for every document that has not been processed
-                // instead of interrupting the job
-                log.error("fatal failure while parsing references, reporting faults for "
-                        + "the documents which could not be processed", t);
-                for (PendingReference pendingRef : pending) {
-                    result.add(new Tuple2<CharSequence, ReferenceParsingResult>(pendingRef.id,
-                            ReferenceParsingResult.failure(pendingRef.id, t)));
-                }
-                pending.clear();
-                while (rows.hasNext()) {
-                    String id = extractDocumentId(rows.next());
-                    if (id != null) {
-                        result.add(new Tuple2<CharSequence, ReferenceParsingResult>(id,
-                                ReferenceParsingResult.failure(id, t)));
+                if (ready.isEmpty() && !pending.isEmpty()) {
+                    // flush the last, incomplete batch of this partition
+                    try {
+                        flushPendingBatch(pending, ready);
+                    } catch (Throwable t) {
+                        switchToCatastrophicFailure(t);
                     }
                 }
             }
-            return result.iterator();
+
+            /**
+             * Switches to catastrophic failure mode: every document which could not be
+             * processed is reported as a fault instead of interrupting this long lasting job.
+             */
+            private void switchToCatastrophicFailure(Throwable t) {
+                log.error("fatal failure while parsing references, reporting faults for "
+                        + "the documents which could not be processed", t);
+                catastrophicFailure = t;
+                for (PendingReference pendingRef : pending) {
+                    ready.add(new Tuple2<CharSequence, ReferenceParsingResult>(pendingRef.id,
+                            ReferenceParsingResult.failure(pendingRef.id, t)));
+                }
+                pending.clear();
+                pendingChars = 0;
+            }
+
+            /**
+             * Reports a fault for the next not yet processed document while in catastrophic
+             * failure mode - lazily as well, so a huge partition is not materialized either.
+             */
+            private void reportFailureForNextDocument() {
+                while (ready.isEmpty() && rows.hasNext()) {
+                    String id = extractDocumentId(rows.next());
+                    if (id != null) {
+                        ready.add(new Tuple2<CharSequence, ReferenceParsingResult>(id,
+                                ReferenceParsingResult.failure(id, catastrophicFailure)));
+                    }
+                }
+            }
+
+            /**
+             * Processes a single input row, either emitting its tuple right away (references
+             * carrying nothing to parse) or queueing it for the next parser batch.
+             */
+            private void processNextRow() throws Exception {
+                Row row = rows.next();
+                String id = extractDocumentId(row);
+                if (id == null) {
+                    log.warn("skipping input record without 'id' field");
+                    return;
+                }
+                try {
+                    if (row.isNullAt(row.fieldIndex("ref"))) {
+                        return;
+                    }
+                    Row refRow = row.getStruct(row.fieldIndex("ref"));
+                    String unstructured = getString(refRow, "unstructured");
+                    if (ReferenceTextUtils.isOmitted(unstructured)) {
+                        // nothing to parse (blank or too short to carry any bibliographic
+                        // data) - map only the explicitly defined JSON fields
+                        ReferenceBasicMetadata basicMetadata = mapExplicitFields(refRow).build();
+                        ready.add(new Tuple2<CharSequence, ReferenceParsingResult>(id,
+                                ReferenceParsingResult.success(buildReferenceMetadata(refRow, basicMetadata))));
+                    } else {
+                        pending.add(new PendingReference(id, refRow, unstructured));
+                        pendingChars += unstructured.length();
+                        if (pending.size() >= batchSize || pendingChars >= DEFAULT_MAX_BATCH_CHARS) {
+                            flushPendingBatch(pending, ready);
+                            pendingChars = 0;
+                        }
+                    }
+                } catch (Throwable t) {
+                    // a single malformed record must not interrupt this long lasting job:
+                    // the fatal failure is reported as a Fault for the affected document
+                    // so it is not retried by the subsequent (incremental) runs either
+                    log.error("fatal failure while processing the input record of document " + id, t);
+                    ready.add(new Tuple2<CharSequence, ReferenceParsingResult>(id,
+                            ReferenceParsingResult.failure(id, t)));
+                }
+            }
         }
 
         /**
          * Parses the raw text of all pending references (as a single parser batch)
-         * and appends the resulting (id, parsing result) tuples.
+         * and fills the ready queue with the resulting (id, parsing result) tuples.
          */
         private void flushPendingBatch(List<PendingReference> pending,
-                List<Tuple2<CharSequence, ReferenceParsingResult>> result) throws Exception {
+                Deque<Tuple2<CharSequence, ReferenceParsingResult>> ready) throws Exception {
             if (pending.isEmpty()) {
                 return;
             }
@@ -487,7 +569,7 @@ public class JsonReferenceParserJob {
                     if (parsed != null) {
                         ParsedReferenceFiller.applyParsedFields(basicBuilder, parsed);
                     }
-                    result.add(new Tuple2<CharSequence, ReferenceParsingResult>(pendingRef.id,
+                    ready.add(new Tuple2<CharSequence, ReferenceParsingResult>(pendingRef.id,
                             ReferenceParsingResult.success(
                                     buildReferenceMetadata(pendingRef.refRow, basicBuilder.build()))));
                 }
@@ -512,7 +594,7 @@ public class JsonReferenceParserJob {
                         log.warn("Unable to parse unstructured reference text: " +
                                 StringUtils.abbreviate(pendingRef.unstructured, 200), ex);
                     }
-                    result.add(new Tuple2<CharSequence, ReferenceParsingResult>(pendingRef.id,
+                    ready.add(new Tuple2<CharSequence, ReferenceParsingResult>(pendingRef.id,
                             ReferenceParsingResult.success(
                                     buildReferenceMetadata(pendingRef.refRow, basicBuilder.build()))));
                 }
