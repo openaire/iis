@@ -392,7 +392,7 @@
   "documentId": "50|arXiv_______::a343cdcd534d696dd93c7ee9d78b9be7",
   "projectId": "40|inca________::1e5e62235d094afd01cd56e65112fc63",
   "confidenceLevel": 0.8,
-  "textsnippet": "This study was supported by research funding from the French National Cancer Institute (INCa) "
+  "textsnippet": "This study was supported by research funding from the French National Cancer Institute (INCa)"
 }
 {
   "documentId": "50|arXiv_______::006603fe0b5e0abfdc7fdc9b94c5ef16", 
@@ -485,4 +485,9 @@
   "confidenceLevel": 0.8,
   "textsnippet": "Funding: This research has been done in the project \u003c\u003c\u003c 2021-1-TR01-KA220-VET-000028090 \u003e\u003e\u003e named DigiRescueMe, Standardization and Digitalization of Rescue Education in Mining"
 }
-
+{
+   "documentId": "50|RECOLECTA___::ede183fc3d0d6279dfac4fe1c4f1d2fe", 
+   "projectId": "40|501100001593::79db992d8dd2a9c9ba3e22841143dacc", 
+   "confidenceLevel": 0.8, 
+   "textsnippet": "This work is funded by the Irish Cancer Society Research Grant <<< CRDF22ELL. >>> The opinions, findings and conclusions"
+}
