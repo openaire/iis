@@ -26,6 +26,7 @@ import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.storage.StorageLevel;
 
 import scala.Tuple2;
 import scala.Tuple3;
@@ -122,6 +123,26 @@ public class JsonReferenceParserJob {
 
     private static final String COUNTER_PROCESSED_FAULT = "processing.crossref.referenceParser.processed.fault";
 
+    /**
+     * Marker used while matching the input against the cache contents for a document which was
+     * already parsed in one of the previous runs.
+     */
+    private static final byte CACHED_DOCUMENT_MARKER = 1;
+
+    /**
+     * Marker used while matching the input against the cache contents for a document which failed
+     * with a fatal error in one of the previous runs.
+     */
+    private static final byte CACHED_FAULT_MARKER = 2;
+
+    /**
+     * Storage level used for the RDDs consumed by multiple actions of this job. Both the documents
+     * and the faults may be as large as the whole dataset, so they are persisted on disk only:
+     * keeping them in the executor heap starves the execution memory needed for shuffling, which
+     * ends up with OutOfMemoryErrors.
+     */
+    private static final StorageLevel CACHE_STORAGE_LEVEL = StorageLevel.DISK_ONLY();
+
     // ----------------------------- MAIN -----------------------------
 
     public static void main(String[] args) throws Exception {
@@ -182,34 +203,52 @@ public class JsonReferenceParserJob {
 
             // ----------------------------- INPUT MATCHED WITH CACHE CONTENTS -----------------------------
 
-            // All the input records sharing the same id are grouped together with the cache
-            // contents in a single shuffle. This is enough to identify the documents which have to
-            // be parsed as well as to provide the cached documents for the output.
-            JavaPairRDD<CharSequence, Tuple3<Iterable<Row>, Iterable<ExtractedDocumentMetadata>, Iterable<Fault>>> inputGroupedWithCache =
+            // All the input records sharing the same id are grouped together with the cache contents
+            // in a single shuffle. Only identifiers travel through it: neither the cached documents
+            // (holding all the references parsed by the previous runs) nor the faults (embedding the
+            // failure details) are shipped to match the input against the cache - plain markers are
+            // used instead.
+            JavaPairRDD<CharSequence, Tuple3<Iterable<Row>, Iterable<Byte>, Iterable<Byte>>> inputGroupedWithCache =
                     inputRowsByDocId.cogroup(
                             cachedDocuments.mapToPair(
-                                    x -> new Tuple2<CharSequence, ExtractedDocumentMetadata>(x.getId(), x)),
+                                    x -> new Tuple2<CharSequence, Byte>(x.getId(), CACHED_DOCUMENT_MARKER)),
                             cachedFaults.mapToPair(
-                                    x -> new Tuple2<CharSequence, Fault>(x.getInputObjectId(), x)));
-
-            // documents present in this run's input and already cached: they are not parsed again
-            // and only their cached version is written at the output
-            JavaRDD<ExtractedDocumentMetadata> documentsReturnedFromCache = inputGroupedWithCache
-                    .filter(x -> x._2()._1().iterator().hasNext() && x._2()._2().iterator().hasNext())
-                    .map(x -> x._2()._2().iterator().next());
+                                    x -> new Tuple2<CharSequence, Byte>(x.getInputObjectId(), CACHED_FAULT_MARKER)));
 
             // documents to be processed: the ones having neither a cached document nor a cached fault
             JavaRDD<Row> rowsToBeProcessed = inputGroupedWithCache
                     .filter(x -> !x._2()._2().iterator().hasNext() && !x._2()._3().iterator().hasNext())
                     .flatMap(x -> x._2()._1().iterator());
 
-            // (documents returned from cache, faults returned from cache) - the counter values are
-            // computed within a single action (fold is used instead of reduce as the cache may
-            // leave nothing to be counted)
-            Tuple2<Long, Long> cacheHitCounts = inputGroupedWithCache
-                    .map(x -> countCacheHits(x._2()))
-                    .fold(new Tuple2<>(0L, 0L),
-                            (a, b) -> new Tuple2<>(a._1() + b._1(), a._2() + b._2()));
+            // ids of the documents present in this run's input and already cached: they are not parsed
+            // again and only their cached version is written at the output
+            JavaRDD<CharSequence> documentIdsReturnedFromCache = inputGroupedWithCache
+                    .filter(x -> x._2()._1().iterator().hasNext() && x._2()._2().iterator().hasNext())
+                    .keys();
+
+            // (documents returned from cache, faults returned from cache, cache entries pointing at
+            // documents which are not a part of this run's input) - all the counter values are
+            // computed within a single action (fold is used instead of reduce as the cache may leave
+            // nothing to be counted)
+            Tuple3<Long, Long, Long> cacheCounters = inputGroupedWithCache
+                    .map(x -> countCacheEntries(x._2()))
+                    .fold(new Tuple3<>(0L, 0L, 0L),
+                            (a, b) -> new Tuple3<>(a._1() + b._1(), a._2() + b._2(), a._3() + b._3()));
+
+            Tuple2<Long, Long> cacheHitCounts = new Tuple2<>(cacheCounters._1(), cacheCounters._2());
+
+            // When the cache holds no entry for the documents outside of this run's input, the whole
+            // cache applies to the current input and the cached documents are returned at the output
+            // as-is, without matching them against the input by identifier (which would mean
+            // shuffling the entire cache contents).
+            JavaRDD<ExtractedDocumentMetadata> documentsReturnedFromCache = cacheCounters._3() == 0
+                    ? cachedDocuments
+                    : cachedDocuments
+                            .mapToPair(x -> new Tuple2<CharSequence, ExtractedDocumentMetadata>(x.getId(), x))
+                            .join(documentIdsReturnedFromCache.mapToPair(
+                                    id -> new Tuple2<CharSequence, Byte>(id, CACHED_DOCUMENT_MARKER)))
+                            .values()
+                            .map(x -> x._1());
 
             // ----------------------------- PARSING -----------------------------
 
@@ -229,9 +268,9 @@ public class JsonReferenceParserJob {
             JavaPairRDD<CharSequence, DocumentParsingResult> parsedDocumentsAndFaults = parsedByDocIdRdd
                     .groupByKey()
                     .mapToPair(new GroupedReferencesToResultMapper(extractedBy));
-            // consumed for cache storage, output and counters: caching makes the parsing executed
+            // consumed for cache storage, output and counters: persisting makes the parsing executed
             // only once
-            parsedDocumentsAndFaults.cache();
+            parsedDocumentsAndFaults.persist(CACHE_STORAGE_LEVEL);
 
             JavaRDD<ExtractedDocumentMetadata> parsedDocuments = parsedDocumentsAndFaults
                     .filter(x -> x._2.getDocument() != null)
@@ -259,7 +298,7 @@ public class JsonReferenceParserJob {
 
             JavaRDD<ExtractedDocumentMetadata> documentsToBeWritten = documentsReturnedFromCache
                     .union(parsedDocuments);
-            documentsToBeWritten.cache();
+            documentsToBeWritten.persist(CACHE_STORAGE_LEVEL);
 
             // (documents, references) written at the output
             Tuple2<Long, Long> outputCounts = documentsToBeWritten
@@ -293,20 +332,24 @@ public class JsonReferenceParserJob {
     }
 
     /**
-     * Counts the cache hits of a single document as a (cached documents, cached faults) tuple.
-     * Only the documents present in the current input are taken into account - cache entries
-     * pointing at documents which are not a part of this run's input are ignored.
+     * Counts the cache entries of a single document as a (cached documents, cached faults, cache
+     * entries outside of the input) tuple. Only the documents present in the current input are
+     * taken into account when counting the cache hits - cache entries pointing at documents which
+     * are not a part of this run's input are counted separately.
      */
-    private static Tuple2<Long, Long> countCacheHits(
-            Tuple3<Iterable<Row>, Iterable<ExtractedDocumentMetadata>, Iterable<Fault>> documentWithCache) {
-        if (!documentWithCache._1().iterator().hasNext()) {
+    private static Tuple3<Long, Long, Long> countCacheEntries(
+            Tuple3<Iterable<Row>, Iterable<Byte>, Iterable<Byte>> documentWithCache) {
+        boolean presentInInput = documentWithCache._1().iterator().hasNext();
+        boolean cachedDocument = documentWithCache._2().iterator().hasNext();
+        boolean cachedFault = documentWithCache._3().iterator().hasNext();
+        if (!presentInInput) {
             // the document exists in the cache but not in the current input
-            return new Tuple2<>(0L, 0L);
+            return new Tuple3<>(0L, 0L, cachedDocument || cachedFault ? 1L : 0L);
         }
-        if (documentWithCache._2().iterator().hasNext()) {
-            return new Tuple2<>(1L, 0L);
+        if (cachedDocument) {
+            return new Tuple3<>(1L, 0L, 0L);
         }
-        return documentWithCache._3().iterator().hasNext() ? new Tuple2<>(0L, 1L) : new Tuple2<>(0L, 0L);
+        return new Tuple3<>(0L, cachedFault ? 1L : 0L, 0L);
     }
 
     /**
