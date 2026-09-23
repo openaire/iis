@@ -13,29 +13,7 @@
             <value>$UNDEFINED$</value>
             <description>hive metastore locations</description>
         </property>
-        
-        <!-- old objectstore backed import related -->
-        <property>
-            <name>objectstore_facade_factory_classname</name>
-            <value>eu.dnetlib.iis.wf.importer.facade.WebServiceObjectStoreFacadeFactory</value>
-            <description>ServiceFacadeFactory implementation class name producing eu.dnetlib.iis.wf.importer.facade.ObjectStoreFacade</description>
-        </property>
-        <property>
-            <name>objectstore_service_location</name>
-            <value>$UNDEFINED$</value>
-            <description>object store service location to retrieve PDF/text contents from</description>
-        </property>
-        <property>
-            <name>approved_objectstores_csv</name>
-            <value>$UNDEFINED$</value>
-            <description>CSV of approved object stores</description>
-        </property>
-        <property>
-            <name>blacklisted_objectstores_csv</name>
-            <value>$UNDEFINED$</value>
-            <description>CSV of blacklisted object stores</description>
-        </property>
-        
+                
 		<property>
 			<name>mimetypes_pdf</name>
 			<description>pdf mime types</description>
@@ -73,11 +51,6 @@
 			<value>$UNDEFINED$</value>
 			<description>input containing list of identifiers used by existence filter module in order to omit contents which do not have metadata representatives</description>
 		</property>
-        <property>
-            <name>input_objectstore_resultset_pagesize</name>
-            <value>100</value>
-            <description>ResultSet single page size</description>
-        </property>
 		<!-- output -->
 		<property>
 			<name>output_root</name>
@@ -161,35 +134,9 @@
 	        <arg>org.apache.avro.Schema.Type.STRING</arg>
 	        <capture-output />
 	    </java>
-	    <ok to="decision-content-url-import-mode" />
+	    <ok to="parquet-content-url-importer" />
 	    <error to="fail" />
 	</action>
-    
-    <decision name="decision-content-url-import-mode">
-        <switch>
-            <case to="objectstore-content-url-importer">${input_table_name eq "$UNDEFINED$"}</case>
-            <default to="parquet-content-url-importer"/>
-        </switch>
-    </decision>
-	
-	<action name="objectstore-content-url-importer">
-        <sub-workflow>
-            <app-path>${wf:appPath()}/import_content_url_core</app-path>
-            <propagate-configuration/>
-            <configuration>
-                <property>
-                    <name>workingDir</name>
-                    <value>${workingDir}/import_content_url_core/working_dir</value>
-                </property>
-                <property>
-                    <name>output</name>
-                    <value>${workingDir}/imported-urls</value>
-                </property>
-            </configuration>
-        </sub-workflow>
-        <ok to="input_id_mapping-path-setter" />
-        <error to="fail" />
-    </action>
     
     <action name="parquet-content-url-importer">
         <sub-workflow>
@@ -198,7 +145,7 @@
             <configuration>
                 <property>
                     <name>workingDir</name>
-                    <value>${workingDir}/import_content_url_core/working_dir</value>
+                    <value>${workingDir}/import_content_url_core_parquet/working_dir</value>
                 </property>
                 <property>
                     <name>output</name>
