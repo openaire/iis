@@ -12,8 +12,10 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -284,6 +286,9 @@ public class CrossrefExporterJobTest {
         // Verify a specific relation: source=pub1, target matches the "Introduction to AI" entity id
         AtomicAction<Publication> introToAiEntity = findEntityByTitle(capturedEntityActions, "Introduction to AI");
         String introToAiId = introToAiEntity.getPayload().getId();
+        Set<String> exportedEntityIds = capturedEntityActions.stream()
+                .map(action -> action.getPayload().getId())
+                .collect(Collectors.toSet());
         boolean foundIntroToAiRelation = false;
         boolean foundQuantumRelation = false;
         for (AtomicAction<Relation> relAction : capturedRelationActions) {
@@ -299,6 +304,8 @@ public class CrossrefExporterJobTest {
                     "relation target should start with '50|mutecitation::', got: " + rel.getTarget());
             assertFalse(rel.getTarget().contains("||"),
                     "relation target should not contain a doubled prefix separator, got: " + rel.getTarget());
+            assertTrue(exportedEntityIds.contains(rel.getTarget()),
+                    "relation target should match an exported entity id, got: " + rel.getTarget());
 
             if ("pub1".equals(rel.getSource()) && introToAiId.equals(rel.getTarget())) {
                 foundIntroToAiRelation = true;
@@ -474,9 +481,90 @@ public class CrossrefExporterJobTest {
                 "blank volume and pages should produce no journal");
     }
 
+    @Test
+    @DisplayName("Identifiers are consistent within a run and fresh with respect to the previous runs")
+    public void identifiersAreConsistentWithinARunAndFreshAcrossRuns() throws IOException {
+
+        // given
+        String jsonInputFile = ClassPathResourceProvider
+                .getResourcePath("eu/dnetlib/iis/wf/export/actionmanager/entity/crossref/input/input_extracted_document_metadata.json");
+
+        AvroTestUtils.createLocalAvroDataStore(
+                JsonAvroTestUtils.readJsonDataStore(jsonInputFile, ExtractedDocumentMetadata.class),
+                inputPath);
+
+        Path secondRunDir = Files.createTempDirectory(
+                Path.of(System.getProperty("java.io.tmpdir")), "crossrefExporterSecondRun");
+        secondRunDir.toFile().deleteOnExit();
+        String secondEntityPath = secondRunDir.resolve("output_entity").toString();
+        String secondRelationPath = secondRunDir.resolve("output_relation").toString();
+        String secondReportPath = secondRunDir.resolve("report").toString();
+
+        // execute - the very same input is exported twice, while every single run consumes the
+        // export entries through more than one action (one per output plus the report counters)
+        executor.execute(buildJob());
+        executor.execute(buildJob(secondEntityPath, secondRelationPath, secondReportPath));
+
+        // then - within a run every relation points at an entity exported by that very same run
+        List<String> firstRunEntityIds = readEntityIds(outputEntityPath);
+        assertFalse(firstRunEntityIds.isEmpty(), "expected exported entities");
+        assertTargetsMatchEntities(outputRelationPath, firstRunEntityIds);
+
+        List<String> secondRunEntityIds = readEntityIds(secondEntityPath);
+        assertFalse(secondRunEntityIds.isEmpty(), "expected exported entities in the second run");
+        assertTargetsMatchEntities(secondRelationPath, secondRunEntityIds);
+
+        // and - a new run never reuses the identifiers minted by a previous one, so re-exporting an
+        // already processed document never silently overwrites an entity exported before
+        assertTrue(Collections.disjoint(firstRunEntityIds, secondRunEntityIds),
+                "identifiers of a new run should not collide with the ones exported before, shared: "
+                        + new HashSet<>(firstRunEntityIds).stream()
+                                .filter(secondRunEntityIds::contains)
+                                .collect(Collectors.toList()));
+    }
+
+    /**
+     * Asserts that every exported relation targets an entity exported to the given output.
+     */
+    private static void assertTargetsMatchEntities(String relationOutputPath, List<String> entityIds)
+            throws IOException {
+        List<String> relationTargets = readRelationTargets(relationOutputPath);
+        assertFalse(relationTargets.isEmpty(), "expected exported relations");
+        assertTrue(entityIds.containsAll(relationTargets),
+                "every relation target should match an entity id exported by the same run, unmatched: "
+                        + new HashSet<>(relationTargets).stream()
+                                .filter(target -> !entityIds.contains(target))
+                                .collect(Collectors.toList()));
+    }
+
     // ---------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------
+
+    /**
+     * Reads the identifiers of the exported entities, sorted for a stable comparison.
+     */
+    private static List<String> readEntityIds(String entityOutputPath) throws IOException {
+        return IteratorUtils
+                .toList(SequenceFileTextValueReader.fromFile(entityOutputPath),
+                        text -> AtomicActionDeserializationUtils.<Publication>deserializeAction(text.toString()))
+                .stream()
+                .map(action -> action.getPayload().getId())
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Reads the targets of the exported relations.
+     */
+    private static List<String> readRelationTargets(String relationOutputPath) throws IOException {
+        return IteratorUtils
+                .toList(SequenceFileTextValueReader.fromFile(relationOutputPath),
+                        text -> AtomicActionDeserializationUtils.<Relation>deserializeAction(text.toString()))
+                .stream()
+                .map(action -> action.getPayload().getTarget())
+                .collect(Collectors.toList());
+    }
 
     private static ReferenceMetadata refWithJournal(String title, String volume, String startPage, String endPage) {
         Range.Builder pages = null;
@@ -547,13 +635,17 @@ public class CrossrefExporterJobTest {
     }
 
     private SparkJob buildJob() {
+        return buildJob(outputEntityPath, outputRelationPath, reportPath);
+    }
+
+    private SparkJob buildJob(String entityOutputPath, String relationOutputPath, String reportOutputPath) {
         return SparkJobBuilder.create()
                 .setAppName("Spark Crossref Exporter")
                 .setMainClass(CrossrefExporterJob.class)
                 .addArg("-inputPath", inputPath)
-                .addArg("-outputEntityPath", outputEntityPath)
-                .addArg("-outputRelationPath", outputRelationPath)
-                .addArg("-outputReportPath", reportPath)
+                .addArg("-outputEntityPath", entityOutputPath)
+                .addArg("-outputRelationPath", relationOutputPath)
+                .addArg("-outputReportPath", reportOutputPath)
                 .addJobProperty("spark.driver.host", "localhost")
                 .build();
     }
