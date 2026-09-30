@@ -33,6 +33,13 @@ public class AtomicActionSerializationUtils {
     }
     
     /**
+     * Serializes action into text representation using the shared object mapper.
+     */
+    public static <T extends Oaf> Text serializeAction(AtomicAction<T> action) throws JsonProcessingException {
+        return new Text(serializeAction(action, objectMapper));
+    }
+
+    /**
      * Serializes action into text representation.
      */
     public static <T extends Oaf> String serializeAction(AtomicAction<T> action, ObjectMapper objectMapper) throws JsonProcessingException {
