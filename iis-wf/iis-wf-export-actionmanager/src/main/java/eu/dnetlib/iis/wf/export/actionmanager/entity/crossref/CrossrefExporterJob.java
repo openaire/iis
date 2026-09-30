@@ -17,6 +17,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.storage.StorageLevel;
 
 import com.google.common.collect.Lists;
 
@@ -49,6 +50,7 @@ import eu.dnetlib.iis.wf.export.actionmanager.IdentifierFactory;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
+import scala.Tuple2;
 
 /**
  * Exporter job reading {@link ExtractedDocumentMetadata} Avro records and producing
@@ -105,7 +107,17 @@ public class CrossrefExporterJob {
 
     private static final String COUNTER_EXPORTED_UNIQUE_SOURCE_DOCS = "export.crossref.relations.uniqueSourceDocs";
 
+    /**
+     * Number of files each of the two outputs is written with, and the number of partitions the
+     * serialized payloads are spread over.
+     */
     private static final int NUMBER_OF_OUTPUT_FILES = 10;
+
+    /**
+     * Key of the exported sequence files: the payload travels in the value only, exactly as
+     * {@link AtomicActionSerializationUtils#mapActionToText} used to write it.
+     */
+    private static final Text EXPORT_KEY = new Text("");
 
     private static SparkAvroLoader avroLoader = new SparkAvroLoader();
 
@@ -134,10 +146,17 @@ public class CrossrefExporterJob {
             // input - see buildIdentifierSeed for why that matters.
             final String runIdentifierSalt = UUID.randomUUID().toString();
 
-            // Single pass: generate shared ids and produce both entity and relation actions
-            JavaRDD<ExportEntry> exportEntries = extractedDocMetaRDD
-                    .flatMap(docMeta -> {
-                        List<ExportEntry> entries = new ArrayList<>();
+            // Build and serialize the payloads of every eligible reference exactly once. Generating
+            // the identifiers, building both actions and running Jackson over the exported OAF
+            // payloads is what makes this job expensive, while the very same payloads feed four
+            // actions: the entity output, the relation output and the two report counters. Keeping
+            // the serialized payloads, keyed by the source document, instead of the action objects
+            // keeps the materialized form down to roughly the size of the entity output rather than
+            // the whole object graph - so it stays resident in the executors and none of the
+            // consumers rebuilds nor re-serializes anything.
+            JavaPairRDD<Text, Tuple2<Text, Text>> serializedEntries = extractedDocMetaRDD
+                    .flatMapToPair(docMeta -> {
+                        List<Tuple2<Text, Tuple2<Text, Text>>> entries = new ArrayList<>();
                         List<ReferenceMetadata> references = docMeta.getReferences();
                         if (references != null) {
                             for (int referencePosition = 0; referencePosition < references.size(); referencePosition++) {
@@ -147,33 +166,39 @@ public class CrossrefExporterJob {
                                             NUMERIC_PREFIX, PID_TYPE,
                                             buildIdentifierSeed(runIdentifierSalt, ref, docMeta.getId(), referencePosition),
                                             true);
-                                    entries.add(new ExportEntry(
-                                            buildEntityAction(ref, generatedId),
-                                            buildRelationAction(docMeta.getId().toString(), generatedId)));
+                                    String sourceDocId = docMeta.getId().toString();
+                                    entries.add(new Tuple2<>(
+                                            new Text(sourceDocId),
+                                            new Tuple2<>(
+                                                    AtomicActionSerializationUtils.serializeAction(
+                                                            buildEntityAction(ref, generatedId)),
+                                                    AtomicActionSerializationUtils.serializeAction(
+                                                            buildRelationAction(sourceDocId, generatedId)))));
                                 }
                             }
                         }
                         return entries.iterator();
-                    });
+                    })
+                    // the source documents are counted straight out of those keys, and spreading the
+                    // payloads over the requested number of output files let both writers below write
+                    // their files without shuffling the payloads again
+                    .repartition(NUMBER_OF_OUTPUT_FILES)
+                    .persist(StorageLevel.MEMORY_AND_DISK());
 
-            JavaPairRDD<Text, Text> entitiesToExportRDD = AtomicActionSerializationUtils
-                    .mapActionToText(exportEntries.map(e -> e.entityAction));
-            JavaPairRDD<Text, Text> relationsToExportRDD = AtomicActionSerializationUtils
-                    .mapActionToText(exportEntries.map(e -> e.relationAction));
+            JavaPairRDD<Text, Text> entitiesToExportRDD = serializedEntries
+                    .mapToPair(entry -> new Tuple2<>(EXPORT_KEY, entry._2()._1()));
+            JavaPairRDD<Text, Text> relationsToExportRDD = serializedEntries
+                    .mapToPair(entry -> new Tuple2<>(EXPORT_KEY, entry._2()._2()));
 
             Configuration configuration = sc.hadoopConfiguration();
             configuration.set(FileOutputFormat.COMPRESS, Boolean.TRUE.toString());
             configuration.set(FileOutputFormat.COMPRESS_TYPE, SequenceFile.CompressionType.BLOCK.name());
 
-            exportEntries.cache();
-
-            RDDUtils.saveTextPairRDD(entitiesToExportRDD, NUMBER_OF_OUTPUT_FILES,
-                    params.outputEntityPath, configuration);
-            RDDUtils.saveTextPairRDD(relationsToExportRDD, NUMBER_OF_OUTPUT_FILES,
-                    params.outputRelationPath, configuration);
+            RDDUtils.saveTextPairRDD(entitiesToExportRDD, params.outputEntityPath, configuration);
+            RDDUtils.saveTextPairRDD(relationsToExportRDD, params.outputRelationPath, configuration);
 
             // generate report
-            generateReport(sc, extractedDocMetaRDD, exportEntries, params.outputReportPath);
+            generateReport(sc, extractedDocMetaRDD, serializedEntries, params.outputReportPath);
         }
     }
 
@@ -511,33 +536,18 @@ public class CrossrefExporterJob {
                 InfoSpaceConstants.SEMANTIC_SCHEME_DNET_PROVENANCE_ACTIONS);
     }
 
-    // ----------------------------------------- INNER TYPES ----------------------------------------------
-
-    /**
-     * Holds a pair of entity and relation actions sharing the same generated id.
-     */
-    private static class ExportEntry {
-
-        final AtomicAction<Publication> entityAction;
-        final AtomicAction<Relation> relationAction;
-
-        ExportEntry(AtomicAction<Publication> entityAction, AtomicAction<Relation> relationAction) {
-            this.entityAction = entityAction;
-            this.relationAction = relationAction;
-        }
-    }
-
     // ----------------------------------------- REPORT ----------------------------------------------
 
     private static void generateReport(JavaSparkContext sc,
             JavaRDD<ExtractedDocumentMetadata> inputRDD,
-            JavaRDD<ExportEntry> exportEntriesRDD,
+            JavaPairRDD<Text, Tuple2<Text, Text>> serializedEntriesRDD,
             String outputReportPath) {
 
         long inputRecordsCount = inputRDD.count();
-        long exportedEntitiesCount = exportEntriesRDD.count();
-        long uniqueSourceDocIdsCount = exportEntriesRDD
-                .map(e -> e.relationAction.getPayload().getSource())
+        // both counters are read from the materialized payloads: nothing gets rebuilt here
+        long exportedEntitiesCount = serializedEntriesRDD.count();
+        long uniqueSourceDocIdsCount = serializedEntriesRDD
+                .keys()
                 .distinct()
                 .count();
 
