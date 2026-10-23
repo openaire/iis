@@ -151,7 +151,7 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         ReferenceMetadata ref0 = doc.getReferences().get(0);
         assertEquals(ref0.getText().toString(),
                 "Vidačak, I., & Škrabalo, M. (2014). Exploring the Effects of Europeanization on the Openness of Public Administration in Croatia. Hrvatska i komparativna javna uprava/Croatian and Comparative Public Administration, 14(1), 149–187.");
-        assertNull(ref0.getPosition(), "position should be null (unknown ordering)");
+        assertEquals(Integer.valueOf(1), ref0.getPosition(), "first reference position should be 1");
         ReferenceBasicMetadata basic0 = ref0.getBasicMetadata();
         assertNotNull(basic0);
         assertEquals("Exploring the Effects of Europeanization", basic0.getTitle().toString());
@@ -170,7 +170,7 @@ class JsonReferenceParserJobTest extends TestWithSharedSparkSession {
         ReferenceMetadata ref1 = doc.getReferences().get(1);
         assertEquals("Druge, A. (2020). Some Other Article. Some Journal, 5(2), 55-78.",
                 ref1.getText().toString());
-        assertNull(ref1.getPosition(), "position should be null");
+        assertEquals(Integer.valueOf(2), ref1.getPosition(), "second reference position should be 2");
         ReferenceBasicMetadata basic1 = ref1.getBasicMetadata();
         assertNotNull(basic1);
         assertEquals("Some Other Article", basic1.getTitle().toString());
