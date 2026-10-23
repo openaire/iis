@@ -914,6 +914,12 @@ public class JsonReferenceParserJob {
                             DocumentParsingResult.failure(firstFault));
                 }
 
+                for (int i = 0; i < referenceMetadatas.size(); i++) {
+                    referenceMetadatas.set(i, ReferenceMetadata.newBuilder(referenceMetadatas.get(i))
+                            .setPosition(i + 1)
+                            .build());
+                }
+
                 ExtractedDocumentMetadata.Builder builder = ExtractedDocumentMetadata.newBuilder();
                 builder.setId(id);
                 builder.setExtractedBy(extractedBy);
