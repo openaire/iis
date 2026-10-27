@@ -3,6 +3,7 @@ package eu.dnetlib.iis.common.model.extrainfo.converter;
 import java.util.SortedSet;
 
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
+import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationBasicMetadata;
 
 
 /**
@@ -15,6 +16,8 @@ public class CitationsExtraInfoSerDe extends AbstractExtraInfoSerDe<SortedSet<Bl
 	public CitationsExtraInfoSerDe() {
 	    super();
 		getXstream().processAnnotations(BlobCitationEntry.class);
+		getXstream().processAnnotations(BlobCitationBasicMetadata.class);
+		getXstream().processAnnotations(BlobCitationBasicMetadata.Pages.class);
 		getXstream().alias("references", SortedSet.class);
 	}
 

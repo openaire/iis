@@ -42,7 +42,7 @@ public class CitationRelationExporterTestUtils {
                         citation.getDestinationDocumentId(), citation.getConfidenceLevel(),
                         // JavaConverters.mapAsScalaMapConverter(citation.getExternalDestinationDocumentIds()).asScala()));
                         // new HashMap<String, String>()));
-                        citation.getExternalDestinationDocumentIds()));
+                        citation.getExternalDestinationDocumentIds(), citation.getBasicMetadata()));
             }
             dataFrameList.add(RowFactory.create(input.getDocumentId(), 
                     citationsList.toArray()));

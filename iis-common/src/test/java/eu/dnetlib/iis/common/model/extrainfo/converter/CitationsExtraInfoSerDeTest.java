@@ -1,10 +1,12 @@
 package eu.dnetlib.iis.common.model.extrainfo.converter;
 
 import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationEntry;
+import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationBasicMetadata;
 import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -59,8 +61,9 @@ public class CitationsExtraInfoSerDeTest {
         // execute
         String resultStr = serDe.serialize(entrySet);
         SortedSet<BlobCitationEntry> resultSet = serDe.deserialize(resultStr);
-        
+
         // assert
+        assertFalse(resultStr.contains("basicMetadata"));
         assertNotNull(resultSet);
         assertEquals(1, resultSet.size());
         BlobCitationEntry resultEntry = resultSet.first();
@@ -73,6 +76,34 @@ public class CitationsExtraInfoSerDeTest {
         assertEquals(idValue, resultId.getValue());
         assertEquals(idType, resultId.getType());
         assertEquals(trustLevel, resultId.getTrustLevel(), 0.001f);
+    }
+
+    @Test
+    public void testSerializeBasicMetadata() {
+        BlobCitationBasicMetadata basicMetadata = new BlobCitationBasicMetadata();
+        basicMetadata.setTitle("Citation title");
+        basicMetadata.setAuthors(Arrays.asList("A. Author", "B. Author"));
+        basicMetadata.setPages(new BlobCitationBasicMetadata.Pages("10", "20"));
+
+        BlobCitationEntry entry = new BlobCitationEntry();
+        entry.setPosition(1);
+        entry.setBasicMetadata(basicMetadata);
+
+        SortedSet<BlobCitationEntry> entries = new TreeSet<>();
+        entries.add(entry);
+
+        String result = serDe.serialize(entries);
+
+        assertTrue(result.contains("<basicMetadata>"));
+        assertTrue(result.contains("<title>Citation title</title>"));
+        assertTrue(result.contains("<author>A. Author</author>"));
+        assertTrue(result.contains("<author>B. Author</author>"));
+        assertTrue(result.contains("<pages start=\"10\" end=\"20\"/>"));
+        assertFalse(result.contains("<authors>"));
+        assertFalse(result.contains("<string>"));
+        assertFalse(result.contains("class=\"null\""));
+        assertFalse(result.contains("<externalIds"));
+        assertFalse(result.contains("<source"));
     }
 
 }

@@ -3,7 +3,10 @@ package eu.dnetlib.iis.wf.export.actionmanager.module;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.citations.schemas.CitationEntry;
 import eu.dnetlib.iis.common.model.extrainfo.ExtraInfoConstants;
+import eu.dnetlib.iis.common.model.extrainfo.citations.BlobCitationBasicMetadata;
 import eu.dnetlib.iis.common.model.extrainfo.citations.TypedId;
+import eu.dnetlib.iis.metadataextraction.schemas.Range;
+import eu.dnetlib.iis.metadataextraction.schemas.ReferenceBasicMetadata;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -78,6 +81,72 @@ class CitationsActionBuilderModuleUtilsTest {
             String result = CitationsActionBuilderModuleUtils.RawTextBuilder.build(citationEntry);
 
             assertEquals("raw text", result);
+        }
+    }
+
+    @Nested
+    public class BasicMetadataBuilderTest {
+
+        @Test
+        @DisplayName("Basic metadata fields are copied and external IDs are excluded")
+        public void givenCitationEntryWithBasicMetadata_whenBuilt_thenMetadataFieldsAreCopied() {
+            ReferenceBasicMetadata source = ReferenceBasicMetadata.newBuilder()
+                    .setTitle("Citation title")
+                    .setAuthors(Arrays.<CharSequence>asList("A. Author", "B. Author"))
+                    .setPages(Range.newBuilder()
+                            .setStart("10")
+                            .setEnd("20")
+                            .build())
+                    .setSource("Journal")
+                    .setVolume("vol. 2")
+                    .setYear("2024")
+                    .setEdition("Second edition")
+                    .setPublisher("Publisher")
+                    .setLocation("London")
+                    .setSeries("Series")
+                    .setIssue("Issue 3")
+                    .setUrl("https://example.org/reference")
+                    .setExternalIds(Collections.<CharSequence, CharSequence>singletonMap("doi", "10.1234/example"))
+                    .setJournal("Journal name")
+                    .setType("article")
+                    .build();
+            CitationEntry citationEntry = buildCitationEntry(
+                    5, "raw text", null, null, Collections.emptyMap());
+            citationEntry.setBasicMetadata(source);
+
+            BlobCitationBasicMetadata result = CitationsActionBuilderModuleUtils.BasicMetadataBuilder.build(citationEntry);
+
+            assertNotNull(result);
+            assertEquals("Citation title", result.getTitle());
+            assertEquals(Arrays.asList("A. Author", "B. Author"), result.getAuthors());
+            assertEquals("10", result.getPages().getStart());
+            assertEquals("20", result.getPages().getEnd());
+            assertEquals("Journal", result.getSource());
+            assertEquals("vol. 2", result.getVolume());
+            assertEquals("2024", result.getYear());
+            assertEquals("Second edition", result.getEdition());
+            assertEquals("Publisher", result.getPublisher());
+            assertEquals("London", result.getLocation());
+            assertEquals("Series", result.getSeries());
+            assertEquals("Issue 3", result.getIssue());
+            assertEquals("https://example.org/reference", result.getUrl());
+            assertEquals("Journal name", result.getJournal());
+            assertEquals("article", result.getType());
+        }
+
+        @Test
+        @DisplayName("Basic metadata containing only external IDs is omitted")
+        public void givenCitationEntryWithOnlyExternalIds_whenBuilt_thenNullIsReturned() {
+            ReferenceBasicMetadata source = ReferenceBasicMetadata.newBuilder()
+                    .setExternalIds(Collections.<CharSequence, CharSequence>singletonMap("doi", "10.1234/example"))
+                    .build();
+            CitationEntry citationEntry = buildCitationEntry(
+                    5, "raw text", null, null, Collections.emptyMap());
+            citationEntry.setBasicMetadata(source);
+
+            BlobCitationBasicMetadata result = CitationsActionBuilderModuleUtils.BasicMetadataBuilder.build(citationEntry);
+
+            assertNull(result);
         }
     }
 

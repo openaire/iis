@@ -48,35 +48,38 @@ public class CitationsFromReferenceMetadataTransformerJob {
             JavaRDD<ExtractedDocumentMetadataMergedWithOriginal> input = avroLoader.loadJavaRDD(sc,
                     params.input, ExtractedDocumentMetadataMergedWithOriginal.class);
 
-            JavaRDD<Citation> output = input.flatMap(doc -> {
-                List<ReferenceMetadata> references = doc.getReferences();
-                if (references == null) {
-                    return Collections.emptyIterator();
-                }
-                List<Citation> citations = new ArrayList<>();
-                for (ReferenceMetadata ref : references) {
-                    Map<CharSequence, CharSequence> externalIds = Collections.emptyMap();
-                    ReferenceBasicMetadata basicMetadata = ref.getBasicMetadata();
-                    if (basicMetadata != null && basicMetadata.getExternalIds() != null) {
-                        externalIds = basicMetadata.getExternalIds();
-                    }
-                    CitationEntry entry = CitationEntry.newBuilder()
-                            .setPosition(ref.getPosition())
-                            .setRawText(ref.getText())
-                            .setDestinationDocumentId(null)
-                            .setConfidenceLevel(null)
-                            .setExternalDestinationDocumentIds(externalIds)
-                            .build();
-                    citations.add(Citation.newBuilder()
-                            .setSourceDocumentId(doc.getId())
-                            .setEntry(entry)
-                            .build());
-                }
-                return citations.iterator();
-            });
+            JavaRDD<Citation> output = input.flatMap(doc -> transformDocument(doc).iterator());
 
             avroSaver.saveJavaRDD(output, Citation.SCHEMA$, params.output);
         }
+    }
+
+    static List<Citation> transformDocument(ExtractedDocumentMetadataMergedWithOriginal doc) {
+        List<ReferenceMetadata> references = doc.getReferences();
+        if (references == null) {
+            return Collections.emptyList();
+        }
+        List<Citation> citations = new ArrayList<>();
+        for (ReferenceMetadata ref : references) {
+            Map<CharSequence, CharSequence> externalIds = Collections.emptyMap();
+            ReferenceBasicMetadata basicMetadata = ref.getBasicMetadata();
+            if (basicMetadata != null && basicMetadata.getExternalIds() != null) {
+                externalIds = basicMetadata.getExternalIds();
+            }
+            CitationEntry entry = CitationEntry.newBuilder()
+                    .setPosition(ref.getPosition())
+                    .setRawText(ref.getText())
+                    .setDestinationDocumentId(null)
+                    .setConfidenceLevel(null)
+                    .setExternalDestinationDocumentIds(externalIds)
+                    .setBasicMetadata(basicMetadata)
+                    .build();
+            citations.add(Citation.newBuilder()
+                    .setSourceDocumentId(doc.getId())
+                    .setEntry(entry)
+                    .build());
+        }
+        return citations;
     }
 
     //------------------------ PRIVATE --------------------------

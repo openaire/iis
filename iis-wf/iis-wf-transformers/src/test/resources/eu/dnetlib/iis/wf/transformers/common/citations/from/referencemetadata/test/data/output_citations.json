@@ -5,6 +5,14 @@
         "destinationDocumentId": null,
         "confidenceLevel": null,
         "externalDestinationDocumentIds": {},
+        "basicMetadata": {
+            "title": "Interview with the Vampire",
+            "authors": ["A. Rice", "B. Pasta"],
+            "pages": {"start": "1", "end": "236"},
+            "source": "Vampire Journal",
+            "year": "1997",
+            "publisher": "Ballantine Books"
+        },
         "rawText": "A. Rice, Interview with the Vampire"
     }
 }
@@ -15,6 +23,13 @@
         "destinationDocumentId": null,
         "confidenceLevel": null,
         "externalDestinationDocumentIds": {"ext-id-type1":"ext-id-1", "ext-id-type2":"ext-id-2"},
+        "basicMetadata": {
+            "title": "The Lord of the Rings",
+            "authors": ["J.R.R. Tolkien"],
+            "pages": {"start": "1", "end": "236"},
+            "year": "2012",
+            "externalIds": {"ext-id-type1":"ext-id-1", "ext-id-type2":"ext-id-2"}
+        },
         "rawText": "J.R.R. Tolkien, The Lord of the Rings, 2012"
     }
 }
@@ -25,6 +40,11 @@
         "destinationDocumentId": null,
         "confidenceLevel": null,
         "externalDestinationDocumentIds": {},
+        "basicMetadata": {
+            "title": "The Other Wind",
+            "volume": "vol.23",
+            "year": "2003"
+        },
         "rawText": "Ursula K. Le Guin, The Other Wind, 2003"
     }
 }
@@ -35,6 +55,14 @@
         "destinationDocumentId": null,
         "confidenceLevel": null,
         "externalDestinationDocumentIds": {},
+        "basicMetadata": {
+            "title": "Interview with the Vampire",
+            "authors": ["A. Rice", "B. Pasta"],
+            "pages": {"start": "1", "end": "236"},
+            "source": "Vampire Journal",
+            "year": "1997",
+            "publisher": "Ballantine Books"
+        },
         "rawText": "A. Rice, Interview with the Vampire"
     }
 }
@@ -45,6 +73,11 @@
         "destinationDocumentId": null,
         "confidenceLevel": null,
         "externalDestinationDocumentIds": {},
+        "basicMetadata": {
+            "title": "The Other Wind",
+            "volume": "vol.23",
+            "year": "2003"
+        },
         "rawText": "Ursula K. Le Guin, The Other Wind, 2003"
     }
 }

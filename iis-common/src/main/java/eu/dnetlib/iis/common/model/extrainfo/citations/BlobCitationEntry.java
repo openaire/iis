@@ -35,6 +35,11 @@ public class BlobCitationEntry implements Comparable<BlobCitationEntry> {
 	 */
 	@XStreamImplicit
 	private List<TypedId> identifiers;
+
+	/**
+	 * Bibliographic metadata extracted from the reference text.
+	 */
+	private BlobCitationBasicMetadata basicMetadata;
 	
 	@XStreamOmitField
 	private final static Pattern alphaNumChunkPattern = Pattern.compile("(\\d+\\" + 
@@ -63,6 +68,14 @@ public class BlobCitationEntry implements Comparable<BlobCitationEntry> {
 
 	public void setIdentifiers(List<TypedId> identifiers) {
 		this.identifiers = identifiers;
+	}
+
+	public BlobCitationBasicMetadata getBasicMetadata() {
+		return basicMetadata;
+	}
+
+	public void setBasicMetadata(BlobCitationBasicMetadata basicMetadata) {
+		this.basicMetadata = basicMetadata;
 	}
 
 	@Override
