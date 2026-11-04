@@ -165,4 +165,106 @@
         </dependency>
 	</dependencies>
 
+    <profiles>
+        <profile>
+            <!--
+                Builds the shaded uber JAR consumed by the Airflow DAGs via the JAR_* params.
+                Build command: mvn package -Pshade-uber-jar
+                Produces: iis-wf-metadataextraction-<version>-uber.jar
+            -->
+            <id>shade-uber-jar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.5.1</version>
+                        <executions>
+                            <execution>
+                                <id>shade-uber-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                                    <shadedClassifierName>uber</shadedClassifierName>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                                <!-- AWS SDK v2 service models (~1.6 GB raw); unused by the IIS jobs -->
+                                                <exclude>models/*.json</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <!-- AWS SDK v2 and the S3 analytics accelerator are not used by the IIS code
+                                             and are provided by the cluster's hadoop-aws, so they are excluded to keep
+                                             the uber JAR small. -->
+                                        <filter>
+                                            <artifact>software.amazon.awssdk:*</artifact>
+                                            <excludes>
+                                                <exclude>**</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <filter>
+                                            <artifact>software.amazon.s3.analyticsaccelerator:*</artifact>
+                                            <excludes>
+                                                <exclude>**</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <!-- AWS SDK v1 is excluded from THIS module only (it arrives transitively
+                                             through iis-wf-import, which needs it for s3:// content retrieval).
+
+                                             Proof that metadata extraction never needs it:
+                                               * no com.amazonaws reference anywhere in the
+                                                 iis-wf-metadataextraction sources, nor in iis-common, nor in the
+                                                 classes this module actually uses from iis-wf-import
+                                                 (HttpClientUtils, ContentApprover, PDFHeaderBasedContentApprover,
+                                                 InvalidCountableContentApproverWrapper);
+                                               * bytecode scan of this uber JAR: the only IIS classes referencing
+                                                 com.amazonaws are
+                                                   eu.dnetlib.iis.wf.importer.content.ContentRetrievalContext,
+                                                   ...content.ObjectStoreContentProviderUtils,
+                                                   ...content.HadoopBasedS3CredentialsProvider
+                                                 and nothing outside eu.dnetlib.iis.wf.importer.content
+                                                 references those three;
+                                               * JAR_METADATAEXTRACTION only ever launches
+                                                 MetadataExtractionCacheChainJob (cache chain + extraction),
+                                                 never the content importer.
+
+                                             The iis-wf-import uber JAR (JAR_IMPORT) DOES bundle AWS SDK v1 — that is
+                                             where s3:// content retrieval happens. If this JAR is ever reused to run
+                                             DocumentContentUrlBasedImporterJob, remove this filter. -->
+                                        <filter>
+                                            <artifact>com.amazonaws:*</artifact>
+                                            <excludes>
+                                                <exclude>**</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorJob</mainClass>
+                                        </transformer>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                            <resource>META-INF/spring.handlers</resource>
+                                        </transformer>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                            <resource>META-INF/spring.schemas</resource>
+                                        </transformer>
+                                    </transformers>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
+
