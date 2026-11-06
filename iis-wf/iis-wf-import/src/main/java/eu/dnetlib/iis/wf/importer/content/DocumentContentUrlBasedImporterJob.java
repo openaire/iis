@@ -3,8 +3,10 @@ package eu.dnetlib.iis.wf.importer.content;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.hadoop.conf.Configuration;
@@ -70,6 +72,10 @@ public class DocumentContentUrlBasedImporterJob {
 
         try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             Configuration hadoopConf = sc.hadoopConfiguration();
+            // the task-side Configuration is built from scratch (see createRetrievalContext), so the
+            // driver settings it needs -- fs.defaultFS and the HDFS HA properties required to resolve
+            // jceks://hdfs/... credential provider paths -- have to be carried over explicitly
+            params.hadoopConf = toMap(hadoopConf);
 
             HdfsUtils.remove(hadoopConf, params.output);
             HdfsUtils.remove(hadoopConf, params.outputReportPath);
@@ -85,7 +91,13 @@ public class DocumentContentUrlBasedImporterJob {
                     .mapPartitions(partition -> new ContentRetrievalIterator(partition, params,
                             sizeExceededCounter, sizeInvalidCounter, unavailableCounter, correctCounter));
 
-            long correctCount = output.count();
+            // The content is downloaded HERE, exactly once: saveJavaRDD() is the only action
+            // (saveAsNewAPIHadoopFile). Do not add a count()/collect() before it -- the RDD is not
+            // cached, so every extra action would re-download every PDF from the object store.
+            avroSaver.saveJavaRDD(output, DocumentContent.SCHEMA$, params.output);
+
+            // Accumulators are valid after the action above completed.
+            long correctCount = correctCounter.value();
 
             JavaRDD<ReportEntry> reports = sc.parallelize(Lists.newArrayList(
                     ReportEntryFactory.createCounterReportEntry(REPORT_KEY_CORRECT, correctCount),
@@ -112,6 +124,12 @@ public class DocumentContentUrlBasedImporterJob {
      */
     private static ContentRetrievalContext createRetrievalContext(Params params) {
         Configuration conf = new Configuration();
+        if (params.hadoopConf != null) {
+            // without fs.defaultFS a jceks://hdfs/... location is resolved against the local file
+            // system, the credentials are not found and the client silently falls back to
+            // anonymous access (every retrieval then fails with 403 and gets counted as unavailable)
+            params.hadoopConf.forEach(conf::set);
+        }
         conf.setInt(ImportWorkflowRuntimeParameters.IMPORT_CONTENT_CONNECTION_TIMEOUT,
                 params.contentConnectionTimeout);
         conf.setInt(ImportWorkflowRuntimeParameters.IMPORT_CONTENT_READ_TIMEOUT,
@@ -131,6 +149,16 @@ public class DocumentContentUrlBasedImporterJob {
 
     private static boolean isDefined(String value) {
         return value != null && !"$UNDEFINED$".equals(value);
+    }
+
+    private static Map<String, String> toMap(Configuration conf) {
+        Map<String, String> result = new HashMap<>();
+        for (Map.Entry<String, String> entry : conf) {
+            if (entry.getKey() != null && entry.getValue() != null) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
     }
 
     //------------------------ PRIVATE --------------------------
@@ -231,7 +259,12 @@ public class DocumentContentUrlBasedImporterJob {
                         + ", real size is expected to be greater than 0!");
                 sizeInvalidCounter.add(1);
                 return null;
-            } catch (IOException e) {
+            } catch (Exception e) {
+                // Parity with DocumentContentUrlBasedImporterMapper, which catches Exception here:
+                // ANY retrieval failure is counted as unavailable and must not fail the job.
+                // This is load bearing -- AmazonS3Exception (NoSuchKey for a dead link, 403,
+                // throttling, ...) is a RuntimeException, so catching only IOException would let it
+                // escape and abort the whole stage on the first missing object in the store.
                 log.error("unexpected exception occured while obtaining content " + docUrl.getId()
                         + " for location: " + docUrl.getUrl(), e);
                 unavailableCounter.add(1);
@@ -267,6 +300,9 @@ public class DocumentContentUrlBasedImporterJob {
 
         @Parameter(names = "-objectstoreS3Endpoint")
         public String objectstoreS3Endpoint = "$UNDEFINED$";
+
+        /** Driver Hadoop configuration carried over to the task-side configuration. */
+        public Map<String, String> hadoopConf;
 
         @Parameter(names = "-objectstoreS3KeystoreLocation")
         public String objectstoreS3KeystoreLocation = "$UNDEFINED$";
