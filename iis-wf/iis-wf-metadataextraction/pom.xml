@@ -139,6 +139,13 @@
 		<dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+            <!-- The root dependencyManagement pins httpclient/httpcore/httpmime to 'provided',
+                 which is right for httpclient/httpcore (Hadoop ships both) but NOT for httpmime:
+                 neither Hadoop nor the spark image provides it, so GrobidClient failed with
+                 NoClassDefFoundError: org/apache/http/entity/mime/MultipartEntityBuilder once the
+                 shaded uber JAR dropped it. Forcing compile scope keeps httpmime in the uber JAR
+                 while httpclient/httpcore stay provided (their versions are not shadowed). -->
+            <scope>compile</scope>
         </dependency>
 
         <!-- Spark dependencies: required by the Spark ports of the metadata extraction
