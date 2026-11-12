@@ -235,10 +235,14 @@ public class MetadataExtractionCacheChainJob {
         @Parameter(names = "-numberOfEmittedFilesInCache")
         public int numberOfEmittedFilesInCache = 1000;
 
-        @Parameter(names = "-activeMetadataExtraction")
+        // arity = 1 is required to make the value explicit: with the default arity (0) JCommander
+        // 1.60 only accepts the bare flag and always sets it to true, so 'false' could never be
+        // expressed (-flag=false / -flag false left the value as an unbound "main parameter").
+        // Callers must therefore pass -activeMetadataExtraction=true|false.
+        @Parameter(names = "-activeMetadataExtraction", arity = 1)
         public boolean activeMetadataExtraction = true;
 
-        @Parameter(names = "-returnAlreadyExtractedMeta")
+        @Parameter(names = "-returnAlreadyExtractedMeta", arity = 1)
         public boolean returnAlreadyExtractedMeta = true;
 
         // --- reporting ---
