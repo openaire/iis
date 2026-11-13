@@ -26,8 +26,9 @@ import eu.dnetlib.iis.common.lock.LockManagerUtils;
 import eu.dnetlib.iis.common.report.ReportEntryFactory;
 import eu.dnetlib.iis.common.schemas.ReportEntry;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
-import eu.dnetlib.iis.importer.schemas.DocumentContent;
+import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
+import eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterJob;
 import eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorJob;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
@@ -95,8 +96,14 @@ public class MetadataExtractionCacheChainJob {
             LockManager lockManager = LockManagerUtils.instantiateLockManager(
                     params.lockManagerFactoryClassName, hadoopConf);
 
-            JavaRDD<DocumentContent> input = avroLoader.loadJavaRDD(sc, params.input, DocumentContent.class);
-            input.cache();
+            boolean contentInput = !StringUtils.isBlank(params.input);
+            if (!contentInput) {
+                throw new IllegalArgumentException("-input (DocumentContentUrl) must be provided");
+            }
+
+            JavaRDD<DocumentContentUrl> inputUrls = avroLoader.loadJavaRDD(sc, params.input,
+                    DocumentContentUrl.class);
+            inputUrls.cache();
 
             HdfsUtils.remove(hadoopConf, params.outputRoot);
             if (!StringUtils.isBlank(params.outputReportRootPath)) {
@@ -104,7 +111,7 @@ public class MetadataExtractionCacheChainJob {
                 HdfsUtils.remove(hadoopConf, params.outputReportRootPath + "/" + params.cacheReportRelativePath);
             }
 
-            if (input.isEmpty()) {
+            if (inputUrls.isEmpty()) {
                 log.info("input is empty, generating empty meta and fault datastores without touching the cache");
                 MetadataExtractorJob.ExtractionResult empty = MetadataExtractorJob.emptyResult(sc);
                 storeOutput(sc, params, empty.meta, empty.fault);
@@ -120,8 +127,8 @@ public class MetadataExtractionCacheChainJob {
             JavaRDD<Fault> cachedFault = CacheStorageUtils.getRddOrEmpty(sc, avroLoader,
                     cacheRootDir, existingCacheId, CacheRecordType.fault, Fault.class);
 
-            JavaPairRDD<CharSequence, Boolean> inputIds = input
-                    .map(DocumentContent::getId)
+            JavaPairRDD<CharSequence, Boolean> inputIds = inputUrls
+                    .map(DocumentContentUrl::getId)
                     .distinct()
                     .mapToPair(id -> new Tuple2<>(id, Boolean.TRUE));
             JavaPairRDD<CharSequence, Boolean> cachedMetaIds = cachedMeta
@@ -131,13 +138,15 @@ public class MetadataExtractionCacheChainJob {
 
             // skip already extracted content (mirrors the skip_extracted / skip_extracted_without_meta
             // PIG transformers: an id is skipped when it has ANY cached meta record, including the
-            // empty marker records written for faulted documents)
-            JavaRDD<DocumentContent> toBeProcessed = input
-                    .mapToPair(content -> new Tuple2<>(content.getId(), content))
+            // empty marker records written for faulted documents).
+            // Only these urls get their content imported below -- this is what keeps the object store
+            // traffic limited to the documents that are actually going to be processed.
+            JavaRDD<DocumentContentUrl> toBeProcessedUrls = inputUrls
+                    .mapToPair(url -> new Tuple2<>(url.getId(), url))
                     .leftOuterJoin(cachedMetaIds)
                     .filter(pair -> !pair._2._2.isPresent())
                     .map(pair -> pair._2._1);
-            toBeProcessed.cache();
+            toBeProcessedUrls.cache();
 
             // records already processed, returned from cache (empty marker records are filtered out)
             JavaRDD<ExtractedDocumentMetadata> returnedMeta = params.returnAlreadyExtractedMeta
@@ -151,11 +160,18 @@ public class MetadataExtractionCacheChainJob {
                     : sc.<ExtractedDocumentMetadata>emptyRDD();
 
             MetadataExtractorJob.ExtractionResult extraction;
-            if (params.activeMetadataExtraction && !toBeProcessed.isEmpty()) {
-                extraction = MetadataExtractorJob.extract(sc, toBeProcessed, params.toExtractionParams());
+            DocumentContentUrlBasedImporterJob.ImportResult imported = null;
+            boolean hasWork = !toBeProcessedUrls.isEmpty();
+            if (params.activeMetadataExtraction && hasWork) {
+                // content retrieval is embedded here (equivalent to the Oozie prefetched sub-workflow)
+                // so that the bytes are fetched for the not-yet-cached documents only, and are not
+                // materialized in between
+                imported = DocumentContentUrlBasedImporterJob.importContent(sc, toBeProcessedUrls,
+                        params.toImportParams());
+                extraction = MetadataExtractorJob.extract(sc, imported.content, params.toExtractionParams());
             } else {
                 log.info("skipping metadata extraction: activeMetadataExtraction="
-                        + params.activeMetadataExtraction + ", toBeProcessed empty=" + toBeProcessed.isEmpty());
+                        + params.activeMetadataExtraction + ", toBeProcessed empty=" + !hasWork);
                 extraction = MetadataExtractorJob.emptyResult(sc);
             }
 
@@ -177,7 +193,15 @@ public class MetadataExtractionCacheChainJob {
                     : newMeta;
 
             storeOutput(sc, params, mergedMeta, newFault);
-            storeReports(sc, params, extraction.reports, returnedMeta.count());
+
+            // Content retrieval report entries are produced here now that the import is in-process;
+            // the counters are valid because the extraction above already triggered the actions.
+            JavaRDD<ReportEntry> reports = extraction.reports;
+            if (imported != null) {
+                reports = reports.union(sc.parallelize(
+                        DocumentContentUrlBasedImporterJob.reportEntries(imported)));
+            }
+            storeReports(sc, params, reports, returnedMeta.count());
         }
     }
 
@@ -214,6 +238,11 @@ public class MetadataExtractionCacheChainJob {
 
         private static final long serialVersionUID = 1L;
 
+        /**
+         * Input datastore of {@code DocumentContentUrl} records (identifiers + locations). This is
+         * the preprocessed checksum datastore -- the content bytes are NOT read from here: they are
+         * retrieved in-process, and only for the documents that still have to be processed.
+         */
         @Parameter(names = "-input", required = true)
         public String input;
 
@@ -248,6 +277,33 @@ public class MetadataExtractionCacheChainJob {
 
         @Parameter(names = "-returnAlreadyExtractedMeta", arity = 1)
         public boolean returnAlreadyExtractedMeta = true;
+
+        // --- content retrieval (used only when activeMetadataExtraction is true) ---
+        @Parameter(names = "-maxFileSizeMb")
+        public String maxFileSizeMb = MetadataExtractorJob.UNDEFINED;
+
+        @Parameter(names = "-contentConnectionTimeout")
+        public int contentConnectionTimeout = 60000;
+
+        @Parameter(names = "-contentReadTimeout")
+        public int contentReadTimeout = 60000;
+
+        @Parameter(names = "-objectstoreS3Endpoint")
+        public String objectstoreS3Endpoint = MetadataExtractorJob.UNDEFINED;
+
+        @Parameter(names = "-objectstoreS3KeystoreLocation")
+        public String objectstoreS3KeystoreLocation = MetadataExtractorJob.UNDEFINED;
+
+        /** Retrieval parameters handed over to the in-process content importer. */
+        public DocumentContentUrlBasedImporterJob.Params toImportParams() {
+            DocumentContentUrlBasedImporterJob.Params importParams = new DocumentContentUrlBasedImporterJob.Params();
+            importParams.maxFileSizeMb = maxFileSizeMb;
+            importParams.contentConnectionTimeout = contentConnectionTimeout;
+            importParams.contentReadTimeout = contentReadTimeout;
+            importParams.objectstoreS3Endpoint = objectstoreS3Endpoint;
+            importParams.objectstoreS3KeystoreLocation = objectstoreS3KeystoreLocation;
+            return importParams;
+        }
 
         // --- reporting ---
         @Parameter(names = "-outputReportRootPath")

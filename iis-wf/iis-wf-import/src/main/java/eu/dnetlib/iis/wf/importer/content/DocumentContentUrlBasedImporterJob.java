@@ -66,53 +66,104 @@ public class DocumentContentUrlBasedImporterJob {
 
     //------------------------ LOGIC --------------------------
 
+    /**
+     * Reusable in-process entry point: retrieves the content of every given
+     * {@link DocumentContentUrl}, returning the resulting {@link DocumentContent} RDD together with
+     * the retrieval counters.
+     *
+     * <p>The returned RDD is NOT materialized and is not cached, so the caller is responsible for
+     * triggering exactly one action (any additional action would re-download every content). The
+     * counters are only meaningful after that action completed. This is what
+     * {@code MetadataExtractionCacheChainJob} uses to fetch the bytes of the not-yet-cached
+     * documents only, instead of importing the whole object store subset up front.</p>
+     */
+    public static ImportResult importContent(JavaSparkContext sc, JavaRDD<DocumentContentUrl> input,
+            Params params) {
+        if (params.hadoopConf == null) {
+            // the task-side Configuration is built from scratch, so the driver settings it needs
+            // (fs.defaultFS, HDFS HA properties for jceks://hdfs/... credential providers) are
+            // carried over explicitly
+            params.hadoopConf = toMap(sc.hadoopConfiguration());
+        }
+        LongAccumulator sizeExceededCounter = sc.sc().longAccumulator("SIZE_EXCEEDED");
+        LongAccumulator sizeInvalidCounter = sc.sc().longAccumulator("SIZE_INVALID");
+        LongAccumulator unavailableCounter = sc.sc().longAccumulator("UNAVAILABLE");
+        LongAccumulator correctCounter = sc.sc().longAccumulator("CORRECT");
+
+        JavaRDD<DocumentContent> content = input
+                .mapPartitions(partition -> new ContentRetrievalIterator(partition, params,
+                        sizeExceededCounter, sizeInvalidCounter, unavailableCounter, correctCounter));
+        return new ImportResult(content, sizeExceededCounter, sizeInvalidCounter, unavailableCounter,
+                correctCounter);
+    }
+
+    /**
+     * Builds the report entries described by an {@link ImportResult}. Must be called only after an
+     * action consuming {@code result.content} has completed, otherwise the counters are incomplete.
+     */
+    public static List<ReportEntry> reportEntries(ImportResult result) {
+        return Lists.newArrayList(
+                ReportEntryFactory.createCounterReportEntry(REPORT_KEY_CORRECT,
+                        result.correctCounter.value()),
+                ReportEntryFactory.createCounterReportEntry(REPORT_KEY_INVALID_SIZE_EXCEEDED,
+                        result.sizeExceededCounter.value()),
+                ReportEntryFactory.createCounterReportEntry(REPORT_KEY_INVALID_SIZE,
+                        result.sizeInvalidCounter.value()),
+                ReportEntryFactory.createCounterReportEntry(REPORT_KEY_INVALID_UNAVAILABLE,
+                        result.unavailableCounter.value()));
+    }
+
     public static void main(String[] args) throws Exception {
         Params params = new Params();
         new JCommander(params).parse(args);
 
         try (JavaSparkContext sc = JavaSparkContextFactory.withConfAndKryo(new SparkConf())) {
             Configuration hadoopConf = sc.hadoopConfiguration();
-            // the task-side Configuration is built from scratch (see createRetrievalContext), so the
-            // driver settings it needs -- fs.defaultFS and the HDFS HA properties required to resolve
-            // jceks://hdfs/... credential provider paths -- have to be carried over explicitly
-            params.hadoopConf = toMap(hadoopConf);
 
             HdfsUtils.remove(hadoopConf, params.output);
             if (params.outputReportPath != null) {
                 HdfsUtils.remove(hadoopConf, params.outputReportPath);
             }
 
-            LongAccumulator sizeExceededCounter = sc.sc().longAccumulator("SIZE_EXCEEDED");
-            LongAccumulator sizeInvalidCounter = sc.sc().longAccumulator("SIZE_INVALID");
-            LongAccumulator unavailableCounter = sc.sc().longAccumulator("UNAVAILABLE");
-            LongAccumulator correctCounter = sc.sc().longAccumulator("CORRECT");
-
             JavaRDD<DocumentContentUrl> input = avroLoader.loadJavaRDD(sc, params.input, DocumentContentUrl.class);
 
-            JavaRDD<DocumentContent> output = input
-                    .mapPartitions(partition -> new ContentRetrievalIterator(partition, params,
-                            sizeExceededCounter, sizeInvalidCounter, unavailableCounter, correctCounter));
+            ImportResult result = importContent(sc, input, params);
 
             // The content is downloaded HERE, exactly once: saveJavaRDD() is the only action
             // (saveAsNewAPIHadoopFile). Do not add a count()/collect() before it -- the RDD is not
             // cached, so every extra action would re-download every PDF from the object store.
-            avroSaver.saveJavaRDD(output, DocumentContent.SCHEMA$, params.output);
-
-            // Accumulators are valid after the action above completed.
-            long correctCount = correctCounter.value();
-
-            JavaRDD<ReportEntry> reports = sc.parallelize(Lists.newArrayList(
-                    ReportEntryFactory.createCounterReportEntry(REPORT_KEY_CORRECT, correctCount),
-                    ReportEntryFactory.createCounterReportEntry(REPORT_KEY_INVALID_SIZE_EXCEEDED,
-                            sizeExceededCounter.value()),
-                    ReportEntryFactory.createCounterReportEntry(REPORT_KEY_INVALID_SIZE,
-                            sizeInvalidCounter.value()),
-                    ReportEntryFactory.createCounterReportEntry(REPORT_KEY_INVALID_UNAVAILABLE,
-                            unavailableCounter.value())));
+            avroSaver.saveJavaRDD(result.content, DocumentContent.SCHEMA$, params.output);
 
             if (params.outputReportPath != null) {
-                avroSaver.saveJavaRDD(reports.repartition(1), ReportEntry.SCHEMA$, params.outputReportPath);
+                // Accumulators are valid after the action above completed.
+                avroSaver.saveJavaRDD(sc.parallelize(reportEntries(result)).repartition(1),
+                        ReportEntry.SCHEMA$, params.outputReportPath);
             }
+        }
+    }
+
+    /**
+     * Content RDD plus the retrieval counters of a single
+     * {@link #importContent(JavaSparkContext, JavaRDD, Params)} call.
+     */
+    public static final class ImportResult implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        public final JavaRDD<DocumentContent> content;
+        public final LongAccumulator sizeExceededCounter;
+        public final LongAccumulator sizeInvalidCounter;
+        public final LongAccumulator unavailableCounter;
+        public final LongAccumulator correctCounter;
+
+        ImportResult(JavaRDD<DocumentContent> content, LongAccumulator sizeExceededCounter,
+                LongAccumulator sizeInvalidCounter, LongAccumulator unavailableCounter,
+                LongAccumulator correctCounter) {
+            this.content = content;
+            this.sizeExceededCounter = sizeExceededCounter;
+            this.sizeInvalidCounter = sizeInvalidCounter;
+            this.unavailableCounter = unavailableCounter;
+            this.correctCounter = correctCounter;
         }
     }
 

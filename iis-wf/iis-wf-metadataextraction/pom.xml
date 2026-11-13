@@ -222,35 +222,18 @@
                                                 <exclude>**</exclude>
                                             </excludes>
                                         </filter>
-                                        <!-- AWS SDK v1 is excluded from THIS module only (it arrives transitively
-                                             through iis-wf-import, which needs it for s3:// content retrieval).
-
-                                             Proof that metadata extraction never needs it:
-                                               * no com.amazonaws reference anywhere in the
-                                                 iis-wf-metadataextraction sources, nor in iis-common, nor in the
-                                                 classes this module actually uses from iis-wf-import
-                                                 (HttpClientUtils, ContentApprover, PDFHeaderBasedContentApprover,
-                                                 InvalidCountableContentApproverWrapper);
-                                               * bytecode scan of this uber JAR: the only IIS classes referencing
-                                                 com.amazonaws are
-                                                   eu.dnetlib.iis.wf.importer.content.ContentRetrievalContext,
-                                                   ...content.ObjectStoreContentProviderUtils,
-                                                   ...content.HadoopBasedS3CredentialsProvider
-                                                 and nothing outside eu.dnetlib.iis.wf.importer.content
-                                                 references those three;
-                                               * JAR_METADATAEXTRACTION only ever launches
-                                                 MetadataExtractionCacheChainJob (cache chain + extraction),
-                                                 never the content importer.
-
-                                             The iis-wf-import uber JAR (JAR_IMPORT) DOES bundle AWS SDK v1 — that is
-                                             where s3:// content retrieval happens. If this JAR is ever reused to run
-                                             DocumentContentUrlBasedImporterJob, remove this filter. -->
-                                        <filter>
-                                            <artifact>com.amazonaws:*</artifact>
-                                            <excludes>
-                                                <exclude>**</exclude>
-                                            </excludes>
-                                        </filter>
+                                        <!-- AWS SDK v1 (com.amazonaws:*) MUST NOT be excluded any more.
+                                             MetadataExtractionCacheChainJob now performs the content retrieval
+                                             itself: it filters out the already cached ids and then calls
+                                             DocumentContentUrlBasedImporterJob.importContent(...) in-process for
+                                             the remaining subset (the Oozie 'prefetched' step folded into the
+                                             cache chain). That path needs AWSCredentialsProvider /
+                                             AmazonS3Client for s3:// urls, and the spark image provides only
+                                             AWS SDK v2 (bundled with hadoop-aws), so the client must ship here:
+                                             without it the job dies with
+                                               NoClassDefFoundError: com/amazonaws/auth/AWSCredentialsProvider
+                                             at DocumentContentUrlBasedImporterJob.createRetrievalContext(...).
+                                             AWS SDK v2 + the S3 analytics accelerator stay excluded (see above). -->
                                     </filters>
                                     <transformers>
                                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
