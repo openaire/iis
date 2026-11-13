@@ -86,8 +86,9 @@ public class ReportMerger implements Process {
      * Writes all counters as action data properties.
      */
     private void writeActionData(List<ReportEntry> reportEntries) throws FileNotFoundException, IOException {
-        if (CollectionUtils.isNotEmpty(reportEntries)) {
-            File file = new File(System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME));
+        String oozieActionOutputFilename = System.getProperty(OOZIE_ACTION_OUTPUT_FILENAME);
+        if (CollectionUtils.isNotEmpty(reportEntries) && oozieActionOutputFilename != null) {
+            File file = new File(oozieActionOutputFilename);
             Properties props = new Properties();
             try (OutputStream os = new FileOutputStream(file)) {
                 for (ReportEntry currentEntry : reportEntries) {
