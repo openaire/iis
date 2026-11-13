@@ -99,6 +99,10 @@ public class MetadataExtractionCacheChainJob {
             input.cache();
 
             HdfsUtils.remove(hadoopConf, params.outputRoot);
+            if (!StringUtils.isBlank(params.outputReportRootPath)) {
+                HdfsUtils.remove(hadoopConf, params.outputReportRootPath + "/" + params.extractionReportRelativePath);
+                HdfsUtils.remove(hadoopConf, params.outputReportRootPath + "/" + params.cacheReportRelativePath);
+            }
 
             if (input.isEmpty()) {
                 log.info("input is empty, generating empty meta and fault datastores without touching the cache");
