@@ -13,8 +13,6 @@ import static eu.dnetlib.dhp.schema.common.ModelConstants.ZENODO_OD_ID;
 import static eu.dnetlib.dhp.schema.common.ModelConstants.ZENODO_R3_ID;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +24,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.HashBiMap;
@@ -38,6 +35,7 @@ import eu.dnetlib.dhp.schema.oaf.KeyValue;
 import eu.dnetlib.dhp.schema.oaf.OafEntity;
 import eu.dnetlib.dhp.schema.oaf.Result;
 import eu.dnetlib.dhp.schema.oaf.StructuredProperty;
+import eu.dnetlib.iis.common.utils.OaIdUtils;
 
 /**
  * Factory class for OpenAIRE identifiers in the Graph
@@ -243,7 +241,7 @@ public class IdentifierFactory implements Serializable {
             .append(ID_PREFIX_SEPARATOR)
             .append(createPrefix(pidType))
             .append(ID_SEPARATOR)
-            .append(md5 ? md5(pidValue) : pidValue)
+            .append(md5 ? OaIdUtils.md5(pidValue) : pidValue)
             .toString();
     }
 
@@ -256,14 +254,17 @@ public class IdentifierFactory implements Serializable {
         return prefix.substring(0, ID_PREFIX_LEN);
     }
 
+    /**
+     * @deprecated use {@link OaIdUtils#md5(String)} instead, the single md5 implementation used for OpenAIRE id
+     * generation. Unlike {@link OaIdUtils#md5(String)}, this method preserves the legacy behavior of returning null
+     * when the input is null.
+     */
+    @Deprecated
     public static String md5(final String s) {
-        try {
-            final MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(s.getBytes(StandardCharsets.UTF_8));
-            return new String(Hex.encodeHex(md.digest()));
-        } catch (final Exception e) {
+        if (s == null) {
             return null;
         }
+        return OaIdUtils.md5(s);
     }
 
 }

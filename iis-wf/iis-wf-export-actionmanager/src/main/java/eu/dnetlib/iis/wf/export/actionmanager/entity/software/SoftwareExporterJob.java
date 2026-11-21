@@ -12,6 +12,7 @@ import eu.dnetlib.iis.common.java.io.HdfsUtils;
 import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.common.utils.DateTimeUtils;
 import eu.dnetlib.iis.common.utils.IteratorUtils;
+import eu.dnetlib.iis.common.utils.OaIdUtils;
 import eu.dnetlib.iis.common.utils.RDDUtils;
 import eu.dnetlib.iis.referenceextraction.softwareurl.schemas.DocumentToSoftwareUrlWithMeta;
 import eu.dnetlib.iis.transformers.metadatamerger.schemas.ExtractedDocumentMetadataMergedWithOriginal;
@@ -22,7 +23,6 @@ import eu.dnetlib.iis.wf.export.actionmanager.cfg.StaticConfigurationProvider;
 import eu.dnetlib.iis.wf.export.actionmanager.entity.ConfidenceLevelUtils;
 import eu.dnetlib.iis.wf.export.actionmanager.module.AlgorithmName;
 import eu.dnetlib.iis.wf.export.actionmanager.module.BuilderModuleHelper;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -199,7 +199,7 @@ public class SoftwareExporterJob {
 
     private static String generateSoftwareId(String softwareUrl) {
         return InfoSpaceConstants.ROW_PREFIX_RESULT + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX +
-                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + DigestUtils.md5Hex(softwareUrl);
+                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + OaIdUtils.md5(softwareUrl);
     }
 
     private static JavaRDD<SoftwareExportMetadata> deduplicateByHigherConfidenceLevel(JavaRDD<SoftwareExportMetadata> rdd) {
@@ -399,7 +399,7 @@ public class SoftwareExporterJob {
 
     private static String generateDatasourceId(String repositoryName) {
         return InfoSpaceConstants.ROW_PREFIX_DATASOURCE + InfoSpaceConstants.OPENAIRE_ENTITY_ID_PREFIX +
-                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + DigestUtils.md5Hex(repositoryName);
+                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR + OaIdUtils.md5(repositoryName);
     }
 
     private static KeyValue buildHostedBy(String repositoryName) {
