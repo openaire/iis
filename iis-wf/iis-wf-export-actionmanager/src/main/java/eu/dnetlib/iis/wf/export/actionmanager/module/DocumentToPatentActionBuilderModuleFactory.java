@@ -11,8 +11,8 @@ import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
 import eu.dnetlib.iis.common.WorkflowRuntimeParameters;
+import eu.dnetlib.iis.common.utils.OaIdUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
-import eu.dnetlib.iis.wf.export.actionmanager.IdentifierFactory;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 
 /**
@@ -75,7 +75,7 @@ public class DocumentToPatentActionBuilderModuleFactory extends AbstractActionBu
 
         private String generatePatentId(String lensId) {
             return InfoSpaceConstants.ROW_PREFIX_RESULT + InfoSpaceConstants.LENS_ENTITY_ID_PREFIX + 
-                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR +  IdentifierFactory.md5(lensId);
+                InfoSpaceConstants.ID_NAMESPACE_SEPARATOR +  OaIdUtils.md5(lensId);
         }
     }
 }

@@ -2,11 +2,11 @@ package eu.dnetlib.iis.wf.importer.stream.project;
 
 import java.io.IOException;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import eu.dnetlib.iis.common.InfoSpaceConstants;
+import eu.dnetlib.iis.common.utils.OaIdUtils;
 import eu.dnetlib.iis.importer.schemas.Project;
 import eu.dnetlib.iis.wf.importer.infospace.converter.FundingTreeParser;
 import eu.dnetlib.iis.wf.importer.infospace.converter.ProjectConverter;
@@ -69,7 +69,7 @@ public class ProjectDetailConverter {
         if (id.isEmpty() || prefix.isEmpty()) {
             return "";
         }
-        return projectOafSimpleId(prefix + "::" + DigestUtils.md5Hex(id));
+        return projectOafSimpleId(prefix + "::" + OaIdUtils.md5(id));
     }
 
     private static String projectOafSimpleId(String id) {
