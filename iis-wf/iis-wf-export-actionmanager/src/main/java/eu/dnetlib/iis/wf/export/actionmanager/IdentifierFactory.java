@@ -256,10 +256,14 @@ public class IdentifierFactory implements Serializable {
 
     /**
      * @deprecated use {@link OaIdUtils#md5(String)} instead, the single md5 implementation used for OpenAIRE id
-     * generation
+     * generation. Unlike {@link OaIdUtils#md5(String)}, this method preserves the legacy behavior of returning null
+     * when the input is null.
      */
     @Deprecated
     public static String md5(final String s) {
+        if (s == null) {
+            return null;
+        }
         return OaIdUtils.md5(s);
     }
 

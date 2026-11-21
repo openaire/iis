@@ -3,7 +3,6 @@ package eu.dnetlib.iis.wf.export.actionmanager.module;
 import eu.dnetlib.dhp.schema.action.AtomicAction;
 import eu.dnetlib.dhp.schema.oaf.Relation;
 import eu.dnetlib.iis.common.InfoSpaceConstants;
-import eu.dnetlib.iis.common.utils.OaIdUtils;
 import eu.dnetlib.iis.referenceextraction.patent.schemas.DocumentToPatent;
 import eu.dnetlib.iis.wf.export.actionmanager.OafConstants;
 import eu.dnetlib.iis.wf.export.actionmanager.module.VerificationUtils.Expectations;
@@ -58,7 +57,7 @@ public class DocumentToPatentActionBuilderModuleFactoryTest extends AbstractActi
         AtomicAction<Relation> action = actions.get(0);
         assertNotNull(action);
         assertEquals(Relation.class, action.getClazz());
-        String patentId = "50|lens________::" +  OaIdUtils.md5(lensId);
+        String patentId = "50|lens________::5f9cd4d04236b859d589e9611b005a91";
         Expectations expectations = new Expectations(docId, patentId, matchStrength, 
                 OafConstants.REL_TYPE_RESULT_RESULT, OafConstants.SUBREL_TYPE_RELATIONSHIP, 
                 OafConstants.REL_CLASS_ISRELATEDTO);

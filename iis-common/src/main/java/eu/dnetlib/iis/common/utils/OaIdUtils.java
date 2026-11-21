@@ -17,8 +17,8 @@ public class OaIdUtils {
      *
      * @param s the value to hash
      * @return the 32 character lowercase hex MD5 digest
-     * @throws NullPointerException if {@code s} is null (the previous IdentifierFactory#md5 returned null in that
-     * case; failing fast is intentional, no id generation call site passes null)
+     * @throws NullPointerException if {@code s} is null (fail fast; the deprecated IdentifierFactory#md5 keeps the
+     * legacy null-returning behavior for backward compatibility, and no id generation call site passes null)
      */
     public static String md5(final String s) {
         return DigestUtils.md5Hex(s);
