@@ -6,6 +6,7 @@ create temp table partial1 as select * from
 (select id, match, repo,
 case
         when repo='GitHub' then regexpr('itemprop="name">.+>(.+)</a>', source)
+        when repo='GitLab' then regexpr('<meta content="(.+)" property="og:title">', source)
         when repo='Bitbucket' then regexpr('bitbucket.org/[\w-]+/([\w-]+)/?', match)
         when repo='SourceForge' then regexpr('<meta property="og:title" content="(.+)"/>', source)
         when repo='Google Code' then
@@ -16,6 +17,7 @@ case
 end as title,
 case
         when repo='GitHub' then regexpr('itemprop="about">(.+?(?=</span>))', regexpr("\n",source," "))
+        when repo='GitLab' then regexpr('<meta content="(.+)" property="og:description">', source)
         when repo='SourceForge' then regexpr('<meta property="og:description" content="(.+)"/>', source)
         when repo='Google Code' then
                 case
@@ -25,6 +27,7 @@ case
 end as description,
 case
         when repo='GitHub' then regexpr('<link rel="canonical" href="(.+)"', source)
+        when repo='GitLab' then regexpr('<meta content="(.+)" property="og:url">', source)
         when repo='SourceForge' then regexpr('<meta property="og:url" content="(.+)"/>', source)
 end as url,"" as SHUrl
 from metadata where repo = 'GitHub' or repo='SourceForge' or repo = 'Google Code' or repo = 'Bitbucket'));
@@ -37,9 +40,12 @@ create temp table extractedlinks as select extractedpartiallinks.id, extractedpa
 
 update extractedlinks set title = comprspaces(regexpr("\n",title," ")) where title is not null and title != "";
 update extractedlinks set cleanmatch = regexpr("http(s*):\/\/www\.github\.com",cleanmatch,"https://github.com") where cleanmatch is not null;
+update extractedlinks set cleanmatch = regexpr("http(s*):\/\/www\.gitlab\.com",cleanmatch,"https://gitlab.com") where cleanmatch is not null;
 update extractedlinks set cleanmatch = regexpr("http\:\/\/github\.com",cleanmatch,"https://github.com") where cleanmatch is not null;
+update extractedlinks set cleanmatch = regexpr("http\:\/\/gitlab\.com",cleanmatch,"https://gitlab.com") where cleanmatch is not null;
 update extractedlinks set cleanmatch = regexpr("\.git$",cleanmatch,"") where cleanmatch is not null;
 update extractedlinks set cleanmatch = regexpr("((?i)https://github.com/[^/]+/[^/]+)",cleanmatch) where cleanmatch like "https://github.com/%/%/%";
+update extractedlinks set cleanmatch = regexpr("((?i)https://gitlab.com/[^/]+/[^/]+)",cleanmatch);
 update extractedlinks set description = comprspaces(regexpr("\n",description," ")) where description is not null and description != "";
 update extractedlinks set repo = comprspaces(regexpr("\n",repo," ")) where repo is not null and repo != "";
 update extractedlinks set title = regexpr("/([^/]+)$",cleanmatch) where title = "" or title is null;
