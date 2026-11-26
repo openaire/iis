@@ -97,19 +97,30 @@ public class DocumentContentUrlBasedImporterJob {
                 correctCounter);
     }
 
+    /** Report key prefix of the content importer (PDF path). */
+    public static final String DEFAULT_REPORT_PREFIX = "import.contents.pdf";
+
     /**
      * Builds the report entries described by an {@link ImportResult}. Must be called only after an
      * action consuming {@code result.content} has completed, otherwise the counters are incomplete.
      */
     public static List<ReportEntry> reportEntries(ImportResult result) {
+        return reportEntries(result, DEFAULT_REPORT_PREFIX);
+    }
+
+    /**
+     * Builds the report entries using the given key prefix, so the same importer can report as
+     * {@code import.contents.pdf} (default) or another namespace when reused elsewhere.
+     */
+    public static List<ReportEntry> reportEntries(ImportResult result, String prefix) {
         return Lists.newArrayList(
-                ReportEntryFactory.createCounterReportEntry(REPORT_KEY_CORRECT,
+                ReportEntryFactory.createCounterReportEntry(prefix + ".correct",
                         result.correctCounter.value()),
-                ReportEntryFactory.createCounterReportEntry(REPORT_KEY_INVALID_SIZE_EXCEEDED,
+                ReportEntryFactory.createCounterReportEntry(prefix + ".invalid.sizeExceeded",
                         result.sizeExceededCounter.value()),
-                ReportEntryFactory.createCounterReportEntry(REPORT_KEY_INVALID_SIZE,
+                ReportEntryFactory.createCounterReportEntry(prefix + ".invalid.sizeInvalid",
                         result.sizeInvalidCounter.value()),
-                ReportEntryFactory.createCounterReportEntry(REPORT_KEY_INVALID_UNAVAILABLE,
+                ReportEntryFactory.createCounterReportEntry(prefix + ".invalid.unavailable",
                         result.unavailableCounter.value()));
     }
 
@@ -174,8 +185,7 @@ public class DocumentContentUrlBasedImporterJob {
      * pod are still picked up. All retrieval parameters are taken from the serializable
      * {@link Params}.
      */
-    private static ContentRetrievalContext createRetrievalContext(Params params) {
-        Configuration conf = new Configuration();
+    static ContentRetrievalContext createRetrievalContext(Params params) {        Configuration conf = new Configuration();
         if (params.hadoopConf != null) {
             // without fs.defaultFS a jceks://hdfs/... location is resolved against the local file
             // system, the credentials are not found and the client silently falls back to
@@ -203,7 +213,7 @@ public class DocumentContentUrlBasedImporterJob {
         return value != null && !"$UNDEFINED$".equals(value);
     }
 
-    private static Map<String, String> toMap(Configuration conf) {
+    static Map<String, String> toMap(Configuration conf) {
         Map<String, String> result = new HashMap<>();
         for (Map.Entry<String, String> entry : conf) {
             if (entry.getKey() != null && entry.getValue() != null) {

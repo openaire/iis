@@ -143,9 +143,8 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 	 * @throws JDOMException
 	 * @throws IOException
 	 */
-	protected static CharSequence extractText(String xmlInput, Namespace oaiNamespace)
-			throws JDOMException, IOException {
-		SAXBuilder builder = new SAXBuilder();
+	public static CharSequence extractText(String xmlInput, Namespace oaiNamespace)
+			throws JDOMException, IOException {		SAXBuilder builder = new SAXBuilder();
 		builder.setValidation(false);
 		builder.setFeature("http://xml.org/sax/features/validation", false);
 		builder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
@@ -166,7 +165,7 @@ public class MetadataImporter extends Mapper<AvroKey<DocumentText>, NullWritable
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	protected static void extractMetadata(String xmlInput, ExtractedDocumentMetadata.Builder output)
+	public static void extractMetadata(String xmlInput, ExtractedDocumentMetadata.Builder output)
 			throws ParserConfigurationException, SAXException, IOException {
 		SAXParserFactory saxFactory = SAXParserFactory.newInstance();
 		saxFactory.setValidating(false);

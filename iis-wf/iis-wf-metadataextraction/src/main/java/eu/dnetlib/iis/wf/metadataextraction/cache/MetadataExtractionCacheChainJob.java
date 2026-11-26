@@ -1,6 +1,8 @@
 package eu.dnetlib.iis.wf.metadataextraction.cache;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -29,7 +31,10 @@ import eu.dnetlib.iis.common.spark.JavaSparkContextFactory;
 import eu.dnetlib.iis.importer.auxiliary.schemas.DocumentContentUrl;
 import eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata;
 import eu.dnetlib.iis.wf.importer.content.DocumentContentUrlBasedImporterJob;
+import eu.dnetlib.iis.wf.importer.content.DocumentTextUrlBasedImporterJob;
 import eu.dnetlib.iis.wf.metadataextraction.MetadataExtractorJob;
+import eu.dnetlib.iis.wf.metadataextraction.pmc.PmcMetadataIngesterJob;
+import eu.dnetlib.iis.wf.transformers.ingest.pmc.metadata.PmcMetadataTransformerJob;
 import pl.edu.icm.sparkutils.avro.SparkAvroLoader;
 import pl.edu.icm.sparkutils.avro.SparkAvroSaver;
 import scala.Tuple2;
@@ -159,28 +164,63 @@ public class MetadataExtractionCacheChainJob {
                             .map(pair -> pair._2._1)
                     : sc.<ExtractedDocumentMetadata>emptyRDD();
 
-            MetadataExtractorJob.ExtractionResult extraction;
-            DocumentContentUrlBasedImporterJob.ImportResult imported = null;
             boolean hasWork = !toBeProcessedUrls.isEmpty();
+            JavaRDD<ExtractedDocumentMetadata> newMeta;
+            JavaRDD<Fault> newFault;
+            long newMetaCount = 0L;
+            long newFaultCount = 0L;
+            JavaRDD<ReportEntry> reports;
+
             if (params.activeMetadataExtraction && hasWork) {
-                // content retrieval is embedded here (equivalent to the Oozie prefetched sub-workflow)
-                // so that the bytes are fetched for the not-yet-cached documents only, and are not
-                // materialized in between
-                imported = DocumentContentUrlBasedImporterJob.importContent(sc, toBeProcessedUrls,
-                        params.toImportParams());
-                extraction = MetadataExtractorJob.extract(sc, imported.content, params.toExtractionParams());
+                if (params.isPmcMode()) {
+                    // PMC/JATS path -- the Oozie ingest_pmc_prefetched chain folded in:
+                    // import plaintext -> ingest JATS -> convert to the common metadata schema
+                    DocumentTextUrlBasedImporterJob.TextImportResult textImported =
+                            DocumentTextUrlBasedImporterJob.importText(sc, toBeProcessedUrls,
+                                    params.toImportParams());
+                    PmcMetadataIngesterJob.IngestResult ingested =
+                            PmcMetadataIngesterJob.ingest(sc, textImported.text, params.toPmcParams());
+                    newMeta = PmcMetadataTransformerJob.transform(ingested.meta);
+                    newFault = ingested.fault;
+                    // these actions run the pipeline once (ingestion records are cached) and make
+                    // the counters final
+                    newMetaCount = newMeta.count();
+                    newFaultCount = newFault.count();
+                    List<ReportEntry> pmcReports = new ArrayList<>();
+                    pmcReports.addAll(DocumentTextUrlBasedImporterJob.reportEntries(textImported,
+                            params.contentReportPropertiesPrefix));
+                    pmcReports.addAll(PmcMetadataIngesterJob.reportEntries(ingested,
+                            params.reportPropertiesPrefix));
+                    reports = sc.parallelize(pmcReports);
+                } else {
+                    // PDF path -- content retrieval is embedded here (the Oozie prefetched step) so the
+                    // bytes are fetched for the not-yet-cached documents only, without materialization
+                    DocumentContentUrlBasedImporterJob.ImportResult imported =
+                            DocumentContentUrlBasedImporterJob.importContent(sc, toBeProcessedUrls,
+                                    params.toImportParams());
+                    MetadataExtractorJob.ExtractionResult extraction =
+                            MetadataExtractorJob.extract(sc, imported.content, params.toExtractionParams());
+                    newMeta = extraction.meta;
+                    newFault = extraction.fault;
+                    newMetaCount = extraction.metaCount;
+                    newFaultCount = extraction.faultCount;
+                    reports = extraction.reports.union(sc.parallelize(
+                            DocumentContentUrlBasedImporterJob.reportEntries(imported,
+                                    params.contentReportPropertiesPrefix)));
+                }
             } else {
                 log.info("skipping metadata extraction: activeMetadataExtraction="
-                        + params.activeMetadataExtraction + ", toBeProcessed empty=" + !hasWork);
-                extraction = MetadataExtractorJob.emptyResult(sc);
+                        + params.activeMetadataExtraction + ", toBeProcessed empty=" + !hasWork
+                        + ", mode=" + params.extractionMode);
+                MetadataExtractorJob.ExtractionResult empty = MetadataExtractorJob.emptyResult(sc);
+                newMeta = empty.meta;
+                newFault = empty.fault;
+                reports = empty.reports;
             }
 
-            JavaRDD<ExtractedDocumentMetadata> newMeta = extraction.meta;
-            JavaRDD<Fault> newFault = extraction.fault;
-
             // cache update/create guarded by the lock manager
-            if (params.activeMetadataExtraction && (extraction.metaCount > 0 || extraction.faultCount > 0)) {
-                log.info("storing new cache entry: meta=" + extraction.metaCount + ", fault=" + extraction.faultCount);
+            if (params.activeMetadataExtraction && (newMetaCount > 0 || newFaultCount > 0)) {
+                log.info("storing new cache entry: meta=" + newMetaCount + ", fault=" + newFaultCount);
                 CacheStorageUtils.storeInCache(avroSaver, ExtractedDocumentMetadata.SCHEMA$,
                         cachedMeta.union(newMeta), cachedFault.union(newFault), cacheRootDir, lockManager,
                         cacheManager, hadoopConf, params.numberOfEmittedFilesInCache);
@@ -194,13 +234,8 @@ public class MetadataExtractionCacheChainJob {
 
             storeOutput(sc, params, mergedMeta, newFault);
 
-            // Content retrieval report entries are produced here now that the import is in-process;
-            // the counters are valid because the extraction above already triggered the actions.
-            JavaRDD<ReportEntry> reports = extraction.reports;
-            if (imported != null) {
-                reports = reports.union(sc.parallelize(
-                        DocumentContentUrlBasedImporterJob.reportEntries(imported)));
-            }
+            // Content retrieval / ingestion report entries are produced here now that the import is
+            // in-process; the counters are valid because the actions above already ran.
             storeReports(sc, params, reports, returnedMeta.count());
         }
     }
@@ -293,6 +328,38 @@ public class MetadataExtractionCacheChainJob {
 
         @Parameter(names = "-objectstoreS3KeystoreLocation")
         public String objectstoreS3KeystoreLocation = MetadataExtractorJob.UNDEFINED;
+
+        // --- execution mode ---
+        /**
+         * {@code pdf} (default) extracts with Grobid/CERMINE, {@code pmc} ingests JATS/PMC XML.
+         * This replaces the Oozie {@code metadata_extractor_app_name} selector: the same job then
+         * runs either the {@code metadata_extractor} or the {@code ingest_pmc_metadata} chain.
+         */
+        @Parameter(names = "-extractionMode")
+        public String extractionMode = "pdf";
+
+        /**
+         * Report key prefix for the content retrieval counters: {@code import.contents.pdf} for the
+         * PDF path, {@code import.contents.jats} for PMC (as in the Oozie job.properties overrides).
+         */
+        @Parameter(names = "-contentReportPropertiesPrefix")
+        public String contentReportPropertiesPrefix = "import.contents.pdf";
+
+        /** OAI namespace stripped when extracting plain text from JATS records (PMC mode). */
+        @Parameter(names = "-ingestMetadataOaiNamespace")
+        public String ingestMetadataOaiNamespace = "http://www.openarchives.org/OAI/2.0/";
+
+        public boolean isPmcMode() {
+            return "pmc".equalsIgnoreCase(extractionMode);
+        }
+
+        public PmcMetadataIngesterJob.Params toPmcParams() {
+            PmcMetadataIngesterJob.Params pmcParams = new PmcMetadataIngesterJob.Params();
+            pmcParams.excludedIds = excludedIds;
+            pmcParams.ingestMetadataOaiNamespace = ingestMetadataOaiNamespace;
+            pmcParams.reportPropertiesPrefix = reportPropertiesPrefix;
+            return pmcParams;
+        }
 
         /** Retrieval parameters handed over to the in-process content importer. */
         public DocumentContentUrlBasedImporterJob.Params toImportParams() {

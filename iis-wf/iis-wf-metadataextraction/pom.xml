@@ -69,6 +69,24 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<!-- AWS SDK v1 (s3:// content urls) MUST be declared here, not inherited transitively from
+		     iis-wf-import. MetadataExtractionCacheChainJob *executes* the import code inside its own
+		     JVM (DocumentContentUrlBasedImporterJob / DocumentTextUrlBasedImporterJob import the
+		     content bytes in-process, the Oozie 'prefetched' step folded into the cache chain), so
+		     the shaded uber JAR has to be self-contained: the spark image ships only AWS SDK v2
+		     (via hadoop-aws).
+		     Relying on the transitive dependency is what broke: a build that resolves the sibling
+		     from the local repository uses the *installed* POM, so a stale
+		     iis-wf-import-<version>.pom silently drops the dependency, the shade plugin then has
+		     nothing to bundle and the job dies at runtime with
+		       NoClassDefFoundError: com/amazonaws/auth/AWSCredentialsProvider
+		     at DocumentContentUrlBasedImporterJob.createRetrievalContext(...).
+		     Keep in sync with the same dependency in iis-wf-import/pom.xml. -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-bundle</artifactId>
+		</dependency>
+
         <dependency>
             <groupId>eu.dnetlib.iis</groupId>
             <artifactId>iis-wf-report</artifactId>

@@ -40,7 +40,7 @@ public class PmcMetadataTransformerJob {
                             eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata.class);
 
             JavaRDD<eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata> output =
-                    input.map(PmcMetadataTransformerJob::convert);
+                    transform(input);
 
             avroSaver.saveJavaRDD(output,
                     eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata.SCHEMA$,
@@ -49,6 +49,17 @@ public class PmcMetadataTransformerJob {
     }
 
     //------------------------ PRIVATE --------------------------
+
+    /**
+     * Converts PMC-ingested metadata into the common metadataextraction schema. Public so a parent
+     * job can fold the conversion into its own pipeline (the PMC execution mode of
+     * {@code MetadataExtractionCacheChainJob}) instead of materializing an intermediate datastore.
+     */
+    public static JavaRDD<eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata> transform(
+            JavaRDD<eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata> input) {
+        return input.map(PmcMetadataTransformerJob::convert);
+    }
+
 
     private static eu.dnetlib.iis.metadataextraction.schemas.ExtractedDocumentMetadata convert(
             eu.dnetlib.iis.ingest.pmc.metadata.schemas.ExtractedDocumentMetadata src) {
